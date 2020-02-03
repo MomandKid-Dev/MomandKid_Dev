@@ -36,6 +36,9 @@ font:
   - family : Montserrat 
     fonts :
       - asset: assets/Montserrat-Regular.ttf
+  - family : Kano regular
+    fonts :
+      - asset : assets/Kano.otf
 # The following section is specific to Flutter.
 flutter:
 
