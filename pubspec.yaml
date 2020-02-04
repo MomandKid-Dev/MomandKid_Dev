@@ -32,13 +32,7 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-font:
-  - family : Montserrat 
-    fonts :
-      - asset: assets/Montserrat-Regular.ttf
-  - family : Kano regular
-    fonts :
-      - asset : assets/Kano.otf
+
 # The following section is specific to Flutter.
 flutter:
 
@@ -68,6 +62,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family : Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat/Montserrat-Regular.ttf
+        
   # fonts:
   #   - family: Schyler
   #     fonts:
