@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:page_transition/page_transition.dart';
 
 void main() => runApp(MyApp());
 
@@ -108,7 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
             case 1 : print('Article');
               Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => MyArticlePage()),
+                PageTransition(type: PageTransitionType.rightToLeft, child: MyArticlePage()),
+                // MaterialPageRoute(builder: (context) => MyArticlePage()),
+                
                 );
               break;
             default:

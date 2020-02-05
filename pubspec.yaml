@@ -26,6 +26,7 @@ dependencies:
   bottom_navy_bar: ^5.3.2
   font_awesome_flutter: ^8.5.0
   line_awesome_icons: ^1.0.4+2
+  page_transition: ^1.1.5
 
 dev_dependencies:
   flutter_test:
