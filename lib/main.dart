@@ -1,6 +1,10 @@
+
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:momandkid/detailsPage.dart';
+import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,6 +17,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: MyHomePage(),
       debugShowCheckedModeBanner: false,
+  theme: new ThemeData(
+    fontFamily: 'Montserrat',
+  ),
     );
   }
 }
@@ -26,209 +33,251 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  int _currentIndex = 0;
+  PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF21BFBD),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF21BFBD),
-        elevation: 0.0,
-        actions: <Widget>[
-                IconButton(
-                  alignment: Alignment(-40.0,0.0),
-                  icon: Icon(Icons.arrow_back_ios),
-                  iconSize: 22.0,
-                  color: Colors.white, 
-                  onPressed: () {},
-                  ),
-                Container(
-                  width: 125.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.arrow_drop_down),
-                        iconSize: 50.0,
-                        color: Colors.white,
-                        onPressed: () {},
-                        ),
-                      IconButton(
-                        icon: Icon(Icons.more_horiz),
-                        iconSize: 30.0,
-                        color: Colors.white,
-                        onPressed: () {},
-                        ),
-                    ],
-                  ),
-                ),   
-        ],
+      backgroundColor: Color(0xFFF2E8E9),
+    appBar: AppBar(
+      backgroundColor: Colors.white,
+      title: Text(
+        'MomAndKids.',
+        style: TextStyle(
+          color: Colors.grey,
+          fontWeight: FontWeight.bold,
+          fontSize: 24
+        ),
+        
       ),
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top:10.0,left:20.0) ,
-            child: Row(
-              
-            ),
+      centerTitle: true,
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.notifications_none),
+          alignment: Alignment(2.0,0.0),
+          color: Colors.pink, 
+          iconSize: 25.0,
+          onPressed: () {
+            print('Notification');
+          }
           ),
-          SizedBox(height: 25.0,),
-          Padding(
-            padding: EdgeInsets.only(left:40.0),
-            child: Row(
-              children: <Widget>[
-                Text('Healthy',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25.0,
-                  ),
-                ),
-                SizedBox(width: 10.0),
-                Text('Food',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    color: Colors.white,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 25.0,
-                  ),
-                ),
-              ],
-            ),
+        
+        IconButton(
+          icon: Icon(LineAwesomeIcons.cog),
+          alignment: Alignment(0.0,-0.2),
+          color: Colors.pink, 
+          iconSize: 25.0,
+          onPressed: () {
+            print('Setting');
+          }
           ),
-        SizedBox(height: 100.0,),
-        Container(
-          height: MediaQuery.of(context).size.height - 185.0,
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(75.0))),
-          child: ListView(
-            primary: false,
-            padding: EdgeInsets.only(left: 25.0, right: 20.0),
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top:45.0),
-                child: Container(
-                  height: MediaQuery.of(context).size.height - 300.0,
-                  child: ListView(children:[
-                    _buildFoodItem('assets/plate1.png', 'Salmon bowl', '\$24.00'),
-                    _buildFoodItem('assets/plate2.png', 'Spring bowl', '\$22.00'),
-                    _buildFoodItem('assets/plate3.png', 'Avocado bowl', '\$26.00'),
-                    _buildFoodItem('assets/plate5.png', 'Berry bowl', '\$24.00'),
-                    _buildFoodItem('assets/plate4.png', 'Avocado bowl', '\$26.00'),
-                    ],
-                  ),
-                ),
-              ),
-              Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Container(
-                  height: 65.0,
-                  width: 60.0,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.grey,
-                        style: BorderStyle.solid,
-                        width: 1.0),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Center(
-                    child: Icon(Icons.search, color: Colors.black),
-                  ),
-                ),
-                Container(
-                  height: 65.0,
-                  width: 60.0,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.grey,
-                        style: BorderStyle.solid,
-                        width: 1.0),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Center(
-                    child: Icon(Icons.shopping_basket, color: Colors.black),
-                  ),
-                ),
-                Container(
-                  height: 65.0,
-                  width: 120.0,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Colors.grey,
-                          style: BorderStyle.solid,
-                          width: 1.0),
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Color(0xFF1C1428)),
-                  child: Center(
-                      child: Text('Checkout',
-                          style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              color: Colors.white,
-                              fontSize: 15.0))),
-                  )
-                ],
-              )
-            ],
+      ],
+      leading: IconButton(
+        icon: Icon(
+          LineAwesomeIcons.user,
+          color: Colors.pink,
+          size: 35.0,
           ),
-        )
+        alignment: Alignment(0.0,-1.0),
+        onPressed: (){
+          print('Account');
+        },
+      ),
+    ),
+    bottomNavigationBar: BottomNavyBar(
+      selectedIndex: _currentIndex,
+        onItemSelected: (index) {
+          setState(() => _currentIndex = index);
+          switch (index) {
+            case 0 : print('home');
+              break;
+            case 1 : print('Article');
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => MyArticlePage()),
+                );
+              break;
+            default:
+          }
+          print(index);
+        },
+        items: <BottomNavyBarItem>[
+          BottomNavyBarItem(
+            title: Text('Home'),
+            icon : Icon(LineAwesomeIcons.home),
+            activeColor: Colors.red,
+            inactiveColor: Colors.black,
+
+          ),
+          BottomNavyBarItem(
+            title: Text('Article'),
+            icon: Icon(Icons.apps),
+            activeColor: Colors.pink,
+            inactiveColor: Colors.black
+          ),
+          BottomNavyBarItem(
+            title: Text('Kids'),
+            icon: Icon(Icons.chat_bubble),
+            activeColor: Colors.purple,
+            inactiveColor: Colors.black
+          ),
+          BottomNavyBarItem(
+            title: Text('Health'),
+            icon: Icon(Icons.settings),
+            activeColor: Colors.blue,
+            inactiveColor: Colors.black
+          ),
+          BottomNavyBarItem(
+            title: Text('Schedule'),
+            icon: Icon(Icons.settings),
+            activeColor: Colors.green,
+            inactiveColor: Colors.black
+          ),
         ],
       ),
     );
   }
-  Widget _buildFoodItem(String imgPath, String foodName, String price){
-    return Padding(
-      padding: EdgeInsets.only(top:10.0, left: 10.0, right: 10.0),
-      child: InkWell(
-        onTap: (){
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => DetailsPage(heroTag : imgPath, foodName : foodName, foodPrice : price)
-          ));
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              child: Row(
-                children: [
-                  Hero(
-                    tag: imgPath,
-                    child: Image(
-                      image: AssetImage(imgPath),
-                      fit: BoxFit.cover,
-                      height: 75.0,
-                      width: 75.0,
-                      )
-                  ),
-                  SizedBox(width: 10.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        foodName,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                      Text(
-                        price,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 15.0,
-                          color: Colors.grey
-                        )
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-            IconButton(icon: Icon(Icons.add), onPressed: () {},color: Colors.black
-            )
-          ],
+}
+
+class MyArticlePage extends StatefulWidget {
+  MyArticlePage({Key key}) : super(key: key);
+
+  @override
+  _MyArticlePageState createState() => _MyArticlePageState();
+}
+
+class _MyArticlePageState extends State<MyArticlePage> {
+
+  int _currentIndex = 1;
+  PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFFF2E8E9),
+    appBar: AppBar(
+      backgroundColor: Colors.white,
+      title: Text(
+        'Article.',
+        style: TextStyle(
+          color: Colors.grey,
+          fontWeight: FontWeight.bold,
+          fontSize: 24
         ),
+        
+      ),
+      centerTitle: true,
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.notifications_none),
+          alignment: Alignment(2.0,0.0),
+          color: Colors.pink, 
+          iconSize: 25.0,
+          onPressed: () {
+            print('Notification');
+          }
+          ),
+        
+        IconButton(
+          icon: Icon(LineAwesomeIcons.cog),
+          alignment: Alignment(0.0,-0.2),
+          color: Colors.pink, 
+          iconSize: 25.0,
+          onPressed: () {
+            print('Setting');
+          }
+          ),
+      ],
+      leading: IconButton(
+        icon: Icon(
+          LineAwesomeIcons.user,
+          color: Colors.pink,
+          size: 35.0,
+          ),
+        alignment: Alignment(0.0,-1.0),
+        onPressed: (){
+          print('Account');
+          
+        },
+      ),
+    ),
+    bottomNavigationBar: BottomNavyBar(
+      selectedIndex: _currentIndex,
+        onItemSelected: (index) {
+          setState(() => _currentIndex = index);
+          switch (index) {
+            case 0 : print('home');
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => MyHomePage()),
+                );
+              break;
+            case 1 : print('Article');
+              break;
+            default:
+          }
+          print(index);
+        },
+        items: <BottomNavyBarItem>[
+          BottomNavyBarItem(
+            title: Text('Home'),
+            icon : Icon(LineAwesomeIcons.home),
+            activeColor: Colors.red,
+            inactiveColor: Colors.black,
+
+          ),
+          BottomNavyBarItem(
+            title: Text('Article'),
+            icon: Icon(Icons.apps),
+            activeColor: Colors.pink,
+            inactiveColor: Colors.black
+          ),
+          BottomNavyBarItem(
+            title: Text('Kids'),
+            icon: Icon(Icons.chat_bubble),
+            activeColor: Colors.purple,
+            inactiveColor: Colors.black
+          ),
+          BottomNavyBarItem(
+            title: Text('Health'),
+            icon: Icon(Icons.settings),
+            activeColor: Colors.blue,
+            inactiveColor: Colors.black
+          ),
+          BottomNavyBarItem(
+            title: Text('Schedule'),
+            icon: Icon(Icons.settings),
+            activeColor: Colors.green,
+            inactiveColor: Colors.black
+          ),
+        ],
       ),
     );
   }
