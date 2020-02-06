@@ -49,94 +49,48 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   elevation: 0.0,
-      //   title: Text(
-      //     'MomAndKids.',
-      //     style: TextStyle(
-      //         color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24,letterSpacing: 1.6),
-      //   ),
-      //   centerTitle: true,
-      //   actions: <Widget>[
-      //     IconButton(
-      //         icon: Icon(Icons.notifications_none),
-      //         alignment: Alignment(2.0, 0.0),
-      //         color: Colors.pink,
-      //         iconSize: 25.0,
-      //         onPressed: () {
-      //           print('Notification');
-      //           Navigator.push(
-      //               context,
-      //               PageRouteTransition(
-      //                   animationType: AnimationType.slide_right,
-      //                   builder: (context) => MyNotificationPage()));
-      //         }),
-      //     IconButton(
-      //         icon: Icon(LineAwesomeIcons.cog),
-      //         alignment: Alignment(0.0, -0.2),
-      //         color: Colors.pink,
-      //         iconSize: 25.0,
-      //         onPressed: () {
-      //           print('Setting');
-      //         }),
-      //   ],
-      //   leading: IconButton(
-      //     icon: Icon(
-      //       LineAwesomeIcons.user,
-      //       color: Colors.pink,
-      //       size: 35.0,
-      //     ),
-      //     alignment: Alignment(0.0, -1.0),
-      //     onPressed: () {
-      //       print('Account');
-      //     },
-      //   ),
-      // ),
-      body: SizedBox.expand(
-        child: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() => _currentIndex = index);
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        title: Text(
+          'MomAndKids.',
+          style: TextStyle(
+              color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24,letterSpacing: 1.6),
+        ),
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.notifications_none),
+              alignment: Alignment(2.0, 0.0),
+              color: Colors.pink,
+              iconSize: 25.0,
+              onPressed: () {
+                print('Notification');
+                Navigator.push(
+                    context,
+                    PageRouteTransition(
+                        animationType: AnimationType.slide_right,
+                        builder: (context) => MyNotificationPage()));
+              }),
+          IconButton(
+              icon: Icon(LineAwesomeIcons.cog),
+              alignment: Alignment(0.0, -0.2),
+              color: Colors.pink,
+              iconSize: 25.0,
+              onPressed: () {
+                print('Setting');
+              }),
+        ],
+        leading: IconButton(
+          icon: Icon(
+            LineAwesomeIcons.user,
+            color: Colors.pink,
+            size: 35.0,
+          ),
+          alignment: Alignment(0.0, -1.0),
+          onPressed: () {
+            print('Account');
           },
-          children: <Widget>[
-            Container(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  // Padding(
-                  //   padding: EdgeInsets.only(top: 0.0),
-                  //   child: Container(
-                  //     height: 65.0,
-                  //     child: ListView(
-                  //       children:<Widget>[
-                  //         IconButton(
-                  //           icon: Icon(LineAwesomeIcons.user),
-                  //           alignment: Alignment(-1.0, 0.0),
-                  //           onPressed: (){}),
-                          
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  // Padding(
-                  //   padding: EdgeInsets.only(top:0.0),
-                  //   child: Container(
-                  //     height: MediaQuery.of(context).size.height-65.0,
-                  //     child: ListView(
-                  //       children:[
-                          
-                  //       ],
-                  //     ),
-                  //   ),
-                    // )
-                ],
-              ),
-            ),
-            Container(color: Colors.red,),
-            Container(color: Colors.green,),
-            Container(color: Colors.blue,),
-            Container(color: Colors.blue,),
-          ],
         ),
       ),
       bottomNavigationBar: BottomNavyBar(
@@ -159,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
               break;
             default:
           }
-          _pageController.jumpToPage(index);
+          print(index);
         },
         items: <BottomNavyBarItem>[
           BottomNavyBarItem(

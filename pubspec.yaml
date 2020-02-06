@@ -27,6 +27,7 @@ dependencies:
   font_awesome_flutter: ^8.5.0
   line_awesome_icons: ^1.0.4+2
   page_transition: ^1.1.5
+  route_transitions: ^1.0.2
 
 dev_dependencies:
   flutter_test:
@@ -70,17 +71,12 @@ flutter:
     - family : Montserrat
       fonts:
         - asset: assets/fonts/Montserrat/Montserrat-Regular.ttf
-    - family: Billabong
+    - family : OpenSansCondensed
       fonts:
-        - asset: assets/fonts/Billabong.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-    - family: Aveny
+        - asset: assets/fonts/Open_Sans_Condensed/OpenSansCondensed-Light.ttf
+    - family : Dosis
       fonts:
-        - asset: assets/fonts/AvenyTRegular.otf
-          style: normal
-        - asset: assets/fonts/AvenyTMedium.otf
-          style: italic
+        - asset: assets/fonts/Dosis/Dosis-Regular.ttf
         # - asset: fonts/TrajanPro_Bold.ttf
         #   weight: 700
   # fonts:
