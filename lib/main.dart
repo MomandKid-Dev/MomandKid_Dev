@@ -36,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int currentIndex;
   PageController _pageController;
   var selectedCard = 'WEIGHT';
+  bool _visible = true;
 
   String _title;
 
@@ -59,15 +60,19 @@ class _MyHomePageState extends State<MyHomePage> {
       switch (index) {
         case 0:
           _title = 'Home' ;
+          _visible = true;
           break;
         case 1:
           _title = 'Article' ;
+          _visible = false;
           break;
         case 2:
           _title = 'Page 3' ;
+          _visible = false;
           break;
         case 3:
           _title = 'Page 4' ;
+          _visible = false;
           break;
         case 4:
           _title = ' ' ;
@@ -106,6 +111,8 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(LineAwesomeIcons.bell), 
+            color: Color(0xFF9FA2A7),
+            iconSize: 30.0,
             onPressed: (){
               Navigator.push(
               context,
@@ -126,15 +133,19 @@ class _MyHomePageState extends State<MyHomePage> {
               switch (index) {
                 case 0:
                   _title = 'Home' ;
+                  _visible = true;
                   break;
                 case 1:
                   _title = 'Article' ;
+                  _visible = false;
                   break;
                 case 2:
                   _title = 'Page 3' ;
+                  _visible = false;
                   break;
                 case 3:
                   _title = 'Page 4' ;
+                  _visible = false;
                   break;
                 case 4:
                   _title = ' ' ;
@@ -150,6 +161,16 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(color: Colors.green,),
             Container(color: Colors.blue,),
           ],
+        ),
+      ),
+      floatingActionButton: Opacity(
+        opacity: _visible ? 1:0,
+        child: FloatingActionButton(
+        backgroundColor: Color(0xFF76C5BA),
+        child: Icon(Icons.edit,size: 30.0,),
+        onPressed: (){
+          
+        }
         ),
       ),
       bottomNavigationBar: BubbleBottomBar(
