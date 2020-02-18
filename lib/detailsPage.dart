@@ -204,7 +204,7 @@ class _DetailsPageState extends State<DetailsPage> {
             Colors.transparent :
             Colors.grey.withOpacity(0.3),
             style: BorderStyle.solid,
-          width: 0.75
+            width: 0.75
           ),
           
         ),

@@ -53,6 +53,9 @@ flutter:
     - assets/plate4.png
     - assets/plate5.png
     - assets/insta_logo.png
+    - assets/Pictures/grai.png
+    - assets/Pictures/veg.png
+    - assets/Pictures/fru.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg

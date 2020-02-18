@@ -1,11 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
-// import 'package:bottom_navy_bar/bottom_navy_bar.dart';
-// import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:route_transitions/route_transitions.dart';
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
-import 'package:flappy_search_bar/flappy_search_bar.dart';
 
 void main() => runApp(MyApp());
 
@@ -155,8 +152,222 @@ class _MyHomePageState extends State<MyHomePage> {
             } );
           },
           children: <Widget>[
-            Container(color: Colors.white,),
-            Container(color: Colors.blue,),
+            Container(
+              color: Colors.white,
+              child: ListView(
+                padding: EdgeInsets.only(left: 10.0, right: 10.0), 
+                children: <Widget>[
+                  SizedBox(height: 30,),
+                  Container(
+                    height: 330.0,
+                    width: 370.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[100],
+                          blurRadius: 3.0,
+                          spreadRadius: 0.0,
+                          offset: Offset(0.0, 5.0)
+                      )
+                      ]
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  Container(
+                    height: 330.0,
+                    width: 370.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[100],
+                          blurRadius: 3.0,
+                          spreadRadius: 0.0,
+                          offset: Offset(0.0, 5.0)
+                      )
+                      ]
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  Container(
+                    height: 330.0,
+                    width: 370.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[100],
+                          blurRadius: 3.0,
+                          spreadRadius: 0.0,
+                          offset: Offset(0.0, 5.0)
+                      )
+                      ]
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  Container(
+                    height: 330.0,
+                    width: 370.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[100],
+                          blurRadius: 3.0,
+                          spreadRadius: 0.0,
+                          offset: Offset(0.0, 5.0)
+                      )
+                      ]
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                ],
+              ),
+            ),
+            Container(
+              color: Colors.white,
+              child: ListView(
+                padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),
+                children: <Widget>[
+                  Container(
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Color(0xFFF8FAFB)
+                    ),
+                    
+                    child: TextField(
+                      textInputAction: TextInputAction.search,
+                      decoration: InputDecoration(
+                        hintText: "Search",
+                        filled: false,
+                        contentPadding: EdgeInsets.only(top: 15.0),
+                        fillColor: Color(0xFFF8FAFB),
+                        prefixIcon: Icon(Icons.search,size: 35.0,),
+                        border: InputBorder.none
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  Container(
+                    height: 40.0,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF131048)
+                          ),
+                        ),
+                        SizedBox(width: 8.0),
+                        Text(
+                          "Catagories",
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.6,
+                            color: Color(0xFF131048)
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  Container(
+                    height: 180.0,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: <Widget>[
+                        Container(
+                          child: Row(
+                            children: <Widget>[
+                              _buildInfoCard('0', 'assets/Pictures/grai.png', 'GRAINS'),
+                            ],
+                          )
+                        ),
+                        SizedBox(width: 20.0),
+                        Container(
+                          child: Row(
+                            children: <Widget>[
+                              _buildInfoCard('1', 'assets/Pictures/veg.png', 'VEGGIES'),
+                            ],
+                          )
+                        ),
+                        SizedBox(width: 20.0),
+                        Container(
+                          child: Row(
+                            children: <Widget>[
+                              _buildInfoCard('2', 'assets/Pictures/fru.png', 'FRUITS'),
+                            ],
+                          )
+                        ),
+                        SizedBox(width: 20.0),
+                        Container(
+                          child: Row(
+                            children: <Widget>[
+                              _buildInfoCard('3', 'NO', 'TEST')
+                            ],
+                          )
+                        )
+                      ],
+                    )
+                  ),
+                  SizedBox(height: 20,),
+                  Container(
+                    height: 40.0,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: <Widget>[
+                        Container(
+                          width: 10,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF131048)
+                          ),
+                        ),
+                        SizedBox(width: 8.0),
+                        Text(
+                          "Post",
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.6,
+                            color: Color(0xFF131048)
+                          ),
+                        ),
+                        SizedBox(width: 182,),
+                        FlatButton(
+                          onPressed: (){},
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                "view all",
+                                style: TextStyle(
+                                  color: Color(0xFFACB2B9),
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 20,
+                                color: Color(0xFFACB2B9),
+                                )
+                            ],
+                          ),
+                        )
+                        
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Container(color: Colors.blue,),
             Container(color: Colors.green,),
             Container(color: Colors.blue,),
@@ -217,7 +428,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildInfoCard(String cardTitle, String info, String unit) {
+  Widget _buildInfoCard(String cardTitle, String imgPath, String unit) {
     return InkWell(
       onTap: () {
         selectCard(cardTitle);
@@ -227,53 +438,53 @@ class _MyHomePageState extends State<MyHomePage> {
         curve: Curves.easeIn,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
-          color: cardTitle == selectedCard ? Color(0xFF7A9BEE) : Colors.white,
+          color: cardTitle == selectedCard ? Color(0xFFA2D0D2) : Colors.white,
           border: Border.all(
             color: cardTitle == selectedCard ? 
             Colors.transparent :
             Colors.grey.withOpacity(0.3),
-            style: BorderStyle.solid,
-          width: 0.75
-          ),
+            style: BorderStyle.none,
+          width: 0.75,
           
+          ),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 5.0,
+              spreadRadius: 3.0,
+              offset: Offset(5.0, 5.0),
+              color: Color(0xFFF8FAFF)
+            )
+          ]
         ),
-        height: 100.0,
-        width: 100.0,
+        height: 150.0,
+        width: 150.0,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 15.0),
-              child: Text(cardTitle,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 12.0,
-                    color:
-                        cardTitle == selectedCard ? Colors.white : Colors.grey.withOpacity(0.7),
-                  )),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0, bottom: 8.0),
+              padding: const EdgeInsets.only(left: 35.0, bottom: 8.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text(info,
-                      style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 14.0,
-                          color: cardTitle == selectedCard
-                              ? Colors.white
-                              : Colors.black,
-                          fontWeight: FontWeight.bold)),
+                  SizedBox(height: 20,),
+                  Image(
+                    image: AssetImage(imgPath),
+                    fit: BoxFit.fitHeight,
+                    height: 80,
+                    ),
+                  SizedBox(height: 5,),
                   Text(unit,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 12.0,
-                        color: cardTitle == selectedCard
+                      fontFamily: 'Montserrat',
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                      color: cardTitle == selectedCard
                             ? Colors.white
-                            : Colors.black,
-                      ))
+                            : Color(0xFFACB2B9),
+                      ),
+                      )
                 ],
               ),
             )
@@ -282,6 +493,7 @@ class _MyHomePageState extends State<MyHomePage> {
       )
     );
   }
+
   selectCard(cardTitle) {
     setState(() {
       selectedCard = cardTitle;
