@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(),
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
-        fontFamily: 'Dosis',
+        fontFamily: 'Prompt',
       ),
     );
   }
@@ -32,7 +32,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int currentIndex;
   PageController _pageController;
-  var selectedCard = 'WEIGHT';
+  var selectedCard = '0';
   bool _visible = true;
 
   String _title;
@@ -89,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(_title,
           style: TextStyle(
             color: Colors.black,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             letterSpacing: 1.6,
             fontSize: 30.0,
             ),
@@ -271,7 +271,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           "Catagories",
                           style: TextStyle(
                             fontSize: 30.0,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.6,
                             color: Color(0xFF131048)
                           ),
@@ -281,13 +281,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   SizedBox(height: 20,),
                   Container(
-                    height: 180.0,
+                    height: 120.0,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: <Widget>[
                         Container(
                           child: Row(
                             children: <Widget>[
+                              
                               _buildInfoCard('0', 'assets/Pictures/grai.png', 'GRAINS'),
                             ],
                           )
@@ -312,7 +313,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Container(
                           child: Row(
                             children: <Widget>[
-                              _buildInfoCard('3', 'NO', 'TEST')
+                              _buildInfoCard('3', 'NO', 'All')
                             ],
                           )
                         )
@@ -336,7 +337,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           "Post",
                           style: TextStyle(
                             fontSize: 30.0,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.6,
                             color: Color(0xFF131048)
                           ),
@@ -397,7 +398,8 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.red, 
               icon: Icon(Icons.dashboard, color: Color(0xFF9FA2A7),), 
               activeIcon: Icon(Icons.dashboard, color: Colors.red,), 
-              title: Text("Home")
+              title: Text("Home"),
+              
             ),
             BubbleBottomBarItem(
               backgroundColor: Colors.deepPurple, 
@@ -430,6 +432,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildInfoCard(String cardTitle, String imgPath, String unit) {
     return InkWell(
+
       onTap: () {
         selectCard(cardTitle);
       },
@@ -445,7 +448,6 @@ class _MyHomePageState extends State<MyHomePage> {
             Colors.grey.withOpacity(0.3),
             style: BorderStyle.none,
           width: 0.75,
-          
           ),
           boxShadow: [
             BoxShadow(
@@ -456,29 +458,29 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ]
         ),
-        height: 150.0,
-        width: 150.0,
+        height: 95.0,
+        width: 95.0,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 35.0, bottom: 8.0),
+              padding: const EdgeInsets.only(left: 20.0, bottom: 8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(height: 20,),
+                  SizedBox(height: 12,),
                   Image(
                     image: AssetImage(imgPath),
                     fit: BoxFit.fitHeight,
-                    height: 80,
+                    height: 50,
                     ),
                   SizedBox(height: 5,),
                   Text(unit,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontSize: 15.0,
+                      fontSize: 14.0,
                       fontWeight: FontWeight.bold,
                       color: cardTitle == selectedCard
                             ? Colors.white
@@ -499,6 +501,17 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedCard = cardTitle;
     });
   }
+
+  Widget _buildPostCard(String imgPath, String info)
+  {
+    return InkWell(
+      onTap: (){},
+      child: ListView(
+
+      ),
+    );
+  }
+
 }
 
 class MyNotificationPage extends StatefulWidget {
