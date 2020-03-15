@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:route_transitions/route_transitions.dart';
-import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
+// import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController _pageController;
   var selectedCard = '0';
   bool _visible = true;
-
+  bool _showappbar = true;
   String _title;
 
   @override
@@ -58,21 +59,27 @@ class _MyHomePageState extends State<MyHomePage> {
         case 0:
           _title = 'Home' ;
           _visible = true;
+          _showappbar = true;
           break;
         case 1:
           _title = 'Article' ;
           _visible = false;
+          _showappbar = true;
           break;
         case 2:
           _title = 'Page 3' ;
           _visible = false;
+          _showappbar = true;
           break;
         case 3:
           _title = 'Page 4' ;
           _visible = false;
+          _showappbar = true;
           break;
         case 4:
           _title = ' ' ;
+          _visible = false;
+          _showappbar = false;
           break;
         default:
       }
@@ -85,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFB),
       key: _scaffoldKey,
-      appBar: AppBar(
+      appBar: _showappbar ? AppBar(
         title: Text(_title,
           style: TextStyle(
             color: Colors.black,
@@ -120,6 +127,10 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             )
         ],
+      )
+        : PreferredSize(
+        child: Container(),
+        preferredSize: Size(0.0, 0.0),
       ),
       body: SizedBox.expand(
         child: PageView(
@@ -131,21 +142,28 @@ class _MyHomePageState extends State<MyHomePage> {
                 case 0:
                   _title = 'Home' ;
                   _visible = true;
+                  _showappbar = true;
                   break;
                 case 1:
                   _title = 'Article' ;
                   _visible = false;
+                  _showappbar = true;
                   break;
                 case 2:
                   _title = 'Page 3' ;
                   _visible = false;
+                  _showappbar = true;
                   break;
                 case 3:
                   _title = 'Page 4' ;
                   _visible = false;
+                  _showappbar = true;
                   break;
                 case 4:
                   _title = ' ' ;
+                  _visible = false;
+                  _showappbar = false;
+
                   break;
                 default:
               }
@@ -261,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       scrollDirection: Axis.horizontal,
                       children: <Widget>[
                         Container(
-                          width: 10,
+                          width: 8,
                           decoration: BoxDecoration(
                             color: Color(0xFF131048)
                           ),
@@ -271,7 +289,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           "Catagories",
                           style: TextStyle(
                             fontSize: 30.0,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1.6,
                             color: Color(0xFF131048)
                           ),
@@ -285,6 +303,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: <Widget>[
+                        Container(
+                          child: Row(
+                            children: <Widget>[
+                              _buildInfoCard('3', 'NO', 'All')
+                            ],
+                          )
+                        ),
+                        SizedBox(width: 20.0,),
                         Container(
                           child: Row(
                             children: <Widget>[
@@ -309,14 +335,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             ],
                           )
                         ),
-                        SizedBox(width: 20.0),
-                        Container(
-                          child: Row(
-                            children: <Widget>[
-                              _buildInfoCard('3', 'NO', 'All')
-                            ],
-                          )
-                        )
+                        
+                        
                       ],
                     )
                   ),
@@ -327,7 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       scrollDirection: Axis.horizontal,
                       children: <Widget>[
                         Container(
-                          width: 10,
+                          width: 8,
                           decoration: BoxDecoration(
                             color: Color(0xFF131048)
                           ),
@@ -337,7 +357,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           "Post",
                           style: TextStyle(
                             fontSize: 30.0,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1.6,
                             color: Color(0xFF131048)
                           ),
@@ -371,7 +391,40 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Container(color: Colors.blue,),
             Container(color: Colors.green,),
-            Container(color: Colors.blue,),
+            Container(
+              color: Colors.white,
+              child: ListView(
+                children: <Widget>[
+                  Container(
+                    height: 250.0,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/Pictures/pinkBG.jpg'),
+                        fit: BoxFit.cover
+                        ), 
+                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40.0))
+                    ),
+                    child: Container(
+                      alignment: Alignment(1, 1.2),
+                      child: Container(
+                        height: 85,
+                        width: 85,
+                        child: FloatingActionButton(
+                          backgroundColor: Colors.white,
+                          elevation: 0,
+                          child: Icon(
+                            Icons.today,
+                            color: Colors.black,
+                            size: 40,
+                            ),
+                          onPressed: (){}
+                          ),
+                      )
+                    )
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -385,47 +438,55 @@ class _MyHomePageState extends State<MyHomePage> {
         }
         ),
       ),
-      bottomNavigationBar: BubbleBottomBar(
-        opacity: .2,
-        currentIndex: currentIndex,
-        onTap: changePage,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-        elevation: 20,
-        hasInk: true, //new, gives a cute ink effect
-        inkColor: Colors.black12, //optional, uses theme color if not specified
-        items: <BubbleBottomBarItem>[
-            BubbleBottomBarItem(
-              backgroundColor: Colors.red, 
-              icon: Icon(Icons.dashboard, color: Color(0xFF9FA2A7),), 
-              activeIcon: Icon(Icons.dashboard, color: Colors.red,), 
-              title: Text("Home"),
-              
-            ),
-            BubbleBottomBarItem(
-              backgroundColor: Colors.deepPurple, 
-              icon: Icon(Icons.access_time, color: Color(0xFF9FA2A7),), 
-              activeIcon: Icon(Icons.access_time, color: Colors.deepPurple,), 
-              title: Text("Logs")
-            ),
-            BubbleBottomBarItem(
-              backgroundColor: Colors.indigo, 
-              icon: Icon(Icons.folder_open, color: Color(0xFF9FA2A7),), 
-              activeIcon: Icon(Icons.folder_open, color: Colors.indigo,), 
-              title: Text("Folders")
-            ),
-            BubbleBottomBarItem(
-              backgroundColor: Colors.green, 
-              icon: Icon(Icons.menu, color: Color(0xFF9FA2A7),), 
-              activeIcon: Icon(Icons.menu, color: Colors.green,), 
-              title: Text("Menu")
-            ),
-            BubbleBottomBarItem(
-              backgroundColor: Colors.green, 
-              icon: Icon(Icons.menu, color: Color(0xFF9FA2A7),), 
-              activeIcon: Icon(Icons.menu, color: Colors.green,), 
-              title: Text("Menu")
-            )
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white, 
+          boxShadow: [
+            BoxShadow(blurRadius: 20, color: Colors.black.withOpacity(.1)),
+          ],
+          borderRadius: BorderRadius.circular(18.0)
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+            child: GNav(
+                gap: 5,
+                activeColor: Color(0xFFFF7571),
+                iconSize: 22,
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                duration: Duration(milliseconds: 800),
+                tabBackgroundColor: Color(0xFFFFD5D4),
+                tabs: [
+                  GButton(
+                    icon: LineAwesomeIcons.home,
+                    text: 'Home',
+                  ),
+                  GButton(
+                    icon: LineAwesomeIcons.heart_o,
+                    text: 'Likes',
+                  ),
+                  GButton(
+                    icon: LineAwesomeIcons.search,
+                    text: 'Search',
+                  ),
+                  GButton(
+                    icon: LineAwesomeIcons.user,
+                    text: 'Profile',
+                  ),
+                  GButton(
+                    icon: LineAwesomeIcons.user,
+                    text: 'Schedule',
+                  ),
+                ],
+                selectedIndex: currentIndex,
+                onTabChange: (index) {
+                  setState(() {
+                    currentIndex = index;
+                    changePage(currentIndex);
+                  });
+                }),
+          ),
+        ),
       ),
     );
   }
