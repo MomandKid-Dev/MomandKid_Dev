@@ -2,14 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:route_transitions/route_transitions.dart';
-// import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:momandkid/schedulePage.dart';
 
 void main() => runApp(MyApp());
 
-/// This Widget is the main application widget.
 class MyApp extends StatelessWidget {
-  // static const String _title = 'Flutter Code Sample';
 
   @override
   Widget build(BuildContext context) {
@@ -67,14 +65,14 @@ class _MyHomePageState extends State<MyHomePage> {
           _showappbar = true;
           break;
         case 2:
-          _title = 'Page 3' ;
+          _title = ' ' ;
           _visible = false;
-          _showappbar = true;
+          _showappbar = false;
           break;
         case 3:
-          _title = 'Page 4' ;
+          _title = ' ' ;
           _visible = false;
-          _showappbar = true;
+          _showappbar = false;
           break;
         case 4:
           _title = ' ' ;
@@ -152,12 +150,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 case 2:
                   _title = 'Page 3' ;
                   _visible = false;
-                  _showappbar = true;
+                  _showappbar = false;
                   break;
                 case 3:
                   _title = 'Page 4' ;
                   _visible = false;
-                  _showappbar = true;
+                  _showappbar = false;
                   break;
                 case 4:
                   _title = ' ' ;
@@ -272,7 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 20),
                   Container(
                     height: 40.0,
                     child: ListView(
@@ -364,7 +362,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         SizedBox(width: 182,),
                         FlatButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.push(
+                            context,
+                            PageRouteTransition(
+                              animationType: AnimationType.slide_up,
+                              builder: (context) => addSchedule())
+                            );
+                        
+                          },
                           child: Row(
                             children: <Widget>[
                               Text(
@@ -402,25 +408,54 @@ class _MyHomePageState extends State<MyHomePage> {
                         image: AssetImage('assets/Pictures/pinkBG.jpg'),
                         fit: BoxFit.cover
                         ), 
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40.0))
+                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0))
                     ),
                     child: Container(
                       alignment: Alignment(1, 1.2),
                       child: Container(
                         height: 85,
                         width: 85,
-                        child: FloatingActionButton(
-                          backgroundColor: Colors.white,
-                          elevation: 0,
-                          child: Icon(
+                        child: new RawMaterialButton(
+                          onPressed: () {},
+                          child: new Icon(
                             Icons.today,
-                            color: Colors.black,
+                            color: Color(0xFF141148),
                             size: 40,
-                            ),
-                          onPressed: (){}
                           ),
+                          shape: new CircleBorder(),
+                          elevation: 0,
+                          fillColor: Colors.white,
+                          padding: const EdgeInsets.all(15.0),
+                        ),
                       )
                     )
+                  ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: <Widget>[
+                      Spacer(flex: 2,),
+                      Text(
+                        'Schedule',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF141048)
+                        ),
+                        ),
+                      Spacer(flex:12),
+                      IconButton(
+                        icon: Icon(Icons.add_circle_outline),
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            PageRouteTransition(
+                              animationType: AnimationType.slide_up,
+                              builder: (context) => addSchedule())
+                            );
+                        },
+                      ),
+                      Spacer(flex: 1)
+                    ],
                   )
                 ],
               ),
