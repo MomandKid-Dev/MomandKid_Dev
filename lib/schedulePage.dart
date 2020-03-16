@@ -58,7 +58,7 @@ class _addScheduleState extends State<addSchedule>{
               setState(() {
                 _dataSchedule = [title, noti, currentColor, des ];
               });
-              Navigator.of(context).pop();
+              Navigator.pop(context, _dataSchedule);
             } 
             )
         ],
