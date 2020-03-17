@@ -34,7 +34,9 @@ class _MyHomePageState extends State<MyHomePage> {
   var selectedCard = '0';
   bool _visible = true;
   bool _showappbar = true;
-  String _title;
+  bool _showsche = false;
+  String _title, _titleScheItem = '';
+  List dataTitleSche = [], colorSche = [], dataDesSche = [];
 
   @override
   void initState() {
@@ -84,6 +86,33 @@ class _MyHomePageState extends State<MyHomePage> {
       _pageController.jumpToPage(currentIndex);
     });
   }
+
+  void moveToAddPage() async {
+    final information = await Navigator.push(
+                                context,
+                                PageRouteTransition(
+                                  fullscreenDialog: true,
+                                  animationType: AnimationType.slide_up,
+                                  builder: (context) => addSchedule())
+                              );
+    
+    if(information[0].length > 0)
+    {
+      setState(() {
+        _titleScheItem = information[0];
+        dataTitleSche.add(information[0]);
+        colorSche.add(information[2]);
+        dataDesSche.add(information[3]);
+        });
+    }
+    if(dataTitleSche.length > 0){
+      setState(() {
+        _showsche = true;
+      });
+    }
+    print(colorSche);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -333,8 +362,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             ],
                           )
                         ),
-                        
-                        
                       ],
                     )
                   ),
@@ -363,13 +390,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         SizedBox(width: 182,),
                         FlatButton(
                           onPressed: (){
-                            Navigator.push(
-                            context,
-                            PageRouteTransition(
-                              animationType: AnimationType.slide_up,
-                              builder: (context) => addSchedule())
-                            );
-                        
+                            
                           },
                           child: Row(
                             children: <Widget>[
@@ -437,26 +458,63 @@ class _MyHomePageState extends State<MyHomePage> {
                       Text(
                         'Schedule',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF141048)
                         ),
                         ),
                       Spacer(flex:12),
                       IconButton(
-                        icon: Icon(Icons.add_circle_outline),
+                        icon: Icon(Icons.add_circle_outline, size: 30,),
                         onPressed: (){
-                          Navigator.push(
-                            context,
-                            PageRouteTransition(
-                              animationType: AnimationType.slide_up,
-                              builder: (context) => addSchedule())
-                            );
+                          moveToAddPage();
                         },
                       ),
                       Spacer(flex: 1)
                     ],
-                  )
+                  ),
+                  _showsche ? SizedBox(
+                    height: 300,
+                    
+                    child: new ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: dataTitleSche.length,
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          return Container(
+                            height: 100,
+                            child: Card(
+                              color: Color(0xFFEFEFEF),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(15)),
+                              ),
+                              margin: EdgeInsets.only(left: 10, top: 15, right: 10),
+                              child: ListTile(
+                                contentPadding: EdgeInsets.only(top: 10, left: 20),
+                                onTap: (){},
+                                title: Row(
+                                  children: <Widget>[
+                                    Container(width: 5, height: 40,color: colorSche[index]),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      dataTitleSche[index],
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Text(dataDesSche[index]),
+                              ),
+                            )
+                          );
+                        },
+                      ),
+                    )
+                    : PreferredSize(
+                      child: Container(),
+                      preferredSize: Size(0.0, 0.0),)
                 ],
               ),
             ),
@@ -525,6 +583,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+
 
   Widget _buildInfoCard(String cardTitle, String imgPath, String unit) {
     return InkWell(

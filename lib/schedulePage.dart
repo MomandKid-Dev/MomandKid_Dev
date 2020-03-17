@@ -14,25 +14,11 @@ class _addScheduleState extends State<addSchedule>{
 
   Color currentColor = Color(0xFFFF4040);
   Color pickerColor = Color(0xFFFF4040);
-  List _dataSchedule = [];
-
-  String title,  noti, des; //0 = title, 1 = noti, 2 = des
+  final TextEditingController textController = new TextEditingController();
+  final TextEditingController notiController = new TextEditingController();
+  final TextEditingController desController = new TextEditingController();
   
   void changeColor(Color color) => setState(() => pickerColor = color);
-
-  void _addScheItem(String task, int type) { //0 = title, 1 = noti, 2 = des
-    // Only add the task if the user actually entered something
-    if(task.length > 0) {
-      // Putting our code inside "setState" tells the app that our state has changed, and
-      // it will automatically re-render the list
-      if(type == 0)
-        setState(() => title = task);
-      else if(type == 1)
-        setState(() => noti = task);
-      else if(type == 2)
-        setState(() => des = task);
-    }
-  }
 
   @override
   Widget build(BuildContext context){
@@ -55,10 +41,7 @@ class _addScheduleState extends State<addSchedule>{
             color: Color(0xFF131048),
             iconSize: 40, 
             onPressed: (){
-              setState(() {
-                _dataSchedule = [title, noti, currentColor, des ];
-              });
-              Navigator.pop(context, _dataSchedule);
+              Navigator.pop(context, [textController.text, notiController.text, currentColor, desController.text]);
             } 
             )
         ],
@@ -68,6 +51,7 @@ class _addScheduleState extends State<addSchedule>{
           Container(
             padding: EdgeInsets.only(left:60, right: 40),
             child: TextField(
+              controller: textController,
               decoration: InputDecoration(
                 hintText: 'Add title',
                 hintStyle: TextStyle(
@@ -85,15 +69,13 @@ class _addScheduleState extends State<addSchedule>{
                 fontFamily: 'Prompt',
                 color: Color(0xFF131048)
               ),
-              onSubmitted: (val){
-                _addScheItem(val, 0);
-              },
             ),
           ),
           Divider(),
           Container(
             padding: EdgeInsets.only(left:12, right:40),
             child:TextField(
+              controller: notiController,
               decoration: InputDecoration(
                 hintText:'Add notification',
                 hintStyle: TextStyle(
@@ -113,9 +95,6 @@ class _addScheduleState extends State<addSchedule>{
               style: TextStyle(
                 color:Color(0xFF131048)
               ),
-              onSubmitted: (val){
-                _addScheItem(val, 1);
-              },
             )
           ),
           Divider(),
@@ -180,7 +159,7 @@ class _addScheduleState extends State<addSchedule>{
           Container(
             padding: EdgeInsets.only(left:12, right:40),
             child:TextField(
-              textInputAction: TextInputAction.done,
+              controller: desController,
               decoration: InputDecoration(
                 hintText:'Add description',
                 hintStyle: TextStyle(
@@ -200,9 +179,7 @@ class _addScheduleState extends State<addSchedule>{
               style: TextStyle(
                 color:Color(0xFF131048)
               ),
-              onSubmitted: (val){
-                _addScheItem(val, 2);
-              },
+              
             )
           ),
         ],
