@@ -29,7 +29,8 @@ dependencies:
   page_transition: ^1.1.5
   route_transitions: ^1.0.2
   bubble_bottom_bar: ^1.2.0
-  flappy_search_bar: ^1.4.1
+  google_nav_bar: ^2.0.0
+  flutter_colorpicker: ^0.3.2
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +57,7 @@ flutter:
     - assets/Pictures/grai.png
     - assets/Pictures/veg.png
     - assets/Pictures/fru.png
+    - assets/Pictures/pinkBG.jpg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
