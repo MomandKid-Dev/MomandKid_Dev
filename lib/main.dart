@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:route_transitions/route_transitions.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:momandkid/schedulePage.dart';
+
+import 'screens/Login_Page.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
+      home: LoginPage(),
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         fontFamily: 'Prompt',

@@ -36,18 +36,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  assets :
+  assets:
     - assets/plate1.png
     - assets/plate2.png
     - assets/plate3.png
@@ -58,6 +56,7 @@ flutter:
     - assets/Pictures/veg.png
     - assets/Pictures/fru.png
     - assets/Pictures/pinkBG.jpg
+    - assets/Pictures/baby.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
@@ -75,20 +74,19 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family : Montserrat
+    - family: Montserrat
       fonts:
         - asset: assets/fonts/Montserrat/Montserrat-Regular.ttf
-    - family : OpenSansCondensed
+    - family: OpenSansCondensed
       fonts:
         - asset: assets/fonts/Open_Sans_Condensed/OpenSansCondensed-Light.ttf
-    - family : Dosis
+    - family: Dosis
       fonts:
         - asset: assets/fonts/Dosis/Dosis-Regular.ttf
-        
-    - family : Prompt
+
+    - family: Prompt
       fonts:
         - asset: assets/fonts/Prompt/Prompt-Regular.ttf
-      
         # - asset: fonts/TrajanPro_Bold.ttf
         #   weight: 700
   # fonts:
