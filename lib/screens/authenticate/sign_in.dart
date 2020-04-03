@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 // import files
 import 'package:momandkid/services/auth.dart';
+import 'package:momandkid/models/user.dart';
+import 'package:momandkid/services/database.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
@@ -17,9 +19,42 @@ class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
 
   // text field state
-  String email = '';
-  String password = '';
+  User _user = User();
   String error = '';
+
+  Widget _buildEmailField() {
+    return TextFormField(
+      decoration: InputDecoration(hintText: 'Email'),
+      keyboardType: TextInputType.emailAddress,
+      validator: (String val) {
+        if (val.isEmpty) {
+          return 'Enter an email';
+        }
+
+        return null;
+      },
+      onChanged: (val) {
+        setState(() => _user.email = val);
+      },
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      decoration: InputDecoration(hintText: 'Password'),
+      obscureText: true,
+      validator: (String val) {
+        if (val.length < 6) {
+          return 'Enter a password more 6 charactors';
+        }
+
+        return null;
+      },
+      onChanged: (val) {
+        setState(() => _user.password = val);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,24 +71,9 @@ class _SignInState extends State<SignIn> {
                 size: 100.0,
               ),
               SizedBox(height: 20.0),
-              TextFormField(
-                decoration: InputDecoration(hintText: 'Email'),
-                validator: (val) => val.isEmpty ? 'Enter an email' : null,
-                onChanged: (val) {
-                  setState(() => email = val);
-                },
-              ),
+              _buildEmailField(),
               SizedBox(height: 20.0),
-              TextFormField(
-                decoration: InputDecoration(hintText: 'Password'),
-                obscureText: true,
-                validator: (val) => val.length < 6
-                    ? 'Enter a password more 6 charactors'
-                    : null,
-                onChanged: (val) {
-                  setState(() => password = val);
-                },
-              ),
+              _buildPasswordField(),
               SizedBox(height: 20.0),
               RaisedButton(
                 color: Colors.teal,
@@ -63,8 +83,8 @@ class _SignInState extends State<SignIn> {
                 ),
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
-                    dynamic result =
-                        await _auth.signInWithEmailAndPassword(email, password);
+                    dynamic result = await _auth.signInWithEmailAndPassword(
+                        _user.email, _user.password);
                     if (result == null) {
                       setState(() => error = 'Email or Passeord incorrect');
                     } else {

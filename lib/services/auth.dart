@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 // import files
 import 'package:momandkid/models/user.dart';
+import 'package:momandkid/services/database.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -22,6 +23,7 @@ class AuthService {
     try {
       AuthResult result = await _auth.signInAnonymously();
       FirebaseUser user = result.user;
+
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
@@ -43,11 +45,17 @@ class AuthService {
   }
 
   // registor with email & password
-  Future registerWithEmailAndPassword(String email, String password) async {
+  Future registerWithEmailAndPassword(
+      String name, String email, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser user = result.user;
+
+      // create a new document for the user with the uid
+      await DatabaseService(uid: user.uid)
+          .createUserData('image path', name, email);
+
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
