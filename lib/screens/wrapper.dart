@@ -1,5 +1,6 @@
 // import libraries
 import 'package:flutter/material.dart';
+import 'package:momandkid/screens/forum/createpost.dart';
 import 'package:provider/provider.dart';
 
 // import files
@@ -21,7 +22,7 @@ class _WrapperState extends State<Wrapper> {
     if (user == null) {
       return Authenticate();
     } else {
-      return MyHomePage();
+      return CreatePost();
     }
   }
 }
