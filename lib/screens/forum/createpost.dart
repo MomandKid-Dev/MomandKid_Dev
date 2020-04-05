@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:momandkid/models/user.dart';
 import 'package:momandkid/services/auth.dart';
+import 'package:momandkid/services/database.dart';
+import 'package:provider/provider.dart';
 
 class CreatePost extends StatefulWidget {
   @override
@@ -11,10 +13,13 @@ class CreatePost extends StatefulWidget {
   final AuthService _auth = AuthService();
 
 // text field state
-  User _user = User();
+  String content = '';
   String error = '';
 
-Widget _buildPostField() {
+
+class _CreatePostState extends State<CreatePost> {
+
+  Widget _buildPostField() {
     return TextFormField(
       decoration: InputDecoration(hintText: 'Write Somethin\''),
       keyboardType: TextInputType.text,
@@ -25,12 +30,15 @@ Widget _buildPostField() {
 
         return null;
       },
+      onChanged: (val) {
+        setState(() => content = val);
+      },
     );
   }
 
-class _CreatePostState extends State<CreatePost> {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -51,7 +59,10 @@ class _CreatePostState extends State<CreatePost> {
             SizedBox(height: 20.0),
             RaisedButton(
               child: Text('post'),
-              onPressed: () async {},
+              onPressed: () async {
+                print(await DatabaseService(uid: user.uid)
+                .createPost(content,'image path'));
+              },
             ),
             SizedBox(height: 20.0),
             RaisedButton(
