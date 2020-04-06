@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
+      home: calendarSchedule(),
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         fontFamily: 'Prompt',
@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _showappbar = true;
   bool _showsche = false;
   String _title, _titleScheItem = '';
-  List dataTitleSche = [], colorSche = [], dataDesSche = [];
+  List dataTitleSche = [], colorSche = [], dataDesSche = [], colorBGSche =[];
 
   @override
   void initState() {
@@ -103,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         dataTitleSche.add(information[0]);
         colorSche.add(information[2]);
         dataDesSche.add(information[3]);
+        colorBGSche.add(information[4]);
         });
     }
     if(dataTitleSche.length > 0){
@@ -136,7 +137,6 @@ class _MyHomePageState extends State<MyHomePage> {
           color: Color(0xFF9FA2A7),
           iconSize: 30.0,
           onPressed: (){
-            
           }
         ),
         actions: <Widget>[
@@ -475,40 +475,39 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   _showsche ? SizedBox(
                     height: 300,
-                    
                     child: new ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: dataTitleSche.length,
                         itemBuilder: (BuildContext ctxt, int index) {
-                          return Container(
-                            height: 100,
-                            child: Card(
-                              color: Color(0xFFEFEFEF),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(15)),
-                              ),
-                              margin: EdgeInsets.only(left: 10, top: 15, right: 10),
-                              child: ListTile(
-                                contentPadding: EdgeInsets.only(top: 10, left: 20),
-                                onTap: (){},
-                                title: Row(
-                                  children: <Widget>[
-                                    Container(width: 5, height: 40,color: colorSche[index]),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      dataTitleSche[index],
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold
-                                      ),
-                                    ),
-                                  ],
+                            return index%2 == 0 ? Container(
+                              height: 100,
+                              child: Card(
+                                color: colorBGSche[index],
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(15)),
                                 ),
-                                subtitle: Text(dataDesSche[index]),
-                              ),
-                            )
-                          );
+                                margin: EdgeInsets.only(left: 10, top: 15, right: 10),
+                                child: ListTile(
+                                  contentPadding: EdgeInsets.only(top: 10, left: 20),
+                                  onTap: (){},
+                                  title: Row(
+                                    children: <Widget>[
+                                      Container(width: 5, height: 40,color: colorSche[index]),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        dataTitleSche[index],
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  subtitle: Text(dataDesSche[index]),
+                                ),
+                              )
+                            ): PreferredSize(child: Container(), preferredSize: Size(0.0 ,0.0));
                         },
                       ),
                     )
@@ -556,15 +555,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   GButton(
                     icon: LineAwesomeIcons.heart_o,
-                    text: 'Likes',
+                    text: 'Article',
                   ),
                   GButton(
-                    icon: LineAwesomeIcons.search,
-                    text: 'Search',
+                    icon: Icons.face,
+                    text: 'Profile',
                   ),
                   GButton(
                     icon: LineAwesomeIcons.user,
-                    text: 'Profile',
+                    text: 'Healthy',
                   ),
                   GButton(
                     icon: LineAwesomeIcons.user,
