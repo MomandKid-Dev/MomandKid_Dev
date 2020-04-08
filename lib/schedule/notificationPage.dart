@@ -53,70 +53,10 @@ class _MyNotificationPageState extends State<MyNotificationPage> {
 
           SliverList(
             delegate: SliverChildListDelegate([ //Add list in notification
-              _buildFoodItem('assets/plate1.png', 'Salmon bowl', '\$24.00'),
-              _buildFoodItem('assets/plate2.png', 'Spring bowl', '\$22.00'),
-              _buildFoodItem('assets/plate3.png', 'Avocado bowl', '\$26.00'),
-              _buildFoodItem('assets/plate5.png', 'Berry bowl', '\$24.00'),
-              _buildFoodItem('assets/plate4.png', 'Avocado bowl', '\$26.00'),
+              
             ]),
           )
         ],
-      ),
-          
-    );
-  }
-
-
-
-  Widget _buildFoodItem(String imgPath, String foodName, String price){
-    return Padding(
-      padding: EdgeInsets.only(top:10.0, left: 10.0, right: 10.0),
-      child: InkWell(
-        onTap: (){},
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              child: Row(
-                children: [
-                  Hero(
-                    tag: imgPath,
-                    child: Image(
-                      image: AssetImage(imgPath),
-                      fit: BoxFit.cover,
-                      height: 75.0,
-                      width: 75.0,
-                      )
-                  ),
-                  SizedBox(width: 10.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        foodName,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                      Text(
-                        price,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 15.0,
-                          color: Colors.grey
-                        )
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-            IconButton(icon: Icon(Icons.add), onPressed: () {},color: Colors.black
-            )
-          ],
-        ),
       ),
     );
   }
