@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -23,6 +22,7 @@ class _addScheduleState extends State<addSchedule>{
   bool isNoti = false;
   String _date = 'Select Date and Time', _time ='';
   List<String> weekday = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
+  List<String> month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   DateTime _dateTimeSche;
   void changeColor(Color color) => setState(() => pickerColor = color);
 
@@ -101,8 +101,15 @@ class _addScheduleState extends State<addSchedule>{
                       onConfirm: (date){
                         print('Confirm $date');
                         _dateTimeSche = date;
-                        _date = '${weekday[date.weekday - 1]}, ${date.month} ${date.day} ${date.year}';
-                        _time = '${date.hour}:${date.minute}';
+                        _date = '${weekday[date.weekday - 1]}, ${month[date.month - 1]} ${date.day} ${date.year}';
+                        if(date.hour > 9 && date.minute > 9)
+                          _time = '${date.hour}:${date.minute}';
+                        else if(date.hour > 9 && date.minute < 10)
+                          _time = '${date.hour}:0${date.minute}';
+                        else if(date.hour < 10 && date.minute > 9)
+                          _time = '0${date.hour}:${date.minute}';
+                        else if(date.hour < 10 && date.minute < 10)
+                          _time = '0${date.hour}:0${date.minute}';
                         setState(() {});
                       }
                     );

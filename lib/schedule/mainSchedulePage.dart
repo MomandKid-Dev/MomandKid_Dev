@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:momandkid/schedule/calendarTablePage.dart';
 import 'package:route_transitions/route_transitions.dart';
 import 'package:momandkid/schedule/schedulePage.dart';
+import 'package:date_picker_timeline/date_picker_timeline.dart';
+import 'calendarTablePage.dart';
 
 class mainSchedule extends StatefulWidget {
   @override
@@ -11,6 +14,7 @@ class _mainScheduleState extends State<mainSchedule> {
 
   List dataTitleSche = [], colorSche = [], dataDesSche = [], colorBGSche =[], notiSche = [], dateTimeSche = [], _timeSche = [];
   bool _showsche = false;
+  DateTime _selectedDate;
 
   void moveToAddPage() async {
     final information = await Navigator.push(
@@ -62,7 +66,15 @@ class _mainScheduleState extends State<mainSchedule> {
                         height: 85,
                         width: 85,
                         child: new RawMaterialButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageRouteTransition(
+                                fullscreenDialog: true,
+                                animationType: AnimationType.slide_up,
+                                builder: (context) => calendarSchedule())
+                            );
+                          },
                           child: new Icon(
                             Icons.today,
                             color: Color(0xFF141148),
@@ -75,6 +87,43 @@ class _mainScheduleState extends State<mainSchedule> {
                         ),
                       )
                     )
+                  ),
+                  SizedBox(height: 20,),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        DatePicker(
+                          DateTime.now(),
+                          height: 80,
+                          initialSelectedDate: DateTime.now(),
+                          selectionColor: Color(0xFFC6E5E6),//c6e5e6
+                          selectedTextColor: Color(0xFF141048),
+                          unselectionColor: Color(0xFFF8FAFB),
+                          dateTextStyle: TextStyle(
+                            color: Color(0xFFCACFD3),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16
+                          ),
+                          dayTextStyle: TextStyle(
+                            color: Color(0xFFCACFD3),
+                            fontSize: 10
+                          ),
+                          monthTextStyle: TextStyle(
+                            color: Color(0xFFCACFD3),
+                            fontSize: 10
+                          ),
+                          onDateChange: (date) {
+                            // New date selected
+                            setState(() {
+                              _selectedDate = date;
+                            });
+                          },
+                        ),
+                      ],
+                  ),
                   ),
                   SizedBox(height: 20,),
                   Row(
@@ -104,7 +153,7 @@ class _mainScheduleState extends State<mainSchedule> {
                         scrollDirection: Axis.vertical,
                         itemCount: dataTitleSche.length,
                         itemBuilder: (BuildContext ctxt, int index) {
-                            return index%1 == 0 ? Container(
+                            return _selectedDate.day == dateTimeSche[index].day ? Container(
                               height: 115,
                               child: Card(
                                 color: colorBGSche[index],

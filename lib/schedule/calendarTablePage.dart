@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'dart:async';
 
 class calendarSchedule extends StatefulWidget{
@@ -61,7 +62,9 @@ class _calendarScheState extends State<calendarSche>{
                   child: IconButton(
                     icon: Icon(Icons.arrow_back_ios),
                     color: Color(0xFF131048),
-                    onPressed: (){}
+                    onPressed: (){
+                      Navigator.pop(context);
+                    }
                   ),
                 ),
               ],
