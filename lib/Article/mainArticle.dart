@@ -105,8 +105,7 @@ class _mainArticleState extends State<mainArticle> {
           SizedBox(height: 20,),
           Container(
             height: 40.0,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
+            child: Row(
               children: <Widget>[
                 Container(
                   width: 8,
@@ -124,8 +123,9 @@ class _mainArticleState extends State<mainArticle> {
                     color: Color(0xFF131048)
                   ),
                 ),
-                SizedBox(width: 182,),
+                Spacer(flex: 1),
                 FlatButton(
+                  padding: EdgeInsets.only(left:20),
                   onPressed: (){
                     
                   },

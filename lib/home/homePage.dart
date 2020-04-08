@@ -270,11 +270,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 tabBackgroundColor: Color(0xFFFFD5D4),
                 tabs: [
                   GButton(
-                    icon: LineAwesomeIcons.home,
+                    icon: Icons.home,
                     text: 'Home',
                   ),
                   GButton(
-                    icon: LineAwesomeIcons.heart_o,
+                    icon: Icons.lightbulb_outline,
                     text: 'Article',
                   ),
                   GButton(
@@ -282,11 +282,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     text: 'Profile',
                   ),
                   GButton(
-                    icon: LineAwesomeIcons.user,
+                    icon: Icons.assignment_ind,
                     text: 'Healthy',
                   ),
                   GButton(
-                    icon: LineAwesomeIcons.user,
+                    icon: Icons.event_note,
                     text: 'Schedule',
                   ),
                 ],
