@@ -16,6 +16,7 @@ class _BabyNameState extends State<BabyName> {
         title: Text('New baby'),
         actions: <Widget>[
           FlatButton.icon(
+            onPressed: (){},
             icon: Icon(Icons.arrow_back_ios),
             label: Text('back'),
           ),

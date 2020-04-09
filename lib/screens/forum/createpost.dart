@@ -60,8 +60,8 @@ class _CreatePostState extends State<CreatePost> {
             RaisedButton(
               child: Text('post'),
               onPressed: () async {
-                print(await DatabaseService(uid: user.uid)
-                .createPost(content,'image path'));
+                DatabaseService(uid: user.uid)
+                .createPost(content,'image path');
               },
             ),
             SizedBox(height: 20.0),

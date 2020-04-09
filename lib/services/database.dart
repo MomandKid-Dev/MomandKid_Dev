@@ -30,6 +30,7 @@ class DatabaseService {
       'content': content,
       'image': image,
       'time': time,
+      'likecount' : 0,
     }).then((value) => saveuidpost(value.documentID,time));
   }
 
@@ -41,6 +42,14 @@ class DatabaseService {
 
   Future getUserData() async {
     return await userCollection.document(uid).get();
+  }
+
+  Future getUserFromPost(DocumentSnapshot post) async {
+    return await userCollection.document(post.data['uid']).get();
+  }
+
+  Future getPostData(int quantity) async {
+    return await postCollection.orderBy('time', descending: true).limit(quantity).getDocuments();
   }
 
 }

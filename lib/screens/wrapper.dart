@@ -1,6 +1,7 @@
 // import libraries
 import 'package:flutter/material.dart';
 import 'package:momandkid/screens/forum/createpost.dart';
+import 'package:momandkid/screens/forum/postpage.dart';
 import 'package:provider/provider.dart';
 
 // import files
@@ -17,12 +18,11 @@ class _WrapperState extends State<Wrapper> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    print(user);
 
     if (user == null) {
       return Authenticate();
     } else {
-      return CreatePost();
+      return PostPage();
     }
   }
 }
