@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 // import files
 import 'package:momandkid/services/auth.dart';
 import 'package:momandkid/models/user.dart';
-import 'package:momandkid/services/database.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Post {
 
+  final String pid;
   final String content;
   final String image;
   final Timestamp time;
@@ -11,6 +12,6 @@ class Post {
   final String userprofile;
   
 
-  Post({this.content,this.image,this.time,this.uid,this.likecount,this.username,this.userprofile});
+  Post({this.pid,this.content,this.image,this.time,this.uid,this.likecount,this.username,this.userprofile});
 
 }

@@ -18,12 +18,11 @@ final int quantity = 10;
 List<DocumentSnapshot> postRetrieved;
 List<DocumentSnapshot> userFromPost;
 
-
-
 List<Post> _postFromFirebasePost(AsyncSnapshot posts,AsyncSnapshot users){
    List<Post> postss = [];
    for (List<dynamic> pu in zip([posts.data.documents,users.data])){
      postss.add(Post(
+      pid: pu[0].documentID,
       content: pu[0].data['content'] ?? '',
       image: pu[0].data['image'] ?? '',
       time: pu[0].data['time'] ?? null,
@@ -42,7 +41,6 @@ Future getUsers(List<DocumentSnapshot> posts) async {
 }
 
 class _PostPageState extends State<PostPage> {
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -66,7 +64,9 @@ class _PostPageState extends State<PostPage> {
           ListView.builder(
             itemCount: postSnapshot.data.documents.length,
             itemBuilder: (context, index){
-              return PostTile(post: _postFromFirebasePost(postSnapshot, userSnapshot)[index]);
+              return PostTile(
+                post: _postFromFirebasePost(postSnapshot, userSnapshot)[index],
+              );
             }
           )
         );}
