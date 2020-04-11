@@ -76,6 +76,18 @@ class DatabaseService {
     return await postCollection.orderBy('time', descending: true).limit(quantity).getDocuments();
   }
 
+  Future getCommentFromPost(String pid) async {
+    return await pidcommentCollection.document(pid).get();
+  }
+
+  Future getCommentData(String cid) async {
+    return await commentCollection.document(cid).get();
+  }
+
+  Future getUserFromComment(DocumentSnapshot comment) async {
+    return await userCollection.document(comment.data['uid']).get();
+  }
+
   Future increaseCommentCount(String pid) async {
     return await postCollection.document(pid).updateData({
       'commentcount': FieldValue.increment(1)
