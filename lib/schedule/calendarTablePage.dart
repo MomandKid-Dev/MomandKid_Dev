@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'dart:async';
 
 class calendarSchedule extends StatefulWidget{
@@ -43,8 +46,31 @@ class _calendarScheState extends State<calendarSche>{
   var now = DateTime.now();
   List<String> month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+  CalendarCarousel _calendar;
+
   @override
   Widget build(BuildContext context){
+
+    _calendar = CalendarCarousel(
+      showHeader: false,
+      weekDayFormat: WeekdayFormat.narrow,
+      weekdayTextStyle: TextStyle(
+        color: Color(0xFF131048)
+      ),
+      daysTextStyle: TextStyle(
+        color: Color(0xFF131048)
+      ),
+      weekendTextStyle: TextStyle(
+        color: Color(0xFF131048)
+      ),
+      todayButtonColor: Color(0xFFC6E5E6),
+      todayTextStyle: TextStyle(
+        color: Color(0xFF131048)
+      ),
+      
+      // onDayPressed: ,
+    );
+
     return Container(
       child: Column(
         children: <Widget>[
@@ -84,6 +110,13 @@ class _calendarScheState extends State<calendarSche>{
                 )
               ],
             ),
+          ),
+          SizedBox(height: 5,),
+          Container(
+            padding: EdgeInsets.only(left:30, right: 30),
+            width: 400,
+            height: 400,
+            child: _calendar,
           )
         ],
       ),
@@ -195,9 +228,18 @@ class SheetContainer extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
-          color: Colors.red),
+          color: Colors.white),
       child: Column(
         children: <Widget>[
+          Container(
+            width: 80,
+            height: 8,
+            decoration: BoxDecoration(
+              color: Colors.grey[400],
+              // color: Colors.red,
+              borderRadius: BorderRadius.horizontal(left: Radius.circular(30), right: Radius.circular(30))
+            ),
+          )
         ],
       ),
     );
