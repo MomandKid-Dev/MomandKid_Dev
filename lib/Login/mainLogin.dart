@@ -8,8 +8,8 @@ class mainLogin extends StatefulWidget {
 class _mainLoginState extends State<mainLogin> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
+    return Scaffold(
+      backgroundColor: Colors.red,
     );
   }
 }
