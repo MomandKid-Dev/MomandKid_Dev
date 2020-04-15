@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:momandkid/home/homePage.dart';
+import 'package:momandkid/root_page.dart';
+import 'package:momandkid/services/auth.dart';
+// import 'package:momandkid/Login/mainLogin.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,7 +10,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
+      home: RootPage(auth: Auth()),
+      // home: mainLogin(),
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         fontFamily: 'Prompt',

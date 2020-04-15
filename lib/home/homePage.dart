@@ -8,11 +8,19 @@ import 'package:momandkid/story/storyMain.dart';
 import 'package:momandkid/kids/healthMain.dart';
 import 'package:momandkid/Article/mainArticle.dart';
 import 'package:momandkid/schedule/mainSchedulePage.dart';
+import 'package:momandkid/kids/DataTest.dart';
+
+//service
+import 'package:momandkid/services/auth.dart';
 
 
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+  MyHomePage({this.auth, this.logoutCallback, this.userId});
+
+  final AuthService auth;
+  final VoidCallback logoutCallback;
+  final String userId;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -24,15 +32,25 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _visible = true;
   bool _showappbar = true;
   String _title;
- 
+  // Data baby info
+  dataTest _data = dataTest();
+  dynamic babyInfo;
 
   @override
   void initState() {
+    _data.getKiddo(widget.userId);
+    babyInfo = _data.kiddo;
     super.initState();
     _pageController = PageController();
     currentIndex = 0;
     _title = 'Home';
   }
+
+  Future testData() {
+    _data.kiddo[0]['sel'] = 1;
+    print('test data: ${_data.kiddo[0]}');
+  }
+
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   @override
   void dispose() {
@@ -74,8 +92,19 @@ class _MyHomePageState extends State<MyHomePage> {
       _pageController.jumpToPage(currentIndex);
     });
   }
+
+  signOut() async {
+    try {
+      await widget.auth.signOut();
+      widget.logoutCallback();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('test : ${dataTest().kiddo}');
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFB),
       key: _scaffoldKey,
@@ -95,8 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
           icon: Icon(LineAwesomeIcons.user), 
           color: Color(0xFF9FA2A7),
           iconSize: 30.0,
-          onPressed: (){
-          }
+          onPressed: signOut
         ),
         actions: <Widget>[
           IconButton(
