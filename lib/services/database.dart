@@ -36,6 +36,7 @@ class DatabaseService {
       'time': time,
       'likecount' : 0,
       'commentcount' : 0,
+      'likes' : []
     }).then((value) => saveuidpost(value.documentID,time));
   }
 
@@ -50,6 +51,24 @@ class DatabaseService {
       savepidcomment(pid,value.documentID,time);
       increaseCommentCount(pid);
     });
+  }
+
+  Future createLike(String pid) async {
+    return await postCollection.document(pid).updateData(
+      {
+        'likecount' : FieldValue.increment(1),
+        'likes': FieldValue.arrayUnion(List.from([uid]))
+      }
+    );
+  }
+
+  Future removeLike(String pid) async {
+    return await postCollection.document(pid).updateData(
+      {
+        'likecount' : FieldValue.increment(-1),
+        'likes': FieldValue.arrayRemove(List.from([uid]))
+      }
+    );
   }
 
   Future saveuidpost(String post,DateTime time) async {
@@ -89,8 +108,12 @@ class DatabaseService {
   }
 
   Future increaseCommentCount(String pid) async {
-    return await postCollection.document(pid).updateData({
-      'commentcount': FieldValue.increment(1)
-    });
+    return await postCollection.document(pid).updateData(
+      {
+        'commentcount': FieldValue.increment(1)
+      }
+    );
   }
+
+  
 }

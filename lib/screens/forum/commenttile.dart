@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:momandkid/models/comment.dart';
-import 'package:momandkid/services/database.dart';
-import 'package:provider/provider.dart';
-import 'package:momandkid/models/user.dart';
 
 class CommentTile extends StatefulWidget {
   final Comment comment;

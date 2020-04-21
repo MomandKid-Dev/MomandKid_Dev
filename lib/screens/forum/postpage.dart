@@ -29,8 +29,10 @@ List<Post> _postFromFirebasePost(AsyncSnapshot posts,AsyncSnapshot users){
         time: pu[0].data['time'] ?? null,
         uid: pu[0].data['uid'] ?? '',
         likecount: pu[0].data['likecount'] ?? 0,
+        commentcount: pu[0].data['commentcount'] ?? 0,
         username: pu[1].data['name'] ?? '',
-        userprofile: pu[1].data['image'] ?? ''
+        userprofile: pu[1].data['image'] ?? '',
+        likes: pu[0].data['likes'] ?? [],
       )
     );
   }
