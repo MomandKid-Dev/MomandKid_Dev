@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:momandkid/Profile/profilePage.dart';
 import 'package:route_transitions/route_transitions.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:momandkid/schedule/notificationPage.dart';
@@ -9,7 +10,6 @@ import 'package:momandkid/kids/healthMain.dart';
 import 'package:momandkid/Article/mainArticle.dart';
 import 'package:momandkid/schedule/mainSchedulePage.dart';
 import 'package:momandkid/kids/DataTest.dart';
-
 //service
 import 'package:momandkid/services/auth.dart';
 
@@ -92,7 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _pageController.jumpToPage(currentIndex);
     });
   }
-
   signOut() async {
     try {
       await widget.auth.signOut();
@@ -101,7 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
       print(e);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     print('test : ${dataTest().kiddo}');
@@ -124,7 +122,15 @@ class _MyHomePageState extends State<MyHomePage> {
           icon: Icon(LineAwesomeIcons.user), 
           color: Color(0xFF9FA2A7),
           iconSize: 30.0,
-          onPressed: signOut
+          // onPressed: signOut
+          onPressed: (){
+            Navigator.push(
+              context,
+              PageRouteTransition(
+                animationType: AnimationType.slide_left,
+                builder: (context) => mainProfile(userId: widget.userId, auth: widget.auth, logoutCallback: widget.logoutCallback,))
+              );
+          },
         ),
         actions: <Widget>[
           IconButton(
