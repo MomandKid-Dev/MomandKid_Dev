@@ -11,8 +11,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: RootPage(auth: Auth()),
-      // home: mainProfile(),
+      // home: RootPage(auth: Auth()),
+      home: mainProfile(),
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         fontFamily: 'Prompt',
