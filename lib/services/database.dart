@@ -1,12 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DatabaseService {
-  final String uid;
-  DatabaseService({this.uid});
+abstract class DatabaseService {
+  Future<void> createUserInfo(String name, String email, String image);
+
+  Future<void> createBabyInfo(
+      String babyName,
+      String babyGender,
+      Timestamp babyBirthDate,
+      double babyHeight,
+      double babyWeight,
+      String babyImage);
+
+  Future<void> saveUID_baby(String babyId, String babyName);
+
+  Future<dynamic> getBabyId();
+
+  Future<dynamic> getBabyInfo(String babyId);
+
+  Future<dynamic> getBaby(List<String> babyId);
+}
+
+class Database extends DatabaseService {
+  // class object
+  Database({this.userId});
+  final String userId;
 
   // collection referance
   final CollectionReference userCollection =
       Firestore.instance.collection('user_info');
+  final CollectionReference babyCollection =
+      Firestore.instance.collection('baby_info');
+  final CollectionReference uidBaby = 
+      Firestore.instance.collection('uid_baby');
   final CollectionReference postCollection =
       Firestore.instance.collection('post');
   final CollectionReference uidpostCollection =
@@ -16,8 +41,9 @@ class DatabaseService {
   final CollectionReference pidcommentCollection =
       Firestore.instance.collection('pid_comment');
 
-  Future createUserData(String image, String name, String email) async {
-    return await userCollection.document(uid).setData({
+  // Create user info
+  Future<void> createUserInfo(String name, String email, String image) async {
+    return await userCollection.document(userId).setData({
       'image': image,
       'name': name,
       'email': email,
@@ -27,10 +53,54 @@ class DatabaseService {
     });
   }
 
+  // Create baby info
+  Future<void> createBabyInfo(
+      String babyName,
+      String babyGender,
+      Timestamp babyBirthDate,
+      double babyHeight,
+      double babyWeight,
+      String babyImage) async {
+    return await babyCollection.add({
+      'name': babyName,
+      'gender': babyGender,
+      'birthdate': babyBirthDate,
+      'height': babyHeight,
+      'weight': babyWeight,
+      'image': babyImage,
+    }).then((value) => saveUID_baby(value.documentID, babyName));
+  }
+
+  // keep KID in UID <userId>
+  Future<void> saveUID_baby(String babyId, String babyName) async {
+    print('UID: $userId');
+    return await uidBaby
+        .document(userId)
+        .setData({babyId: babyName}, merge: true);
+  }
+
+  // get KID from UID <userId>
+  Future<dynamic> getBabyId() async {
+    dynamic babyId;
+    await uidBaby.document(userId).get().then((val) {
+      babyId = val.data.keys.toList();
+    });
+    return babyId;
+  }
+
+  // get baby info from firestore
+  Future<dynamic> getBabyInfo(String babyId) async {
+    return await babyCollection.document(babyId).get();
+  }
+
+  // map data
+  Future<dynamic> getBaby(List<String> babyId) async {
+    return await Future.wait(babyId.map((baby) => getBabyInfo(baby)));
+  }
   Future createPost(String content, String image) async {
     DateTime time = DateTime.now();
     return await postCollection.add({
-      'uid': uid,
+      'uid': userId,
       'content': content,
       'image': image,
       'time': time,
@@ -44,12 +114,13 @@ class DatabaseService {
     DateTime time = DateTime.now();
     return await commentCollection.add({
       'pid': pid,
-      'uid': uid,
+      'uid': userId,
       'content': content,
       'time': time,
     }).then((value){
       savepidcomment(pid,value.documentID,time);
       increaseCommentCount(pid);
+      return value;
     });
   }
 
@@ -57,7 +128,7 @@ class DatabaseService {
     return await postCollection.document(pid).updateData(
       {
         'likecount' : FieldValue.increment(1),
-        'likes': FieldValue.arrayUnion(List.from([uid]))
+        'likes': FieldValue.arrayUnion(List.from([userId]))
       }
     );
   }
@@ -66,13 +137,13 @@ class DatabaseService {
     return await postCollection.document(pid).updateData(
       {
         'likecount' : FieldValue.increment(-1),
-        'likes': FieldValue.arrayRemove(List.from([uid]))
+        'likes': FieldValue.arrayRemove(List.from([userId]))
       }
     );
   }
 
   Future saveuidpost(String post,DateTime time) async {
-    return await uidpostCollection.document(uid).setData({
+    return await uidpostCollection.document(userId).setData({
       post: time
     }, merge: true);
   }
@@ -83,8 +154,16 @@ class DatabaseService {
     }, merge: true);
   }
 
+  Future increaseCommentCount(String pid) async {
+    return await postCollection.document(pid).updateData(
+      {
+        'commentcount': FieldValue.increment(1)
+      }
+    );
+  }
+
   Future getUserData() async {
-    return await userCollection.document(uid).get();
+    return await userCollection.document(userId).get();
   }
 
   Future getUserFromPost(DocumentSnapshot post) async {
@@ -99,21 +178,24 @@ class DatabaseService {
     return await pidcommentCollection.document(pid).get();
   }
 
-  Future getCommentData(String cid) async {
+  Future<DocumentSnapshot> getCommentData(String cid) async {
     return await commentCollection.document(cid).get();
   }
 
-  Future getUserFromComment(DocumentSnapshot comment) async {
+  Future<DocumentSnapshot> getUserFromComment(DocumentSnapshot comment) async {
     return await userCollection.document(comment.data['uid']).get();
   }
 
-  Future increaseCommentCount(String pid) async {
-    return await postCollection.document(pid).updateData(
-      {
-        'commentcount': FieldValue.increment(1)
-      }
-    );
+  Future getUserDataFromPost(List<DocumentSnapshot> posts) async {
+    return await Future.wait(posts.map((post)=>getUserFromPost(post)));
   }
 
-  
+  Future<List<DocumentSnapshot>> getCommentDataFromPost(List<String> commentsId) async { 
+    return await Future.wait(commentsId.map((comment)=>getCommentData(comment)));
+  }
+
+  Future<List<DocumentSnapshot>> getUsersFromComment(List<dynamic> comments) async {
+    return await Future.wait(comments.map((comment)=>getUserFromComment(comment)));
+  }
+
 }
