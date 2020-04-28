@@ -44,18 +44,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    _data.getKiddo(widget.userId);
-    babyInfo = _data.kiddo;
+    //_data.getKiddo(widget.userId);
+    //babyInfo = _data.kiddo;
     super.initState();
     _pageController = PageController();
     currentIndex = 0;
     _title = 'Home';
   }
 
-  Future testData() {
-    _data.kiddo[0]['sel'] = 1;
-    print('test data: ${_data.kiddo[0]}');
-  }
+  // Future testData() {
+  //   _data.kiddo[0]['sel'] = 1;
+  //   print('test data: ${_data.kiddo[0]}');
+  // }
 
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   @override
@@ -298,7 +298,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(child: mainArticle()),
             Container(child: storyMain()),
             Container(child: mainKidScreen()),
-            Container(child: mainSchedule()),
+            Container(child: mainSchedule(userId: widget.userId)),
           ],
         ),
       ),

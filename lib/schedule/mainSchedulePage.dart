@@ -1,20 +1,66 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:momandkid/schedule/calendarTablePage.dart';
 import 'package:route_transitions/route_transitions.dart';
 import 'package:momandkid/schedule/schedulePage.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'calendarTablePage.dart';
+import 'package:momandkid/services/database.dart';
 
 class mainSchedule extends StatefulWidget {
+  final String userId;
+  mainSchedule({this.userId});
   @override
   _mainScheduleState createState() => _mainScheduleState();
 }
 
 class _mainScheduleState extends State<mainSchedule> {
 
-  List dataTitleSche = [], colorSche = [], dataDesSche = [], colorBGSche =[], notiSche = [], dateTimeSche = [], _timeSche = [];
+  List scheduleIds = [], dataTitleSche = [], colorSche = [], dataDesSche = [], colorBGSche =[], notiSche = [], dateTimeSche = [], _timeSche = [];
   bool _showsche = false;
   DateTime _selectedDate;
+  List<Color> listColor = [Color(0xFF99B998),Color(0xFFF7DB4F),Color(0xFFFECEAB),Color(0xFFFF847C),Color(0xFFE84A5F),Color(0xFF6C5B7B),Color(0xFF45ADA8)];
+  List<Color> listBGColor = [Color(0xFFDBECDB),Color(0xFFFEF0AC),Color(0xFFFFEFE3),Color(0xFFFFD4D1),Color(0xFFF8B3BC),Color(0xFFCCBFD8),Color(0xFFA6CECC)];
+
+  Future loadSchedule() async {
+    String _time ='';
+    await Database(userId: widget.userId).getScheduleFromUser().then((schedulesId) async {
+      if (schedulesId.data == null) return;
+      await Database(userId: widget.userId).getSchedulesData(schedulesId.data.keys.toList()).then((schedulesData){
+        for (DocumentSnapshot schedule in schedulesData){
+          if (schedule.data['timeset'].compareTo(Timestamp.now()) < 0) continue;
+          DateTime _date = schedule.data['timeset'].toDate();
+          if(_date.hour > 9 && _date.minute > 9) _time = '${_date.hour}:${_date.minute}';
+          else if(_date.hour > 9 && _date.minute < 10) _time = '${_date.hour}:0${_date.minute}';
+          else if(_date.hour < 10 && _date.minute > 9) _time = '0${_date.hour}:${_date.minute}';
+          else if(_date.hour < 10 && _date.minute < 10) _time = '0${_date.hour}:0${_date.minute}';
+          setState(() {
+            scheduleIds.add(schedule.documentID);
+            dataTitleSche.add(schedule.data['title']);
+            notiSche.add(schedule.data['notification']);
+            colorSche.add(listColor[schedule.data['color']]);
+            dataDesSche.add(schedule.data['description']);
+            colorBGSche.add(listBGColor[schedule.data['color']]);
+            dateTimeSche.add(_date);
+            _timeSche.add(_time);
+          });
+        }
+        if(dataTitleSche.length > 0){
+          setState(() {
+            _showsche = true;
+          });
+        }
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _selectedDate = DateTime.now();
+    loadSchedule();
+  }
 
   void moveToAddPage() async {
     final information = await Navigator.push(
@@ -27,22 +73,29 @@ class _mainScheduleState extends State<mainSchedule> {
     
     if(information[0].length > 0)
     {
-      setState(() {
-        dataTitleSche.add(information[0]);
-        notiSche.add(information[1]);
-        colorSche.add(information[2]);
-        dataDesSche.add(information[3]);
-        colorBGSche.add(information[4]);
-        dateTimeSche.add(information[5]);
-        _timeSche.add(information[6]);
+      //print(information);
+      await Database(userId: widget.userId).createSchedule(information[0], information[3], information[5], listColor.indexOf(information[2]), information[1]).then((scheduleId) {
+        if (scheduleId == null) return;
+        setState(() {
+          scheduleIds.add(scheduleId.documentID);
+          dataTitleSche.add(information[0]);
+          notiSche.add(information[1]);
+          colorSche.add(information[2]);
+          dataDesSche.add(information[3]);
+          colorBGSche.add(information[4]);
+          dateTimeSche.add(information[5]);
+          _timeSche.add(information[6]);
         });
+      });
+      
     }
+
     if(dataTitleSche.length > 0){
       setState(() {
         _showsche = true;
       });
     }
-    print(notiSche);
+    //print(notiSche);
   }
 
   @override
@@ -197,10 +250,15 @@ class _mainScheduleState extends State<mainSchedule> {
                                         ),
                                       Spacer(flex: 18,),
                                       Switch(
+                                        
                                         value: notiSche[index], 
                                         activeColor: colorSche[index],
-                                        onChanged: (value){
-                                          notiSche[index] = value;
+                                        onChanged: (value) async {
+                                          await Database(userId: widget.userId).switchNotificationSetting(scheduleIds[index], value).whenComplete((){
+                                            setState(() {
+                                              notiSche[index] = value;
+                                            });
+                                          });
                                         }
                                       ),
                                       Spacer(flex: 2,)

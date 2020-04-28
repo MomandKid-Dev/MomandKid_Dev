@@ -40,6 +40,10 @@ class Database extends DatabaseService {
       Firestore.instance.collection('comment');
   final CollectionReference pidcommentCollection =
       Firestore.instance.collection('pid_comment');
+  final CollectionReference scheduleCollection =
+      Firestore.instance.collection('schedule');
+  final CollectionReference uidscheduleCollection =
+      Firestore.instance.collection('uid_schedule');
 
   // Create user info
   Future<void> createUserInfo(String name, String email, String image) async {
@@ -124,6 +128,20 @@ class Database extends DatabaseService {
     });
   }
 
+  Future createSchedule(String title, String description, DateTime timeset, int color, bool notification) async {
+    DateTime time = DateTime.now();
+    return await scheduleCollection.add({
+      'color': color,
+      'description': description,
+      'notification': notification,
+      'timeset': timeset,
+      'title' : title,
+    }).then((value) {
+      saveuidschedule(value.documentID,time);
+      return value;
+    });
+  }
+
   Future createLike(String pid) async {
     return await postCollection.document(pid).updateData(
       {
@@ -151,6 +169,12 @@ class Database extends DatabaseService {
   Future savepidcomment(String post,String comment,DateTime time) async {
     return await pidcommentCollection.document(post).setData({
       comment: time
+    }, merge: true);
+  }
+
+  Future saveuidschedule(String schedule,DateTime time) async {
+    return await uidscheduleCollection.document(userId).setData({
+      schedule: time
     }, merge: true);
   }
 
@@ -198,4 +222,23 @@ class Database extends DatabaseService {
     return await Future.wait(comments.map((comment)=>getUserFromComment(comment)));
   }
 
+  Future<DocumentSnapshot> getScheduleData(String sid) async {
+    return await scheduleCollection.document(sid).get();
+  }
+
+  Future<DocumentSnapshot> getScheduleFromUser() async {
+    return await uidscheduleCollection.document(userId).get();
+  }
+
+  Future<List<DocumentSnapshot>> getSchedulesData(List<String> schedulesId) async {
+    return await Future.wait(schedulesId.map((schedule)=>getScheduleData(schedule)));
+  }
+
+  Future switchNotificationSetting(String sid, bool isSet) async {
+    return await scheduleCollection.document(sid).updateData(
+      {
+        'notification': isSet
+      }
+    );
+  }
 }
