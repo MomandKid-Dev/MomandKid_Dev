@@ -44,6 +44,17 @@ class _createPostState extends State<createPost> {
           onPressed: (){ Navigator.pop(context); }
           ),
         actions: <Widget>[
+          _image == null ? FlatButton(
+            onPressed: null, 
+            child: Text(
+              'post', 
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 20,
+                fontWeight: FontWeight.bold
+              ),
+              )
+            ):
           FlatButton(
             onPressed: (){ Navigator.pop(context); }, 
             child: Text(
@@ -55,6 +66,7 @@ class _createPostState extends State<createPost> {
               ),
               )
             )
+            
         ],
       ),
       body: Container(
