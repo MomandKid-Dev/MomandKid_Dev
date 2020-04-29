@@ -162,6 +162,18 @@ class _postsState extends State<posts>with TickerProviderStateMixin{
     }
   }
 
+  decreaseLike(){
+    setState(() {
+      widget.data['likecount'] -= 1;
+    });
+  }
+
+  increaseLike(){
+    setState(() {
+      widget.data['likecount'] += 1;
+    });
+  }
+
   @override 
   Widget build(BuildContext context){
     return inheritedPost(child: widget.child,data: this,);
@@ -620,7 +632,7 @@ class _favButtonState extends State<favButton>{
                   await Database(userId: posts.of(context).widget.userId).removeLike(posts.of(context).widget.data['pid']).whenComplete((){
                     setState(() {
                       setLike();
-                      posts.of(context).widget.data['likecount'] -= 1;
+                      posts.of(context).decreaseLike();
                     });
                   });
                 }
@@ -628,7 +640,7 @@ class _favButtonState extends State<favButton>{
                   await Database(userId: posts.of(context).widget.userId).createLike(posts.of(context).widget.data['pid']).whenComplete((){
                     setState(() {
                       setLike();
-                      posts.of(context).widget.data['likecount'] += 1;
+                      posts.of(context).increaseLike();
                     });
                   });
                 }
