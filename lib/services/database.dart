@@ -241,4 +241,8 @@ class Database extends DatabaseService {
       }
     );
   }
+
+  Future removeSchedule(String sid) async {
+    return await scheduleCollection.document(sid).delete();
+  }
 }

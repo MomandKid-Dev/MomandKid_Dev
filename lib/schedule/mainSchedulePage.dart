@@ -26,9 +26,12 @@ class _mainScheduleState extends State<mainSchedule> {
     String _time ='';
     await Database(userId: widget.userId).getScheduleFromUser().then((schedulesId) async {
       if (schedulesId.data == null) return;
-      await Database(userId: widget.userId).getSchedulesData(schedulesId.data.keys.toList()).then((schedulesData){
+      await Database(userId: widget.userId).getSchedulesData(schedulesId.data.keys.toList()).then((schedulesData) async {
         for (DocumentSnapshot schedule in schedulesData){
-          if (schedule.data['timeset'].compareTo(Timestamp.now()) < 0) continue;
+          if (schedule.data['timeset'].compareTo(Timestamp.now()) < 0) {
+            await Database(userId: widget.userId).removeSchedule(schedule.documentID);
+            continue;
+          }
           DateTime _date = schedule.data['timeset'].toDate();
           if(_date.hour > 9 && _date.minute > 9) _time = '${_date.hour}:${_date.minute}';
           else if(_date.hour > 9 && _date.minute < 10) _time = '${_date.hour}:0${_date.minute}';
