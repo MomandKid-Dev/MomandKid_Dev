@@ -1,35 +1,38 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/rendering.dart';
+import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/circleImg.dart';
 import 'package:momandkid/shared/style.dart';
 import 'package:photo_view/photo_view.dart';
-
 import 'commentdata.dart';
 
 class mainPostScreen extends StatefulWidget{
-  mainPostScreen({this.data});
+  mainPostScreen({this.data, this.userId});
   Map data;
+  String userId;
   @override 
   _mainPostScreenState createState() => _mainPostScreenState();
 }
 class _mainPostScreenState extends State<mainPostScreen>{
   @override 
   Widget build(BuildContext context){
-    return post(child: postPage(),data: widget.data,);
+    return posts(child: postPage(),data: widget.data, userId: widget.userId);
   }
 }
 
-class post extends StatefulWidget{
+class posts extends StatefulWidget{
   Widget child;
   Map data;
-  post({this.child,this.data});
+  String userId;
+  posts({this.child,this.data,this.userId});
   @override 
-  _postState createState() => _postState();
-  static _postState of(BuildContext context) => (context.dependOnInheritedWidgetOfExactType<inheritedPost>() as inheritedPost).data;
+  _postsState createState() => _postsState();
+  static _postsState of(BuildContext context) => (context.dependOnInheritedWidgetOfExactType<inheritedPost>() as inheritedPost).data;
 }
-class _postState extends State<post>with TickerProviderStateMixin{
+class _postsState extends State<posts>with TickerProviderStateMixin{
   AnimationController slideController;
   Animation<Offset> slideAnimation;
   TextEditingController commentController;
@@ -42,6 +45,37 @@ class _postState extends State<post>with TickerProviderStateMixin{
   var testUser;
   var testComment;
   var testPost;
+  var currentUid;
+
+  Future loadCurrentUser(String uid) async{
+    await Database(userId: uid).getUserData().then((userdata){
+      Map<String,dynamic> temp = {
+        'uid':uid,
+        'userprofile':userdata.data['image'],
+        'username':userdata.data['name'],
+      };
+      user.users.add(temp);
+    });
+  }
+
+  Future loadComment(String pid) async {
+    await Database().getCommentFromPost(pid).then((commentsId) async {
+    if (commentsId.data == null) {
+      commentdata.comments.clear();
+      return;
+    }
+    await Database().getCommentDataFromPost(commentsId.data.keys.toList()).then((comments)  async
+      {
+        setComment(comments);
+        await Database().getUsersFromComment(comments).then((users){
+            setUser(users);
+          }
+        );
+      }
+    );
+    });
+  }
+
   @override 
   initState(){
     super.initState();
@@ -53,9 +87,21 @@ class _postState extends State<post>with TickerProviderStateMixin{
     commentNode = FocusNode();
     slideAnimation = Tween<Offset>(begin: Offset(0,0),end: Offset(0,0.5)).animate(CurvedAnimation(curve: Curves.easeInExpo,parent:slideController));
     scrollController = ScrollController();
-    testUser = user.users[0];
     testPost = widget.data;
-    // testComment = commentdata;
+    testUser = user;
+    testComment = commentdata;
+    currentUid = widget.userId;
+    loadComment(widget.data['pid']).whenComplete((){
+      loadCurrentUser(widget.userId).whenComplete((){
+        if (!mounted) return;
+        setState(()
+          {
+            testComment = commentdata;
+            testUser = user;
+          }
+        );
+      });
+    });
   }
 
   @override 
@@ -74,25 +120,67 @@ class _postState extends State<post>with TickerProviderStateMixin{
       slideController.reverse();
     });
   }
-  addComment(int postID, int userID, String comment,){
-    setState(() {
-      var temp = {
-        'postID':postID,
-        // 'image':'https://pbs.twimg.com/profile_images/1168928962917097472/gD5uWGj3_400x400.jpg',
-        'userID':userID,
-        'comment':comment,
-        'like':false
-      };
-      commentdata.comments.add(temp);
+
+  Future addComment(String postID, String userID, String comment,) async {
+    await Database(userId: userID).createComment(postID, comment).then((cid){
+      if(cid != null) {
+      setState(() {
+        Map<String,dynamic> temp = {
+          'pid':postID,
+          'uid':userID,
+          'content':comment,
+          'time': Timestamp.now()
+        };
+        commentdata.comments.add(temp);
+      });
+    }
     });
   }
+
+  setComment(List<DocumentSnapshot> comments){
+    commentdata.comments.clear();
+    for (DocumentSnapshot comment in comments) {
+      Map<String,dynamic> temp = {
+        'pid':comment.data['pid'],
+        'uid':comment.data['uid'],
+        'content':comment.data['content'],
+        'time': comment.data['time']
+      };
+      commentdata.comments.add(temp);
+    }
+  }
+
+  setUser(List<DocumentSnapshot> users){
+    user.users.clear();
+    for (DocumentSnapshot userr in users) {
+      Map<String,dynamic> temp = {
+        'uid':userr.documentID,
+        'userprofile':userr.data['image'],
+        'username':userr.data['name']
+      };
+      user.users.add(temp);
+    }
+  }
+
+  decreaseLike(){
+    setState(() {
+      widget.data['likecount'] -= 1;
+    });
+  }
+
+  increaseLike(){
+    setState(() {
+      widget.data['likecount'] += 1;
+    });
+  }
+
   @override 
   Widget build(BuildContext context){
     return inheritedPost(child: widget.child,data: this,);
   }
 }
 class inheritedPost extends InheritedWidget{
-  final _postState data;
+  final _postsState data;
 
   const inheritedPost({@required Widget child,this.data}) : super(child:child);
   @override
@@ -111,134 +199,43 @@ class postPage extends StatefulWidget{
 }
  
 class _postPageState extends State<postPage>{
-
-@override
-Widget build(BuildContext context){
-  // post.of(context).commentdata.getComment(1);
-  var image = post.of(context).testPost['image'];
-  return Scaffold(
-    body:ListView(
-      padding: edgeAll(0),
-      physics: BouncingScrollPhysics(),
-      children:<Widget>[
-    //     Container(
-    //       height: MediaQuery.of(context).size.height - 100,
-    //       color: Colors.white,
-    //       child: Stack(
-    //         children: <Widget>[
-    //           Hero(
-    //             tag:'pic',
-    //             child:Image.network(
-    //               image,
-    //               fit: BoxFit.cover
-    //             ),
-    //           ),
-    //           SizedBox.expand(
-    //             child:SlideTransition(
-    //             position: post.of(context).slideAnimation,
-    //             child:DraggableScrollableSheet(
-    //               minChildSize: 0.45,
-    //               initialChildSize: 0.45,
-    //               maxChildSize: 1,
-    //               builder:(BuildContext context,ScrollController controller){
-    //                 return SingleChildScrollView(
-    //                   physics: BouncingScrollPhysics(),
-    //                   controller: controller,
-    //                   child: Container(
-    //                     child: Column(
-    //                       children: <Widget>[
-    //                         Container(
-    //                           decoration: new BoxDecoration(
-    //                             borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0),topRight: Radius.circular(40.0) ),
-    //                           ),
-    //                           // borderRadius: BorderRadius.only(topLeft: Radius.circular(40.0),topRight: Radius.circular(40.0) ),
-    //                           child: SizedBox(
-    //                             // height: 200,
-    //                             width: MediaQuery.of(context).size.width,
-    //                             child: Container(
-                                  
-    //                               decoration: dec(context),
-    //                               child: postBox(),
-    //                               )
-    //                             ),
-    //                           ),
-    //                           Container(
-    //                             height: MediaQuery.of(context).size.height - 180,
-    //                             color: Colors.white,
-    //                             child: ListView(
-    //                               physics: BouncingScrollPhysics(),
-    //                               padding: edgeAll(0),
-    //                               controller: post.of(context).scrollController,
-    //                               children:post.of(context).commentdata.getComment(post.of(context).testPost['id']).map((data)=>commentBox(data: data,)).toList()
-    //                             ),
-    //                           )
-    //                         ],
-    //                       ),
-    //                     )
-    //                   );
-    //                 }
-    //               )
-    //             )
-    //           )
-    //         ],
-    //       ),
-    //     ),
-
-        Container(
-          height: MediaQuery.of(context).size.height - 100,
-          color: Colors.white,
-          child:
-          CustomScrollView(
-            controller: post.of(context).scrollController,
-            physics: BouncingScrollPhysics(),
-            slivers: <Widget>[
-              
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: MySliverAppBar(maxHeight: 500, minHeight: 300, postBox: postBox()),
-              ),
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 80,
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      body:ListView(
+        padding: edgeAll(0),
+        physics: BouncingScrollPhysics(),
+        children:<Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height - 100,
+            color: Colors.white,
+            child:
+            CustomScrollView(
+              controller: posts.of(context).scrollController,
+              physics: BouncingScrollPhysics(),
+              slivers: <Widget>[
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: MySliverAppBar(maxHeight: 500, minHeight: 300, postBox: postBox(
+                    data: posts.of(context).testPost
+                  )),
                 ),
-              ),
-              
-            
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  post.of(context).commentdata.getComment(post.of(context).testPost['id']).map((data)=>commentBox(data: data,)).toList()
-                  // Container(
-                  //   color: Colors.white,
-                  //   margin: EdgeInsets.only(top:80),
-                  //   child: Column(
-                  //     children: <Widget>[
-                        
-
-
-                  //     ],
-                  //   ),
-                  // ),
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 80,
+                  ),
                 ),
-              )
-            ],
-          )
-        ),
-        selfComment()
-        // Container(
-        //   height: 100,
-        //   color: Colors.red,
-        //   child: Column(
-        //     children: <Widget>[
-        //       circleImg(img: '404.png',height: 50,width: 50,)
-        //     ],
-        //   ),
-        // )
-        
-    //   ]
-    // )
-    
-      ]
-    )
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    posts.of(context).commentdata.getComment(posts.of(context).testPost['pid']).map((data)=>commentBox(data: data,)).toList()
+                  ),
+                )
+              ],
+            )
+          ),
+          selfComment()
+        ]
+      )
     );
   }
 }
@@ -250,11 +247,11 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
  final double maxHeight,minHeight;
  Widget postBox;
  MySliverAppBar({@required this.maxHeight,@required this.minHeight,@required this.postBox});
- 
  @override
  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
   //  print(post.of(context).testPost);
-   var image = post.of(context).testPost['image'];
+   var image = posts.of(context).testPost['image'];
+   if(image == 'image path' || image == null) image = 'https://pbs.twimg.com/profile_images/1168928962917097472/gD5uWGj3_400x400.jpg';
    return LayoutBuilder(
      builder: (context, constraints){
        return Stack(
@@ -266,14 +263,14 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             margin: EdgeInsets.only(bottom: 170),
             child: GestureDetector(
               onTap: ()async{
-                post.of(context).forward();
+                posts.of(context).forward();
                 await Future.delayed(Duration(milliseconds: 100),()async{
                   await Navigator.push(context, MaterialPageRoute(builder: (context)=>pictureView(pic:image)));
                 });
                 await Future.delayed(Duration(milliseconds: 200),()async{
-                  post.of(context).reverse();
+                  posts.of(context).reverse();
                 });
-                post.of(context).commentNode.unfocus();
+                posts.of(context).commentNode.unfocus();
                 
               },
               child: Hero(
@@ -291,7 +288,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             top: maxHeight -200- shrinkOffset < -30? -30 : maxHeight-shrinkOffset-200,
             left: 0,
             child: SlideTransition(
-                    position: post.of(context).slideAnimation,
+                    position: posts.of(context).slideAnimation,
                     child:
             Container(
               
@@ -379,7 +376,7 @@ class _commentBoxState extends State<commentBox>{
                   shape: BoxShape.circle,
                   image: new DecorationImage(
                     fit: BoxFit.fill,
-                    image: new NetworkImage(post.of(context).user.getProfilePic(widget.data['userID']))
+                    image: new NetworkImage(posts.of(context).testUser.getProfilePic(widget.data['uid']))
                   )
                 ),       
               ),
@@ -394,19 +391,19 @@ class _commentBoxState extends State<commentBox>{
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(post.of(context).user.getProfileName(widget.data['userID']),textAlign: TextAlign.left,style: TextStyle(fontSize: 20),),
+                    Text(posts.of(context).testUser.getProfileName(widget.data['uid']),textAlign: TextAlign.left,style: TextStyle(fontSize: 20),),
                     Divider(),
-                    Text(widget.data['comment'],textAlign: TextAlign.left,style: TextStyle(fontSize: 16),)
+                    Text(widget.data['content'],textAlign: TextAlign.left,style: TextStyle(fontSize: 16),)
                   ],
                 )
               ),
             ],
           ),
-          Container(
-            height: 50,
-            width: 50,
-            child:favButton(like:widget.data['like'],editable: true)
-          )
+          // Container(
+          //   height: 50,
+          //   width: 50,
+          //   child:favButton(like:widget.data['liked'],editable: true)
+          // )
           
         ],
       )
@@ -415,7 +412,7 @@ class _commentBoxState extends State<commentBox>{
 }
 
 class postBox extends StatefulWidget{
-    Map data;
+  Map data;
   postBox({this.data});
   @override
   _postBoxState createState() => _postBoxState();
@@ -434,48 +431,50 @@ class _postBoxState extends State<postBox>{
 
   getHeight(){
     RenderBox _pBox = _postKey.currentContext.findRenderObject();
-    print(_pBox.size.height);
+    // print(_pBox.size.height);
     pheight = _pBox.size.height;
   }
   @override
   Widget build(BuildContext context){
-    img(){
-      if(widget.data != null){
-        if((widget.data['profileImg'] == null) | (widget.data['profileImg'] == '')){
-          return AssetImage('assets/icons/404.png');
+    img() {
+        if (widget.data != null) {
+          if ((widget.data['image'] == null) |
+              (widget.data['image'] == '') |
+              (widget.data['image'] == 'image path')) {
+            return AssetImage('assets/icons/404.png');
+          } else {
+            return NetworkImage(widget.data['image']);
+          }
         }
-        else{
-          return NetworkImage(widget.data['profileImg']);
-        }
+        return AssetImage('assets/icons/404.png');
       }
-      return AssetImage('assets/icons/404.png');
-    }
+
 
     name(){
       if(widget.data != null){
-        if((widget.data['profileName'] == null) | (widget.data['profileName'] == '')){
+        if((widget.data['username'] == null) | (widget.data['username'] == '')){
           return Text('Null');
         }
         else{
-          return Text(widget.data['profileName']);
+          return Text(widget.data['username']);
         }
       }
       return Text('Null');
     }
     words(){
       if(widget.data != null){
-        if((widget.data['postWord'] == null) | (widget.data['postWord'] == '')){
+        if((widget.data['content'] == null) | (widget.data['content'] == '')){
           return Text('Null');
         }
         else{
-          return Text(widget.data['postWord']);
+          return Text(widget.data['content']);
         }
       }
       return Text('Null');
     }
-    likes(){
+    liked(){
       if(widget.data != null){
-        return widget.data['like'];
+        return widget.data['liked'];
       }
       return false;
     }
@@ -559,11 +558,11 @@ class _postBoxState extends State<postBox>{
                         children: <Widget>[
                           Expanded(
                             flex: 6,
-                            child: favButton(like: likes(),editable: true,)
+                            child: favButton(like: liked(),)
                           ),
                           Expanded(
                             flex: 4,
-                            child: Text('EDIT HERE'),
+                            child: Text((widget.data['likecount']).toString()),
                           )
                         ],
                       ),
@@ -578,9 +577,8 @@ class _postBoxState extends State<postBox>{
                             child: commentButton()
                           ),
                           Expanded(
-                            child:Text('EDIT HERE')
+                            child:Text((widget.data['commentcount']).toString())
                           )
-                          
                         ],
                       )
                     )
@@ -592,7 +590,7 @@ class _postBoxState extends State<postBox>{
           ),
           Container(
             alignment: Alignment.topLeft,
-            child: Text('Comment',style: TextStyle(fontSize: 24),),
+            child: Text('Comment',style: TextStyle(fontSize: 14),),
           )
         ],
       ),
@@ -601,36 +599,62 @@ class _postBoxState extends State<postBox>{
 }
 
 class favButton extends StatefulWidget{
-  favButton({this.like,this.editable});
+  favButton({this.like});
   bool like;
-  bool editable;
   @override
   _favButtonState createState() => _favButtonState();
 }
 
 class _favButtonState extends State<favButton>{
-  bool _pressed = false;
+
   @override
   Widget build(BuildContext context){
+    bool _disabled = false;
     getLike(){
       return widget.like;
     }
     setLike(){
       widget.like = !widget.like;
+      posts.of(context).widget.data['liked'] = !posts.of(context).widget.data['liked'];
     }
-    return IconButton(
-      icon: getLike() ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
-      color:Colors.pink,
-      onPressed: (){
-        if(widget.editable){
-          setState(() {
-            setLike();
-          });
-        }
-      },
+    return Container(
+      child:Row(
+        children:<Widget>[
+          IconButton(
+            icon: getLike() ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
+            color:Colors.pink,
+
+            onPressed: () async {
+              if (_disabled) return; 
+              else {
+                _disabled = true;
+                if(getLike()){
+                  await Database(userId: posts.of(context).widget.userId).removeLike(posts.of(context).widget.data['pid']).whenComplete((){
+                    setState(() {
+                      setLike();
+                      posts.of(context).decreaseLike();
+                    });
+                  });
+                }
+                else {
+                  await Database(userId: posts.of(context).widget.userId).createLike(posts.of(context).widget.data['pid']).whenComplete((){
+                    setState(() {
+                      setLike();
+                      posts.of(context).increaseLike();
+                    });
+                  });
+                }
+                _disabled = false;
+              }
+            },
+          ),
+        ]
+      )
     );
   }
 }
+
+
 class commentButton extends StatefulWidget{
   @override
   _commentButtonState createState() => _commentButtonState();
@@ -647,7 +671,7 @@ class _commentButtonState extends State<commentButton>{
         setState(() {
           // print(post.of(context));
           // print('eiei');
-          post.of(context);
+          posts.of(context);
         });
       },
     );
@@ -710,16 +734,19 @@ class _selfCommentState extends State<selfComment>{
                 // focusColor: Colors.transparent,
                 // border: OutlineInputBorder(borderRadius: BorderRadius.circular(40)),
               ),
-              focusNode: post.of(context).commentNode,
-              controller: post.of(context).commentController,
+              focusNode: posts.of(context).commentNode,
+              controller: posts.of(context).commentController,
             ),
           ),
           GestureDetector(
-            onTap: (){
-              if(post.of(context).commentController.text != ''){
-                post.of(context).addComment(post.of(context).testPost['id'], post.of(context).testUser['userID'],post.of(context).commentController.text );
-                post.of(context).commentController.text = '';
-                post.of(context).scrollController.animateTo(post.of(context).scrollController.position.maxScrollExtent + 100, duration: Duration(milliseconds: 500), curve: Curves.easeInOutExpo);
+            onTap: () async {
+              if(posts.of(context).commentController.text != ''){
+                posts.of(context).addComment(posts.of(context).testPost['pid'], posts.of(context).currentUid,posts.of(context).commentController.text ).whenComplete(()
+                {
+                  posts.of(context).widget.data['commentcount'] +=1;
+                  posts.of(context).commentController.text = '';
+                  posts.of(context).scrollController.animateTo(posts.of(context).scrollController.position.maxScrollExtent + 100, duration: Duration(milliseconds: 500), curve: Curves.easeInOutExpo);
+                });
               }
             },
             child:Container(

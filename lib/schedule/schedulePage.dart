@@ -158,7 +158,9 @@ class _addScheduleState extends State<addSchedule>{
                   value: isNoti, 
                   activeColor: Color(0xFF637470),
                   onChanged: (value){
-                    isNoti = value;
+                    setState(() {
+                      isNoti = value;
+                    });
                   }
                 )
               ],
