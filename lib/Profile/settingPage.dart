@@ -14,6 +14,10 @@ class settingPage extends StatefulWidget {
 
 class _settingPageState extends State<settingPage> {
 
+  bool notification = false, readOnly = true;
+  TextEditingController name = TextEditingController(text: 'Mom name');
+  FocusNode myFocusNode = FocusNode();
+
   signOut() async {
     try {
       await widget.auth.signOut();
@@ -28,6 +32,7 @@ class _settingPageState extends State<settingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -71,11 +76,16 @@ class _settingPageState extends State<settingPage> {
                     width: 8
                   )
                 ),
-                child: Icon(
-                  Icons.person_outline,
-                  color: Color(0xFFFBBBCD),
-                  size: 110,
-                ),
+                child: RawMaterialButton(
+                  onPressed: (){
+                    print('pressed');
+                  },
+                  child: Icon(
+                    Icons.person_outline,
+                    color: Color(0xFFFBBBCD),
+                    size: 110,
+                  ),
+                )
               ),
             ),
             Align(
@@ -83,6 +93,7 @@ class _settingPageState extends State<settingPage> {
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: 150,
+                padding: EdgeInsets.only(left: 28),
                 decoration: BoxDecoration(
                   color: Color(0xFFF89EB9),
                   borderRadius: BorderRadius.circular(24)
@@ -96,7 +107,46 @@ class _settingPageState extends State<settingPage> {
                         color: Color(0xFFFBBBCD),
                         size: 160,
                       ),
-                    )
+                    ),
+                    Align(
+                      alignment: Alignment(-1,-0.2),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 150,
+                            child: TextField(
+                              readOnly: readOnly,
+                              focusNode: myFocusNode,
+                              controller: name,
+                              onEditingComplete: (){
+                                setState(() {
+                                  readOnly = true;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                border: InputBorder.none
+                              ),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ),
+                          IconButton(icon: Icon(Icons.edit), color: Colors.white, onPressed: (){ setState(() { readOnly = false; myFocusNode.requestFocus();});})
+                        ],
+                      )
+                    ),
+                    Align(
+                      alignment: Alignment(-1,0.4),
+                      child: Text(
+                        'YOUR NICKNAME',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14
+                        ),
+                      )
+                    ),
                   ],
                 )
               ),
@@ -106,7 +156,7 @@ class _settingPageState extends State<settingPage> {
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: 100,
-                padding: EdgeInsets.only(right: 25),
+                padding: EdgeInsets.only(right: 25, left: 28),
                 decoration: BoxDecoration(
                   color: Color(0xFFF89EB9),
                   borderRadius: BorderRadius.circular(24)
@@ -120,6 +170,46 @@ class _settingPageState extends State<settingPage> {
                         color: Color(0xFFFBBBCD),
                         size: 100,
                       ),
+                    ),
+                    Align(
+                      alignment: Alignment(0.83,0),
+                      child: Transform.scale(
+                        scale: 1.5,
+                        child: Switch(
+                          value: notification, 
+                          onChanged: (value){
+                            setState(() {
+                              notification = value;
+                            });
+                          },
+                          activeColor: Color(0xFFFE8DAF),
+                          activeTrackColor: Color(0xFFFFFBBBCD),
+                          inactiveTrackColor: Color(0xFFFFE4EB),
+                          inactiveThumbColor: Color(0xFFFE8DAF),
+                          materialTapTargetSize: MaterialTapTargetSize.padded,
+                        )
+                      )
+                    ),
+                    Align(
+                      alignment: Alignment(-1,-0.4),
+                      child: Text(
+                        'Notification',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold
+                        ),
+                      )
+                    ),
+                    Align(
+                      alignment: Alignment(-1,0.4),
+                      child: Text(
+                        'NOTIFICATION ON SCREEN',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14
+                        ),
+                      )
                     )
                   ],
                 )

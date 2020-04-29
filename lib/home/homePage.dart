@@ -10,6 +10,7 @@ import 'package:momandkid/kids/healthMain.dart';
 import 'package:momandkid/Article/mainArticle.dart';
 import 'package:momandkid/schedule/mainSchedulePage.dart';
 import 'package:momandkid/kids/DataTest.dart';
+import 'package:momandkid/post/createPost.dart';
 //service
 import 'package:momandkid/services/auth.dart';
 
@@ -280,7 +281,12 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Color(0xFF76C5BA),
         child: Icon(Icons.edit,size: 30.0,),
         onPressed: (){
-          
+          Navigator.push(
+              context,
+              PageRouteTransition(
+                animationType: AnimationType.slide_up,
+                builder: (context) => createPost())
+              );
         }
         ),
       ),
