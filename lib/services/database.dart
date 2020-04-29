@@ -243,6 +243,13 @@ class Database extends DatabaseService {
   }
 
   Future removeSchedule(String sid) async {
-    return await scheduleCollection.document(sid).delete();
+    return await scheduleCollection.document(sid).delete().whenComplete(() => removeScheduleFromUidSchedule(sid));
+  }
+
+  Future removeScheduleFromUidSchedule(String sid) async {
+    return await uidscheduleCollection.document(userId).updateData({
+      sid : FieldValue.delete()
+      }
+    );
   }
 }
