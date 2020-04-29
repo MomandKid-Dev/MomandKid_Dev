@@ -11,6 +11,7 @@ class mainPostMainScreen extends StatefulWidget {
   Map data;
   String userId;
   mainPostMainScreen({this.child,this.data,this.userId});
+
   @override
   _mainScreenState createState() => _mainScreenState();
   static _mainScreenState of(BuildContext context) =>

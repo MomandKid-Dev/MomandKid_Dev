@@ -12,12 +12,13 @@ import 'package:momandkid/Article/mainArticle.dart';
 import 'package:momandkid/schedule/mainSchedulePage.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'package:quiver/iterables.dart';
+
 //service
 import 'package:momandkid/services/auth.dart';
-
 import '../post/postMain.dart';
 import '../services/database.dart';
 import '../shared/style.dart';
+import 'package:momandkid/post/createPost.dart';
 
 
 
@@ -108,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   @override
   Widget build(BuildContext context) {
+
 
     List<Map> _postFromFirebasePost(AsyncSnapshot posts,AsyncSnapshot users){
     List<Post> postss = [];
@@ -299,6 +301,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(child: storyMain()),
             Container(child: mainKidScreen()),
             Container(child: mainSchedule(userId: widget.userId)),
+
           ],
         ),
       ),
@@ -308,7 +311,12 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Color(0xFF76C5BA),
         child: Icon(Icons.edit,size: 30.0,),
         onPressed: (){
-          
+          Navigator.push(
+              context,
+              PageRouteTransition(
+                animationType: AnimationType.slide_up,
+                builder: (context) => createPost())
+              );
         }
         ),
       ),
