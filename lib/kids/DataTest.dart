@@ -192,7 +192,7 @@ class dataTest {
   }
 
   getKids() {
-    print('call getKid: $kiddo');
+    //print('call getKid: $kiddo');
     return kiddo;
   }
 
