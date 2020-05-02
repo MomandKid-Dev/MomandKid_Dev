@@ -83,7 +83,7 @@ class _mainScheduleState extends State<mainSchedule> {
         setState(() {
           dateTimeSche.add(information[5]);
           dateTimeSche.sort((a,b) => a.compareTo(b));
-          int addindex = _timeSche.indexOf(information[6]);
+          int addindex = dateTimeSche.indexOf(information[5]);
           scheduleIds.insert(addindex, scheduleId.documentID);
           dataTitleSche.insert(addindex, information[0]);
           notiSche.insert(addindex, information[1]);
@@ -91,8 +91,8 @@ class _mainScheduleState extends State<mainSchedule> {
           dataDesSche.insert(addindex, information[3]);
           colorBGSche.insert(addindex, information[4]);
           _timeSche.insert(addindex, information[6]);
-          //scheduleIds = []; dataTitleSche = []; colorSche = []; dataDesSche = []; colorBGSche =[]; notiSche = []; dateTimeSche = []; _timeSche = [];
-          //loadSchedule();
+          // scheduleIds = []; dataTitleSche = []; colorSche = []; dataDesSche = []; colorBGSche =[]; notiSche = []; dateTimeSche = []; _timeSche = [];
+          // loadSchedule();
         });
       });
       
