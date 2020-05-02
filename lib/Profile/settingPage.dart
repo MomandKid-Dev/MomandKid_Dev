@@ -152,7 +152,7 @@ class _settingPageState extends State<settingPage> {
               ),
             ),
             Align(
-              alignment: Alignment(0, 0.12),
+              alignment: Alignment(0, 0.2),
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: 100,
