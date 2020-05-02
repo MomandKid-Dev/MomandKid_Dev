@@ -129,7 +129,7 @@ class _mainScheduleState extends State<mainSchedule> {
                               PageRouteTransition(
                                 fullscreenDialog: true,
                                 animationType: AnimationType.slide_up,
-                                builder: (context) => calendarSchedule())
+                                builder: (context) => calendarSchedule(userId: widget.userId))
                             );
                           },
                           child: new Icon(
@@ -209,8 +209,9 @@ class _mainScheduleState extends State<mainSchedule> {
                     child: new ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: dataTitleSche.length,
+                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width/6.6),
                         itemBuilder: (BuildContext ctxt, int index) {
-                            return _selectedDate.day == dateTimeSche[index].day ? Container(
+                            return _selectedDate.day == dateTimeSche[index].day && _selectedDate.month == dateTimeSche[index].month ? Container(
                               height: 115,
                               child: Card(
                                 color: colorBGSche[index],
@@ -254,7 +255,6 @@ class _mainScheduleState extends State<mainSchedule> {
                                         ),
                                       Spacer(flex: 18,),
                                       Switch(
-                                        
                                         value: notiSche[index], 
                                         activeColor: colorSche[index],
                                         onChanged: (value) async {
