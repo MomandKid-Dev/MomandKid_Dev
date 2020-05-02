@@ -81,14 +81,16 @@ class _mainScheduleState extends State<mainSchedule> {
       await Database(userId: widget.userId).createSchedule(information[0], information[3], information[5], listColor.indexOf(information[2]), information[1]).then((scheduleId) {
         if (scheduleId == null) return;
         setState(() {
-          scheduleIds.add(scheduleId.documentID);
-          dataTitleSche.add(information[0]);
-          notiSche.add(information[1]);
-          colorSche.add(information[2]);
-          dataDesSche.add(information[3]);
-          colorBGSche.add(information[4]);
-          dateTimeSche.add(information[5]);
-          _timeSche.add(information[6]);
+          // scheduleIds.add(scheduleId.documentID);
+          // dataTitleSche.add(information[0]);
+          // notiSche.add(information[1]);
+          // colorSche.add(information[2]);
+          // dataDesSche.add(information[3]);
+          // colorBGSche.add(information[4]);
+          // dateTimeSche.add(information[5]);
+          // _timeSche.add(information[6]);
+          scheduleIds = []; dataTitleSche = []; colorSche = []; dataDesSche = []; colorBGSche =[]; notiSche = []; dateTimeSche = []; _timeSche = [];
+          loadSchedule();
         });
       });
       
@@ -129,7 +131,7 @@ class _mainScheduleState extends State<mainSchedule> {
                               PageRouteTransition(
                                 fullscreenDialog: true,
                                 animationType: AnimationType.slide_up,
-                                builder: (context) => calendarSchedule())
+                                builder: (context) => calendarSchedule(userId: widget.userId))
                             );
                           },
                           child: new Icon(
@@ -205,12 +207,13 @@ class _mainScheduleState extends State<mainSchedule> {
                     ],
                   ),
                   _showsche ? SizedBox(
-                    height: 300,
+                    height: MediaQuery.of(context).size.height - 450,
                     child: new ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: dataTitleSche.length,
+                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.width/6.6),
                         itemBuilder: (BuildContext ctxt, int index) {
-                            return _selectedDate.day == dateTimeSche[index].day ? Container(
+                            return _selectedDate.day == dateTimeSche[index].day && _selectedDate.month == dateTimeSche[index].month ? Container(
                               height: 115,
                               child: Card(
                                 color: colorBGSche[index],
@@ -254,7 +257,6 @@ class _mainScheduleState extends State<mainSchedule> {
                                         ),
                                       Spacer(flex: 18,),
                                       Switch(
-                                        
                                         value: notiSche[index], 
                                         activeColor: colorSche[index],
                                         onChanged: (value) async {
