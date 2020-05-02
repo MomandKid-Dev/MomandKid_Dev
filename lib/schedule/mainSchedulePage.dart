@@ -74,23 +74,25 @@ class _mainScheduleState extends State<mainSchedule> {
                                   animationType: AnimationType.slide_up,
                                   builder: (context) => addSchedule())
                               );
-    
+    if (information == null) return;
     if(information[0].length > 0)
     {
       //print(information);
       await Database(userId: widget.userId).createSchedule(information[0], information[3], information[5], listColor.indexOf(information[2]), information[1]).then((scheduleId) {
         if (scheduleId == null) return;
         setState(() {
-          // scheduleIds.add(scheduleId.documentID);
-          // dataTitleSche.add(information[0]);
-          // notiSche.add(information[1]);
-          // colorSche.add(information[2]);
-          // dataDesSche.add(information[3]);
-          // colorBGSche.add(information[4]);
-          // dateTimeSche.add(information[5]);
-          // _timeSche.add(information[6]);
-          scheduleIds = []; dataTitleSche = []; colorSche = []; dataDesSche = []; colorBGSche =[]; notiSche = []; dateTimeSche = []; _timeSche = [];
-          loadSchedule();
+          _timeSche.add(information[6]);
+          _timeSche.sort((a,b) => a.compareTo(b));
+          int addindex = _timeSche.indexOf(information[6]);
+          scheduleIds.insert(addindex, scheduleId.documentID);
+          dataTitleSche.insert(addindex, information[0]);
+          notiSche.insert(addindex, information[1]);
+          colorSche.insert(addindex, information[2]);
+          dataDesSche.insert(addindex, information[3]);
+          colorBGSche.insert(addindex, information[4]);
+          dateTimeSche.insert(addindex, information[5]);
+          //scheduleIds = []; dataTitleSche = []; colorSche = []; dataDesSche = []; colorBGSche =[]; notiSche = []; dateTimeSche = []; _timeSche = [];
+          //loadSchedule();
         });
       });
       
