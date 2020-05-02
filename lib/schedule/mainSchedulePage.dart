@@ -81,8 +81,8 @@ class _mainScheduleState extends State<mainSchedule> {
       await Database(userId: widget.userId).createSchedule(information[0], information[3], information[5], listColor.indexOf(information[2]), information[1]).then((scheduleId) {
         if (scheduleId == null) return;
         setState(() {
-          _timeSche.add(information[6]);
-          _timeSche.sort((a,b) => a.compareTo(b));
+          dateTimeSche.add(information[5]);
+          dateTimeSche.sort((a,b) => a.compareTo(b));
           int addindex = _timeSche.indexOf(information[6]);
           scheduleIds.insert(addindex, scheduleId.documentID);
           dataTitleSche.insert(addindex, information[0]);
@@ -90,7 +90,7 @@ class _mainScheduleState extends State<mainSchedule> {
           colorSche.insert(addindex, information[2]);
           dataDesSche.insert(addindex, information[3]);
           colorBGSche.insert(addindex, information[4]);
-          dateTimeSche.insert(addindex, information[5]);
+          _timeSche.insert(addindex, information[6]);
           //scheduleIds = []; dataTitleSche = []; colorSche = []; dataDesSche = []; colorBGSche =[]; notiSche = []; dateTimeSche = []; _timeSche = [];
           //loadSchedule();
         });
