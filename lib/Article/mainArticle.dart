@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:async';
 class mainArticle extends StatefulWidget {
   @override
   _mainArticleState createState() => _mainArticleState();
@@ -15,8 +15,6 @@ class _mainArticleState extends State<mainArticle> {
 
   @override
   Widget build(BuildContext context) {
-    print(all.length);
-    
     return Container(
       color: Colors.white,
       child: ListView(
@@ -55,7 +53,7 @@ class _mainArticleState extends State<mainArticle> {
                 Container(
                   child: Row(
                     children: <Widget>[
-                      _buildInfoCard('3', 'NO', 'All')
+                      _buildInfoCard('3', 'assets/Pictures/grai.png', 'All')
                     ],
                   )
                 ),
@@ -114,6 +112,7 @@ class _mainArticleState extends State<mainArticle> {
           if(selectedCard == '0')
             for (var i = 0; i < listDrink.length; i++) 
               Image.asset(listDrink[i])
+            // Image.asset('assets/article/drink/เครื่องดื่มชูกำลัง.png')
           else if(selectedCard == '1')
             for (var i = 0; i < listMeat.length; i++) 
               Image.asset(listMeat[i])

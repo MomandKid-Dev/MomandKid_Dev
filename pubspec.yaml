@@ -57,12 +57,6 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/plate1.png
-    - assets/plate2.png
-    - assets/plate3.png
-    - assets/plate4.png
-    - assets/plate5.png
-    - assets/insta_logo.png
     - assets/Pictures/grai.png
     - assets/Pictures/veg.png
     - assets/Pictures/fru.png

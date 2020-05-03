@@ -775,7 +775,7 @@ class _childrenListState extends State<childrenList> {
                     Hero(
                       tag: 'child${widget.index}',
                       child: circleImg(
-                        img: '037-baby.png',
+                        img: AssetImage('assets/icons/037-baby.png'),
                         width: 50,
                         height: 50,
                       ),
