@@ -331,7 +331,7 @@ class _editState extends State<editKidData> {
                       Hero(
                         tag: 'child${widget.index}',
                         child: circleImg(
-                          img: '037-baby.png',
+                          img: AssetImage('assets/icons/037-baby.png'),
                           height: 150,
                           width: 150,
                         ),

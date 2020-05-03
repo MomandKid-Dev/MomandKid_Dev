@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:async';
 class mainArticle extends StatefulWidget {
   @override
   _mainArticleState createState() => _mainArticleState();
@@ -7,6 +7,10 @@ class mainArticle extends StatefulWidget {
 
 class _mainArticleState extends State<mainArticle> {
 
+  static List listDrink = ['assets/article/drink/01.png', 'assets/article/drink/02.png', 'assets/article/drink/03.png', 'assets/article/drink/04.png', 'assets/article/drink/05.png', 'assets/article/drink/06.png', 'assets/article/drink/07.png'];
+  static List listMeat = ['assets/article/meat/01.png', 'assets/article/meat/02.png', 'assets/article/meat/03.png', 'assets/article/meat/04.png', 'assets/article/meat/05.png', 'assets/article/meat/06.png', 'assets/article/meat/07.png', 'assets/article/meat/08.png', 'assets/article/meat/09.png'];
+  static List listMilk = ['assets/article/milk/01.png', 'assets/article/milk/02.png', 'assets/article/milk/03.png', 'assets/article/milk/04.png', 'assets/article/milk/05.png', 'assets/article/milk/06.png'];
+  List all = listDrink + listMeat + listMilk;
   var selectedCard = '0';
 
   @override
@@ -16,27 +20,6 @@ class _mainArticleState extends State<mainArticle> {
       child: ListView(
         padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),
         children: <Widget>[
-          Container(
-            height: 50,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Color(0xFFF8FAFB)
-            ),
-            
-            child: TextField(
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                hintText: "Search",
-                filled: false,
-                contentPadding: EdgeInsets.only(top: 15.0),
-                fillColor: Color(0xFFF8FAFB),
-                prefixIcon: Icon(Icons.search,size: 35.0,),
-                border: InputBorder.none
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
           Container(
             height: 40.0,
             child: ListView(
@@ -70,7 +53,7 @@ class _mainArticleState extends State<mainArticle> {
                 Container(
                   child: Row(
                     children: <Widget>[
-                      _buildInfoCard('3', 'NO', 'All')
+                      _buildInfoCard('3', 'assets/Pictures/grai.png', 'All')
                     ],
                   )
                 ),
@@ -78,7 +61,6 @@ class _mainArticleState extends State<mainArticle> {
                 Container(
                   child: Row(
                     children: <Widget>[
-                      
                       _buildInfoCard('0', 'assets/Pictures/grai.png', 'GRAINS'),
                     ],
                   )
@@ -123,33 +105,22 @@ class _mainArticleState extends State<mainArticle> {
                     color: Color(0xFF131048)
                   ),
                 ),
-                Spacer(flex: 1),
-                FlatButton(
-                  padding: EdgeInsets.only(left:20),
-                  onPressed: (){
-                    
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        "view all",
-                        style: TextStyle(
-                          color: Color(0xFFACB2B9),
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20,
-                        color: Color(0xFFACB2B9),
-                        )
-                    ],
-                  ),
-                )
-                
               ],
             ),
           ),
+          SizedBox(height: 10,),
+          if(selectedCard == '0')
+            for (var i = 0; i < listDrink.length; i++) 
+              Image.asset(listDrink[i])
+          else if(selectedCard == '1')
+            for (var i = 0; i < listMeat.length; i++) 
+              Image.asset(listMeat[i])
+          else if(selectedCard == '2')
+            for (var i = 0; i < listMilk.length; i++) 
+              Image.asset(listMilk[i])
+          else
+            for (var i = 0; i < all.length; i++) 
+              Image.asset(all[i])
         ],
       ),
     );
