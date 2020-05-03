@@ -1,229 +1,469 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/style.dart';
 import 'DataTest.dart';
 
-class healthCard extends StatefulWidget{
-  healthCard({this.data,this.type, this.list});
+DateTime selectedDated =
+    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+var valued;
+
+class healthCard extends StatefulWidget {
+  healthCard({this.data, this.type, this.list});
   dataTest data;
+  DateTime date;
   String type;
-  Map<dynamic,dynamic> list;
+  Map<dynamic, dynamic> list;
   @override
   _healthCardState createState() => _healthCardState();
 }
 
-class _healthCardState extends State<healthCard>{
-  @override
-  Widget build(BuildContext context){
+class _healthCardState extends State<healthCard> {
+  updateVaccine(String logId, bool check) {
+    if (check) {
+      Database().updateVaccineLog(logId, 1);
+      widget.list['stat'] = 1;
+    } else {
+      Database().updateVaccineLog(logId, 0);
+      widget.list['stat'] = 0;
+    }
+  }
 
-    var cardHeight = 0;
-    if(widget.type == 'evo'){
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.date =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var trashIcon;
+    if (widget.type == 'vac' || widget.type == 'evo') {
+      trashIcon = Icon(
+        Icons.highlight_off,
+        size: 80,
+        color: Color(0xff131048).withOpacity(0.6),
+      );
+    } else {
+      trashIcon = Icon(
+        Icons.delete_outline,
+        size: 80,
+        color: Color(0xff131048).withOpacity(0.6),
+      );
+    }
+    var cardHeight = 0.0;
+    if (widget.type == 'evo') {
+      cardHeight = 1;
+    } else if (widget.type == 'vac') {
       cardHeight = 1;
     }
-    else if(widget.type == 'vac'){
-      cardHeight = 1;
-    }
-    
+    callback(var1, var2) {}
     // dataTest card = new dataTest(widget.type);
     dataTest card = widget.data;
     // print('This is ${card.getData(widget.type)[0][0]['a'].length}');
     bool exit = false;
     // test card = new test(widget.type);
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body:Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color.fromRGBO(255, 226, 241, 1),Color.fromRGBO(233, 242, 255, 1)]
-          )
-        ),
-
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Column(
+        resizeToAvoidBottomPadding: false,
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                Color.fromRGBO(255, 226, 241, 1),
+                Color.fromRGBO(233, 242, 255, 1)
+              ])),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                GestureDetector(
-                  onTapDown: (TapDownDetails details){
-                    exit = true;
-                  },
-                  onTapCancel: (){
-                    if(exit){
-                      Navigator.pop(context);
-                    }
-                  },
-                child:Container(
-                  // height: (120*test().getKeys().length).toDouble(),
-                  height:(220 + 56 * (2 + cardHeight)).toDouble(),
-                  padding: EdgeInsets.only(top:20,left: 20, right: 20),
-                  width: MediaQuery.of(context).size.width/1.13,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                    color: Colors.white,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Image.asset(card.getImg(widget.type),height: 56,width: 56,),
-                          Container(
-                            child:Text(card.getTitle(widget.type),style: TextStyle(fontFamily: 'Segoe UI',fontSize: 20,color: Color(0xff131048),fontWeight: FontWeight.normal),),
-                            padding: EdgeInsets.only(bottom: 30), 
-                          ),
-                          
-                          Text(card.getVal(widget.type),style: TextStyle(fontFamily: 'Segoe UI',fontSize: 30,color: Color(0xff131048),fontWeight: FontWeight.w700),),
-                          Container(
-                            child:Text(card.getSubval(widget.type),style: TextStyle(fontFamily: 'Segoe UI',fontSize: 14,color: Color(0xff131048),fontWeight: FontWeight.normal),),
-                            padding: EdgeInsets.only(bottom: 20),
-                          ),
-                          table(context,widget.type,card, widget.list)
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 30),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        flex: 4,
-                        child: SizedBox(),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: RawMaterialButton(
-                          
-                          child: Container(
-                            child: Image.asset('assets/icons/check-circle.png'),
-                          ),
-                          onPressed: (){
-                            widget.data.setDatasStat(widget.list['id'], widget.list['type']);
-                            Navigator.pop(context);
-                          },
+                Column(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTapDown: (TapDownDetails details) {
+                        exit = true;
+                      },
+                      onTapCancel: () {
+                        if (exit) {
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Container(
+                        // height: (120*test().getKeys().length).toDouble(),
+                        height: (220 + 56 * (2 + cardHeight)).toDouble(),
+                        padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                        width: MediaQuery.of(context).size.width / 1.13,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                Image.asset(
+                                  card.getImg(widget.type),
+                                  height: 56,
+                                  width: 56,
+                                ),
+                                Container(
+                                  // alignment: Alignment.center,
+                                  child: Text(
+                                    card.getTitle(widget.type),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontFamily: 'Segoe UI',
+                                        fontSize: 20,
+                                        color: Color(0xff131048),
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  padding: EdgeInsets.only(bottom: 30),
+                                ),
+                                Text(
+                                  widget.list['val'].toString(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontFamily: 'Segoe UI',
+                                      fontSize: 30,
+                                      color: Color(0xff131048),
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                Container(
+                                  child: Text(
+                                    card.getSubval(widget.type),
+                                    style: TextStyle(
+                                        fontFamily: 'Segoe UI',
+                                        fontSize: 20,
+                                        color: Color(0xff131048),
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  padding: EdgeInsets.only(bottom: 20),
+                                ),
+                                table(
+                                  type: widget.type,
+                                  card: card,
+                                  list: widget.list,
+                                  date: widget.date,
+                                  callbacks: callback,
+                                )
+                              ],
+                            )
+                          ],
                         ),
                       ),
-                      Expanded(
-                        flex: 4,
-                        child: Container(
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.only(left:50,right:20),
-                          child:RawMaterialButton(
-                            child: Container(
-                              child: Image.asset('assets/icons/trash-alt.png'),
-                            ),
-                            onPressed: (){
-                              widget.data.setDatas(widget.list['id'], widget.list['type']);
-                              Navigator.pop(context);
-                            },
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 30),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 4,
+                            child: SizedBox(),
                           ),
-                        )
-                      )
-                    ],
-                  ),
+                          Expanded(
+                            flex: 2,
+                            child: RawMaterialButton(
+                              child: Container(
+                                  child: Icon(
+                                Icons.check_circle_outline,
+                                size: 100,
+                                color: Color(0xff131048).withOpacity(0.6),
+                              )),
+                              onPressed: () {
+                                updateVaccine(widget.list['logId'], true);
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                          Expanded(
+                              flex: 4,
+                              child: Container(
+                                alignment: Alignment.centerRight,
+                                padding: EdgeInsets.only(left: 50, right: 20),
+                                child: RawMaterialButton(
+                                  child: Container(child: trashIcon),
+                                  onPressed: () {
+                                    if (widget.type == 'vac' ||
+                                        widget.type == 'evo')
+                                      updateVaccine(
+                                          widget.list['logId'], false);
+                                    else
+                                      widget.data.setDatas(widget.list['id'],
+                                          widget.list['type']);
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ))
+                        ],
+                      ),
+                    )
+                  ],
                 )
-                
-              ],
-            )
-          ]
-        ),
-      )
-    );
+              ]),
+        ));
   }
 }
 
-table(BuildContext context,String type, dataTest card, Map<dynamic,dynamic> list){
+class table extends StatefulWidget {
+  table({this.type, this.card, this.list, this.date, this.callbacks});
+  String type;
+  dataTest card;
+  // Function(Map) callback;
+  Map<dynamic, dynamic> list;
+  Function(dynamic, DateTime) callbacks;
+  DateTime date;
+  @override
+  _tableState createState() => _tableState();
+}
+
+class _tableState extends State<table> {
   // print(list);
-  List temp = new List();
-  var tableList;
-  if(list != null){
-    
-    if( (type == 'evo'.toString()) | (type == 'vac'.toString())){
-    tableList = [
-      tab('ช่วงอายุ',list['range'],),
-      Divider(height: 30,),
-      tab(card.getTitle(type),list['val']),
-      Divider(height: 30,),
-      tab('Date',toDate(list['Date']))
-    ];
-    }
-    else{
-      tableList =[
-        tab(card.getTitle(type),list['val']),
-        Divider(height: 30,),
-        tab('Date',toDate(list['Date']))
+  callback(newVal, newDate) {
+    setState(() {
+      print(newVal.toString() + ' ' + newDate.toString());
+      // widget.date = newDate;
+      widget.callbacks(newVal, newDate);
+    });
+  }
+
+  Widget build(BuildContext cotext) {
+    List temp = new List();
+    var tableList;
+    if (widget.list != null) {
+      if ((widget.type == 'evo'.toString())) {
+        tableList = [
+          tab(
+            keys: 'ช่วงอายุ',
+            value: widget.list['range'],
+            date: widget.date,
+            callback: callback,
+          ),
+          Divider(
+            height: 30,
+          ),
+          tab(
+            keys: widget.card.getTitle(widget.type),
+            value: widget.list['val'].toString(),
+            date: widget.date,
+            callback: callback,
+          ),
+          Divider(
+            height: 30,
+          ),
+          tab(
+            keys: 'Date',
+            value: toDate(widget.list['date'].toDate().toUtc()),
+            date: widget.date,
+            callback: callback,
+          )
+        ];
+      } else if (widget.type == 'vac') {
+        tableList = [
+          tab(
+            keys: 'ช่วงอายุ',
+            value: widget.list['subval'],
+            date: widget.date,
+            callback: callback,
+          ),
+          Divider(
+            height: 30,
+          ),
+          tab(
+            keys: 'Date',
+            value: toDate(widget.list['date'].toDate()),
+            date: widget.date,
+            callback: callback,
+          )
+        ];
+      } else {
+        tableList = [
+          tab(
+            keys: widget.card.getTitle(widget.type),
+            value: widget.list['val'].toString(),
+            date: widget.date,
+            callback: callback,
+          ),
+          Divider(
+            height: 30,
+          ),
+          tab(
+            keys: 'Date',
+            value: toDate(widget.list['date'].toDate().toUtc()),
+            date: widget.date,
+            callback: callback,
+          )
+        ];
+      }
+    } else {
+      tableList = [
+        tab(
+          keys: widget.card.getTitle(widget.type),
+          value: null,
+          date: widget.date,
+          callback: callback,
+        ),
+        Divider(
+          height: 30,
+        ),
+        tab(
+          keys: 'Date',
+          value: null,
+          date: widget.date,
+          callback: callback,
+        )
       ];
     }
+
+    // print(card.getData()[0]['a'].map((e)=>print(e.keys)));
+    // print(card.getData()[0]['a'].forEach((a,b)=>print(a,b)));
+    // print(card.getData()[0]['a'].forEach((k,v)=>print(k)));
+    // print(list['val']);
+    // print(list['title']);
+    Widget tables() => Column(
+        // children: list.map((e)=> tab())
+
+        //children:<Widget>[((e)=> tab(e,list['a'][e],temp.length,temp.indexOf(e))).toList()],
+        children: tableList
+        // children: card.getData()[0]['a'].forEach((k)=>tab('a','a',0,0)).toList(),
+        // children: ((card.getData()[0])['a']).map<Widget>((e)=>tab(e,'a',0,0)).toList(),
+        // children: (card.getData()[0])['a'].map((e)=>tab(e['title'],e['val'],e.length,i)).toList(),
+        );
+    return tables();
   }
-  else{
-    tableList =[
-      tab(card.getTitle(type),null),
-      Divider(height: 30,),
-      tab('Date',null)
-    ];
-  }
-  
-  
-  
-  // print(card.getData()[0]['a'].map((e)=>print(e.keys)));
-  // print(card.getData()[0]['a'].forEach((a,b)=>print(a,b)));
-  // print(card.getData()[0]['a'].forEach((k,v)=>print(k)));
-  // print(list['val']);
-  // print(list['title']);
-  Widget tables() => Column(
-    // children: list.map((e)=> tab())
-    
-    //children:<Widget>[((e)=> tab(e,list['a'][e],temp.length,temp.indexOf(e))).toList()],
-    children: tableList
-    // children: card.getData()[0]['a'].forEach((k)=>tab('a','a',0,0)).toList(),
-    // children: ((card.getData()[0])['a']).map<Widget>((e)=>tab(e,'a',0,0)).toList(),
-    // children: (card.getData()[0])['a'].map((e)=>tab(e['title'],e['val'],e.length,i)).toList(),
-  );
-  return tables();
 }
 
-Widget tab(String key, String value) => new Container(
-  // padding: EdgeInsets.only(top:16,bottom: 16),
-  decoration: BoxDecoration(
-    // border: size == index + 1 ? Border() : Border(bottom: BorderSide(
-    //   color: Color(0xff8988A2),
-    //   width: 0.5
-    // )) ,
-  ),
-  child:Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: <Widget>[
-      Text(key,style:TextStyle(fontSize: 20,color: Color(0xff131048))),
-      value == null ? 
-      Container(
-        width: 100,
-        child:TextField(
-          
-        )
-      ):
-      Text(value,textAlign: TextAlign.right,style: TextStyle(fontSize: 20,color: Color(0xff625BD4))),
+class tab extends StatefulWidget {
+  tab({this.keys, this.value, this.date, this.type, this.callback});
+  String keys, value, type;
+  DateTime date;
+  DateTime selectedDate = DateTime.now();
+  Function(dynamic, DateTime) callback;
 
-      // Expanded(
-      //   flex: 4,
-      //   child: Container(
-          
-      //     child:Text(key,style: TextStyle(fontSize: 20,color: Color(0xff131048)),
-      //     ),
-      //   ),
-      // ),
-      // Expanded(
-      //   flex: 6,
-      //   child: Container(
-      //     child:Text(value,textAlign: TextAlign.right,style: TextStyle(fontSize: 20,color: Color(0xff625BD4))),
-      //   )
-      // )
-    ],
-  )
-);
+  @override
+  _tabState createState() => _tabState();
+}
+
+class _tabState extends State<tab> {
+  int day, mon, year;
+
+  // DateTime selectedDate;
+  TextEditingController textController;
+  var temp;
+  List month = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    textController = new TextEditingController();
+    if (widget.date == null) {
+      widget.date = DateTime.now();
+    }
+    day = widget.date.day;
+    mon = widget.date.month;
+    year = widget.date.year;
+    widget.selectedDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    valued = textController.text;
+    // temp = '';
+  }
+
+  setVal(var val) {
+    setState(() {
+      valued = val;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        // padding: EdgeInsets.only(top:16,bottom: 16),
+        decoration: BoxDecoration(
+            // border: size == index + 1 ? Border() : Border(bottom: BorderSide(
+            //   color: Color(0xff8988A2),
+            //   width: 0.5
+            // )) ,
+            ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(widget.keys,
+                style: TextStyle(fontSize: 20, color: Color(0xff131048))),
+            widget.value == null
+                ? Container(
+                    width: 100,
+                    child: widget.keys == 'Date'
+                        ? GestureDetector(
+                            onTap: () {
+                              showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime(year, mon, day),
+                                      firstDate:
+                                          DateTime(DateTime.now().year - 1),
+                                      lastDate: DateTime.now())
+                                  .then((newDate) {
+                                setState(() {
+                                  day = newDate.day;
+                                  mon = newDate.month;
+                                  year = newDate.year;
+                                  selectedDated = newDate;
+                                  temp = newDate.month;
+                                  // print("Date : ${newDate.day}" );
+                                  widget.callback(valued, selectedDated);
+                                });
+                              });
+                            },
+                            child: Text('${day.toString()}' +
+                                ' ${month[mon - 1]} ' +
+                                '${year.toString()}'))
+                        : TextFormField(
+                            controller: textController,
+                            onChanged: (text) {
+                              setVal(text);
+                              print(day);
+                              setState(() {
+                                widget.callback(valued, selectedDated);
+                              });
+                            },
+                          ))
+                : Text(widget.value,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(fontSize: 20, color: Color(0xff625BD4))),
+
+            // Expanded(
+            //   flex: 4,
+            //   child: Container(
+
+            //     child:Text(key,style: TextStyle(fontSize: 20,color: Color(0xff131048)),
+            //     ),
+            //   ),
+            // ),
+            // Expanded(
+            //   flex: 6,
+            //   child: Container(
+            //     child:Text(value,textAlign: TextAlign.right,style: TextStyle(fontSize: 20,color: Color(0xff625BD4))),
+            //   )
+            // )
+          ],
+        ));
+  }
+}
 // Row(
 //         children: <Widget>[
 //           Expanded(
@@ -237,151 +477,389 @@ Widget tab(String key, String value) => new Container(
 //         ],
 //       ),
 
-toDate(String date){
+toDate(DateTime date) {
   String newDate = '';
-  List month = ['January','February','March','May','June','July','August','September','October','November','December'];
-  newDate += date.substring(0,2);
+  List month = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  newDate += date.day.toString();
   newDate += ' ';
-  newDate += month[int.parse(date.substring(2,3))];
+  newDate += month[date.month];
   newDate += ' ';
-  newDate += date.substring(4,8);
+  newDate += date.year.toString();
   return newDate;
 }
 
-class editCard extends StatefulWidget{
-  editCard({this.data,this.type});
+class editCard extends StatefulWidget {
+  editCard({this.data, this.type, this.userId});
   dataTest data;
   String type;
-  @override 
+  String userId;
+  @override
   _editCardState createState() => _editCardState();
 }
 
-class _editCardState extends State<editCard>{
-  
-  @override 
-  Widget build(BuildContext context){
+class _editCardState extends State<editCard> {
+  DateTime date;
+  DateTime selectedDate;
+  var value;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    date = DateTime.now();
+    selectedDated =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  }
+
+  callback(newVal, newDate) {
+    setState(() {
+      selectedDate = newDate;
+      value = newVal;
+    });
+  }
+
+  createHeight(dynamic value, DateTime dateTime, String babyId, dynamic subVal,
+      dynamic age) async {
+    dynamic logId;
+    // create height log on firebase
+    logId = await Database().createHeightLog(
+        double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal, age);
+    // create hieght log on device (datas)
+    addHeight(double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal,
+        age, logId);
+
+    dynamic oldDate =
+        widget.data.getData('height')[0][0]['date'].millisecondsSinceEpoch;
+    if (oldDate == Timestamp.fromDate(dateTime).millisecondsSinceEpoch) {
+      // update on firebase
+      Database().updateHeight(double.parse(value), babyId);
+      // update on device (kiddo)
+      widget.data.getSelectedKid()['height'] = double.parse(value);
+    }
+  }
+
+  addHeight(double value, Timestamp dateTime, String babyId, dynamic subVal,
+      dynamic age, dynamic logId) {
+    widget.data.datas.add({
+      'logId': logId,
+      'type': 'height',
+      'val': value,
+      'subval': subVal,
+      'date': dateTime,
+      'year': age.years,
+      'month': age.months,
+      'day': age.days
+    });
+  }
+
+  createWeight(dynamic value, DateTime dateTime, String babyId, dynamic subVal,
+      dynamic age) async {
+    dynamic logId;
+    // create weight log on firebase
+    logId = await Database().createWeightLog(
+        double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal, age);
+    // create wieght log on device (datas)
+    addWeight(double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal,
+        age, logId);
+
+    dynamic oldDate =
+        widget.data.getData('weight')[0][0]['date'].millisecondsSinceEpoch;
+    if (oldDate == Timestamp.fromDate(dateTime).millisecondsSinceEpoch) {
+      // update on firebase
+      Database().updateWeight(double.parse(value), babyId);
+      // update on divice (kiddo)
+      widget.data.getSelectedKid()['weight'] = double.parse(value);
+    }
+  }
+
+  addWeight(double value, Timestamp dateTime, String babyId, dynamic subVal,
+      dynamic age, dynamic logId) {
+    widget.data.datas.add({
+      'logId': logId,
+      'type': 'weight',
+      'val': value,
+      'subval': subVal,
+      'date': dateTime,
+      'year': age.years,
+      'month': age.months,
+      'day': age.days
+    });
+  }
+
+  createMedicine(dynamic value, DateTime dateTime, String babyId,
+      dynamic subVal, dynamic age) async {
+    dynamic logId;
+    // create weight log on firebase
+    logId = Database().createMedicineLog(
+        value, Timestamp.fromDate(dateTime), babyId, subVal, age);
+    // update on divice
+    addMedicineDatas(
+        value, Timestamp.fromDate(dateTime), babyId, subVal, age, logId);
+  }
+
+  addMedicineDatas(dynamic value, Timestamp dateTime, String babyId,
+      dynamic subVal, dynamic age, dynamic logId) {
+    widget.data.datas.add({
+      'logId': logId,
+      'type': 'med',
+      'val': value,
+      'subval': subVal,
+      'date': dateTime,
+      'year': age.years,
+      'month': age.months,
+      'day': age.days
+    });
+  }
+
+  // createVaccine(
+  //     dynamic value, DateTime dateTime, String babyId, dynamic subVal) {
+  //   dynamic logId;
+  //   // create weight log on firebase
+  //   logId = Database()
+  //       .createVaccineLog(value, Timestamp.fromDate(dateTime), babyId, subVal);
+  //   // update on divice
+  //   addVaccineDatas(value, Timestamp.fromDate(dateTime), babyId, subVal, logId);
+  // }
+
+  // addVaccineDatas(dynamic value, Timestamp dateTime, String babyId,
+  //     dynamic subVal, dynamic logId) {
+  //   widget.data.datas.add({
+  //     'logId': logId,
+  //     'type': 'vac',
+  //     'val': value,
+  //     'subval': subVal,
+  //     'date': dateTime,
+  //     'stat': 0
+  //   });
+  // }
+
+  // createDevelope(
+  //     dynamic value, DateTime dateTime, String babyId, dynamic subVal) {
+  //   dynamic logId;
+  //   // create weight log on firebase
+  //   logId = Database()
+  //       .createDevelopeLog(value, Timestamp.fromDate(dateTime), babyId, subVal);
+  //   // update on divice
+  //   addDevelopeDatas(
+  //       value, Timestamp.fromDate(dateTime), babyId, subVal, logId);
+  // }
+
+  // addDevelopeDatas(dynamic value, Timestamp dateTime, String babyId,
+  //     dynamic subVal, dynamic logId) {
+  //   widget.data.datas.add({
+  //     'logId': logId,
+  //     'type': 'evo',
+  //     'val': value,
+  //     'subval': subVal,
+  //     'date': dateTime,
+  //     'stat': 0
+  //   });
+  // }
+
+  createLog(String type, dynamic value, DateTime dateTime, String babyId,
+      dynamic subVal, dynamic age) {
+    switch (type) {
+      case 'height':
+        return createHeight(value, dateTime, babyId, subVal, age);
+        break;
+      case 'weight':
+        return createWeight(value, dateTime, babyId, subVal, age);
+        break;
+      case 'med':
+        return createMedicine(value, dateTime, babyId, subVal, age);
+        break;
+      case 'vac':
+        // return createVaccine(value, dateTime, babyId, subVal);
+        break;
+      case 'evo':
+        // return createDevelope(value, dateTime, babyId, subVal);
+        break;
+      default:
+        break;
+    }
+  }
+
+  deleteLog(String type, String babyId, String logId) {}
+
+  @override
+  Widget build(BuildContext context) {
     var cardHeight = 0;
-    if(widget.type == 'evo'){
+    if (widget.type == 'evo') {
+      cardHeight = 1;
+    } else if (widget.type == 'vac') {
       cardHeight = 1;
     }
-    else if(widget.type == 'vac'){
-      cardHeight = 1;
-    }
-    
+
     // dataTest card = new dataTest(widget.type);
     dataTest card = widget.data;
     // print('This is ${card.getData(widget.type)[0][0]['a'].length}');
     bool exit = false;
     return Scaffold(
-      // resizeToAvoidBottomPadding: false,
-      body:ListView(
-        physics: BouncingScrollPhysics(),
-        padding: edgeAll(0),
-        children:<Widget>[
+        // resizeToAvoidBottomPadding: false,
+        body: ListView(
+            physics: BouncingScrollPhysics(),
+            padding: edgeAll(0),
+            children: <Widget>[
           Container(
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color.fromRGBO(255, 226, 241, 1),Color.fromRGBO(233, 242, 255, 1)]
-              )
-            ),
-
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                  Color.fromRGBO(255, 226, 241, 1),
+                  Color.fromRGBO(233, 242, 255, 1)
+                ])),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    GestureDetector(
-                      // onTapDown: (TapDownDetails details){
-                      //   exit = true;
-                      // },
-                      // onTapCancel: (){
-                      //   if(exit){
-                      //     Navigator.pop(context);
-                      //   }
-                      // },
-                    child:Container(
-                      // height: (120*test().getKeys().length).toDouble(),
-                      height:(220 + 56 * (2 + cardHeight)).toDouble(),
-                      padding: EdgeInsets.only(top:20,left: 20, right: 20),
-                      width: MediaQuery.of(context).size.width/1.13,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      GestureDetector(
+                        // onTapDown: (TapDownDetails details){
+                        //   exit = true;
+                        // },
+                        // onTapCancel: (){
+                        //   if(exit){
+                        //     Navigator.pop(context);
+                        //   }
+                        // },
+                        child: Container(
+                          // height: (120*test().getKeys().length).toDouble(),
+                          height: (220 + 56 * (2 + cardHeight)).toDouble(),
+                          padding:
+                              EdgeInsets.only(top: 20, left: 20, right: 20),
+                          width: MediaQuery.of(context).size.width / 1.13,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            color: Colors.white,
+                          ),
+                          child: Column(
                             children: <Widget>[
-                              Image.asset(card.getImg(widget.type),height: 56,width: 56,),
-                              Container(
-                                child:Text(card.getTitle(widget.type),style: TextStyle(fontFamily: 'Segoe UI',fontSize: 20,color: Color(0xff131048),fontWeight: FontWeight.normal),),
-                                padding: EdgeInsets.only(bottom: 30), 
-                              ),
-                              
-                              Text(card.getVal(widget.type),style: TextStyle(fontFamily: 'Segoe UI',fontSize: 30,color: Color(0xff131048),fontWeight: FontWeight.w700),),
-                              Container(
-                                child:Text(card.getSubval(widget.type),style: TextStyle(fontFamily: 'Segoe UI',fontSize: 14,color: Color(0xff131048),fontWeight: FontWeight.normal),),
-                                padding: EdgeInsets.only(bottom: 20),
-                              ),
-                              table(context,widget.type,card, null)
+                              Column(
+                                children: <Widget>[
+                                  Image.asset(
+                                    card.getImg(widget.type),
+                                    height: 56,
+                                    width: 56,
+                                  ),
+                                  Container(
+                                    child: Text(
+                                      card.getTitle(widget.type),
+                                      style: TextStyle(
+                                          fontFamily: 'Segoe UI',
+                                          fontSize: 20,
+                                          color: Color(0xff131048),
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    padding: EdgeInsets.only(bottom: 30),
+                                  ),
+                                  Text(
+                                    value == null ? "0" : value.toString(),
+                                    style: TextStyle(
+                                        fontFamily: 'Segoe UI',
+                                        fontSize: 30,
+                                        color: Color(0xff131048),
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  Container(
+                                    child: Text(
+                                      'test',
+                                      style: TextStyle(
+                                          fontFamily: 'Segoe UI',
+                                          fontSize: 14,
+                                          color: Color(0xff131048),
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    padding: EdgeInsets.only(bottom: 20),
+                                  ),
+                                  table(
+                                    type: widget.type,
+                                    card: card,
+                                    list: null,
+                                    date: date,
+                                    callbacks: callback,
+                                  )
+                                ],
+                              )
                             ],
-                          )
-                        ],
+                          ),
+                        ),
                       ),
-                    ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(top: 30),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 4,
-                            child: SizedBox(),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: RawMaterialButton(
-                              
-                              child: Container(
-                                child: Image.asset('assets/icons/check-circle.png'),
-                              ),
-                              onPressed: (){
-                                // widget.data.setDatasStat(widget.list['id'], widget.list['type']);
-                                Navigator.pop(context);
-                              },
+                      Container(
+                        padding: EdgeInsets.only(top: 30),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 4,
+                              child: SizedBox(),
                             ),
-                          ),
-                          Expanded(
-                            flex: 4,
-                            child: Container(
-                              alignment: Alignment.centerRight,
-                              padding: EdgeInsets.only(left:50,right:20),
-                              child:RawMaterialButton(
+                            Expanded(
+                              flex: 2,
+                              child: RawMaterialButton(
                                 child: Container(
-                                  child: Image.asset('assets/icons/trash-alt.png'),
+                                  child: Image.asset(
+                                      'assets/icons/check-circle.png'),
                                 ),
-                                onPressed: (){
-                                  // widget.data.setDatas(widget.list['id'], widget.list['type']);
+                                onPressed: () async {
+                                  // widget.data.setDatasStat(widget.list['id'], widget.list['type']);
+                                  // print(value + ' ' + selectedDate.toString());
+                                  //here na ja
+                                  //value
+                                  //selectedDate
+                                  print('create log');
+                                  await createLog(
+                                      widget.type,
+                                      value,
+                                      selectedDate,
+                                      widget.data.getSelectedKid()['kid'],
+                                      '',
+                                      widget.data.getSelectedKid()['age']);
+                                  // print('TYPE: ${widget.type}');
+                                  // //here
+                                  // print(
+                                  //     'KID: ${widget.data.getSelectedKid()['kid']}');
                                   Navigator.pop(context);
                                 },
                               ),
-                            )
-                          )
-                        ],
-                      ),
-                    )
-                    
-                  ],
-                )
-              ]
-            ),
+                            ),
+                            Expanded(
+                                flex: 4,
+                                child: Container(
+                                  alignment: Alignment.centerRight,
+                                  padding: EdgeInsets.only(left: 50, right: 20),
+                                  child: RawMaterialButton(
+                                    child: Container(
+                                      child: Image.asset(
+                                          'assets/icons/trash-alt.png'),
+                                    ),
+                                    onPressed: () {
+                                      // widget.data.setDatas(widget.list['id'], widget.list['type']);
+                                      // deleteLog();
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ))
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                ]),
           )
-        ]
-      )
-    );
+        ]));
   }
 }
