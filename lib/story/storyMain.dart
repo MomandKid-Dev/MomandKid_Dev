@@ -9,7 +9,7 @@ import 'package:momandkid/story/storyData.dart';
 
 class storyMain extends StatefulWidget {
   storyMain({Key key, this.data}) : super(key: key);
-  storyData data;
+  StoryData data;
   // PageController Stoontroller;
   int index = 0;
 
@@ -137,7 +137,7 @@ class _story extends State<storyMain>
 
 class addStoryCard extends StatefulWidget {
   addStoryCard({this.data, this.active, this.index, this.controller});
-  storyData data;
+  StoryData data;
   bool active;
   PageController controller;
   int index;
@@ -236,7 +236,7 @@ class storyPreviewCard extends StatefulWidget {
       this.newest});
   int index, current;
   bool active, newest;
-  storyData datas;
+  StoryData datas;
   Map data;
   bool exit;
   PageController controller;

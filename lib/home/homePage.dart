@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _visible = true;
   bool _showappbar = true;
   String _title;
-  storyData story = storyData();
+  StoryData story = StoryData();
   @override
   void initState() {
     widget.data.getKiddo(widget.userId);

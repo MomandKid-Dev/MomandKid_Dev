@@ -14,7 +14,7 @@ import 'package:flutter/services.dart';
 class addStoryPage extends StatefulWidget{
   addStoryPage({this.data});
   int _pageIndex = 0;
-  storyData data;
+  StoryData data;
   PageController controller = new PageController(initialPage: 0);
   @override 
   _addStory createState() => _addStory();
@@ -150,7 +150,7 @@ upbutton(String title,PageController controller,int index,File img){
 class dates extends StatefulWidget{
   dates({this.controller,this.data});
   PageController controller;
-  storyData data;
+  StoryData data;
   int index;
   coverImages ci;
   @override 

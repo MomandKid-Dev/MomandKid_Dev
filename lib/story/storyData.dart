@@ -1,6 +1,6 @@
 import 'dart:io';
 
-class storyData{
+class StoryData{
   File _coverImg;
   String _title;
   var datas = [
@@ -14,7 +14,7 @@ class storyData{
     },
 
   ];
-  storyData(){
+  StoryData(){
 
   }
 
