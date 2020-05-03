@@ -21,15 +21,17 @@ class _mainArticleState extends State<mainArticle> {
       color: Colors.white,
       child: Stack(
         children: <Widget>[
-          ListView(
-            controller: _scrollController,
-            children: <Widget>[
-              Container(
-                height: 30,
-                color: Colors.red,
-              )
-            ],
-          ),
+          Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 1.6,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+                    color: Color(0xFFEFF5F8)
+                  ),
+                ),
+              ),
           ListView(
             controller: _scrollController,
             padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),

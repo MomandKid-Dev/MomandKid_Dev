@@ -342,7 +342,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: Opacity(
         opacity: _visible ? 1 : 0,
-        child: FloatingActionButton(
+        child: _visible ? FloatingActionButton(
             backgroundColor: Color(0xFF76C5BA),
             child: Icon(
               Icons.edit,
@@ -360,7 +360,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   .whenComplete(() {
                 setState(() {});
               });
-            }),
+            }):  PreferredSize(
+                      child: Container(),
+                      preferredSize: Size(0.0, 0.0),),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
