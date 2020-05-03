@@ -8,21 +8,19 @@ import 'package:momandkid/kids/DataTest.dart';
 import 'dart:async';
 
 class mainLogin extends StatefulWidget {
-  mainLogin({this.auth, this.loginCallback});
+  mainLogin({this.auth, this.loginCallback, this.data});
 
   final AuthService auth;
   final VoidCallback loginCallback;
+  dataTest data;
 
   @override
   _mainLoginState createState() => _mainLoginState();
 }
 
-String _title = 'Login';//default
-
+String _title = 'Login'; //default
 
 class _mainLoginState extends State<mainLogin> {
-
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,16 +29,18 @@ class _mainLoginState extends State<mainLogin> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFFF9AB3), Color(0xFF9CCBFF)]
-            )
-        ),
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFFFF9AB3), Color(0xFF9CCBFF)])),
         padding: EdgeInsets.symmetric(horizontal: 30),
         child: Stack(
           children: <Widget>[
-            CustomBottomSheet(auth: widget.auth, loginCallback: widget.loginCallback,),
+            CustomBottomSheet(
+              auth: widget.auth,
+              loginCallback: widget.loginCallback,
+              data: widget.data,
+            ),
           ],
         ),
       ),
@@ -72,10 +72,11 @@ class StateProvider {
 }
 
 class CustomBottomSheet extends StatefulWidget {
-  CustomBottomSheet({this.auth, this.loginCallback});
+  CustomBottomSheet({this.auth, this.loginCallback, this.data});
 
   final AuthService auth;
   final VoidCallback loginCallback;
+  dataTest data;
 
   @override
   _CustomBottomSheetState createState() => _CustomBottomSheetState();
@@ -83,11 +84,9 @@ class CustomBottomSheet extends StatefulWidget {
 
 class _CustomBottomSheetState extends State<CustomBottomSheet>
     with SingleTickerProviderStateMixin {
-  
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final TextEditingController _passwordController = new TextEditingController();
 
-  
   String _name;
   String _email;
   String _password;
@@ -118,11 +117,12 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
           print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_name, _email, _password);
-          Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => mainAddScreen(
                       userId: userId,
+                      data: widget.data,
                     )),
           );
           print('Signed up: $userId');
@@ -166,8 +166,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
   double loginLeft = 0;
   double signupLeft = 101;
 
-  Animation<double> animation , animationHorizontal;
-  AnimationController controller ;
+  Animation<double> animation, animationHorizontal;
+  AnimationController controller;
 
   @override
   void initState() {
@@ -178,11 +178,11 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     setAnimation(0, 140);
   }
 
-  void setAnimation(double sheetTop, double minSheetTop){
+  void setAnimation(double sheetTop, double minSheetTop) {
     controller = AnimationController(
-        duration: const Duration(milliseconds: 200), 
-        vsync: this,
-        );
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
     animation = Tween<double>(begin: sheetTop, end: minSheetTop)
         .animate(CurvedAnimation(
       parent: controller,
@@ -202,13 +202,14 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
             setState(() {});
           });
   }
+
   forwardAnimation() {
     controller.forward(from: 0);
     print(animation.value);
     stateBloc.toggleAnimation();
     _title = 'Sign up';
     // setState(() {
-      
+
     // });
   }
 
@@ -218,7 +219,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     stateBloc.toggleAnimation();
     _title = 'Login';
     // setState(() {
-      
+
     // });
   }
 
@@ -229,76 +230,70 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     return Stack(
       children: <Widget>[
         Align(
-          alignment: Alignment(0,-0.565),
+          alignment: Alignment(0, -0.565),
           child: Image.asset(
             'assets/icons/020-hat.png',
             scale: 0.65,
           ),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height/3.5,
+          top: MediaQuery.of(context).size.height / 3.5,
           left: 0,
           child: SheetContainer(),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height/3.5 + animation.value ,
+          top: MediaQuery.of(context).size.height / 3.5 + animation.value,
           left: 0,
           child: SheetContainer(),
         ),
         Align(
-          alignment: Alignment(-0.4,-0.45),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.black,
-                width: 4,
-              ),
-              color: Color(0xFFFFDAAA)
-            ),
-          )
-        ),
+            alignment: Alignment(-0.4, -0.45),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 4,
+                  ),
+                  color: Color(0xFFFFDAAA)),
+            )),
         Align(
-          alignment: Alignment(0.4,-0.45),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.black,
-                width: 4,
-              ),
-              color: Color(0xFFFFE3C2)
-            ),
-          )
-        ),
+            alignment: Alignment(0.4, -0.45),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 4,
+                  ),
+                  color: Color(0xFFFFE3C2)),
+            )),
         Positioned(
-          top: animation.value+(MediaQuery.of(context).size.height) / 1.535,
+          top: animation.value + (MediaQuery.of(context).size.height) / 1.535,
           left: (MediaQuery.of(context).size.width) / 6,
           child: Container(
-            width: 200,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Color(0xFF5EA0FF),
-              borderRadius: BorderRadius.horizontal(left: Radius.circular(50),right: Radius.circular(50))
-            ),
-            padding: EdgeInsets.only(top: 6),
-            child: FlatButton(
-              onPressed: validateAndSubmit, 
-              child: Text(
-                _title,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold
+              width: 200,
+              height: 50,
+              decoration: BoxDecoration(
+                  color: Color(0xFF5EA0FF),
+                  borderRadius: BorderRadius.horizontal(
+                      left: Radius.circular(50), right: Radius.circular(50))),
+              padding: EdgeInsets.only(top: 6),
+              child: FlatButton(
+                onPressed: validateAndSubmit,
+                child: Text(
+                  _title,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            )
-          ),
+              )),
         ),
         Positioned(
           top: 265,
@@ -307,37 +302,38 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
             height: 50,
             width: 220,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.horizontal(left: Radius.circular(50), right: Radius.circular(50)),
-              color: Color(0xFFEAD4E7)
-            ),
+                borderRadius: BorderRadius.horizontal(
+                    left: Radius.circular(50), right: Radius.circular(50)),
+                color: Color(0xFFEAD4E7)),
           ),
         ),
         Positioned(
           top: 267.5,
-          left: ((MediaQuery.of(context).size.width) / 6.5) + animationHorizontal.value,//45->146
+          left: ((MediaQuery.of(context).size.width) / 6.5) +
+              animationHorizontal.value, //45->146
           child: Container(
             height: 45,
             width: 110,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.horizontal(left: Radius.circular(50), right: Radius.circular(50)),
-              color: Colors.white
-            ),
+                borderRadius: BorderRadius.horizontal(
+                    left: Radius.circular(50), right: Radius.circular(50)),
+                color: Colors.white),
           ),
         ),
         Positioned(
           top: 272,
-          left: (MediaQuery.of(context).size.width) /5.15,
+          left: (MediaQuery.of(context).size.width) / 5.15,
           child: Container(
             height: 40,
             width: 80,
             child: Text(
               'Login',
               style: TextStyle(
-                  color: controller.isCompleted ? Colors.white : Color(0xFF131048),
+                  color:
+                      controller.isCompleted ? Colors.white : Color(0xFF131048),
                   fontSize: 24,
-                  fontWeight: FontWeight.bold
-                ),
-                textAlign: TextAlign.center,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
@@ -350,136 +346,137 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
             child: Text(
               'Sign Up',
               style: TextStyle(
-                  color: controller.isCompleted ? Color(0xFF131048) : Colors.white,
+                  color:
+                      controller.isCompleted ? Color(0xFF131048) : Colors.white,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  wordSpacing: -5
-                ),
-                textAlign: TextAlign.center,
+                  wordSpacing: -5),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
-        Positioned( //TextArea
-          top: MediaQuery.of(context).size.height /2.6,
+        Positioned(
+          //TextArea
+          top: MediaQuery.of(context).size.height / 2.6,
           child: Container(
-            height: _title == 'Login' ? MediaQuery.of(context).size.height / 3.9 : MediaQuery.of(context).size.height / 2.2,
-            width: MediaQuery.of(context).size.width - 60,
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            color: Colors.transparent,
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                shrinkWrap: true,
-                children: <Widget>[
-                  showNameInput(),
-                  showEmailInput(),
-                  showPasswordInput(),
-                  showConfirmPasswordInput(),
-                  showErrorMessage(),
-                ],
-              )
-            )
-          ),
+              height: _title == 'Login'
+                  ? MediaQuery.of(context).size.height / 3.9
+                  : MediaQuery.of(context).size.height / 2.2,
+              width: MediaQuery.of(context).size.width - 60,
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              color: Colors.transparent,
+              child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      showNameInput(),
+                      showEmailInput(),
+                      showPasswordInput(),
+                      showConfirmPasswordInput(),
+                      showErrorMessage(),
+                    ],
+                  ))),
         ),
         Positioned(
           top: 265,
           left: (MediaQuery.of(context).size.width) / 7,
           child: Container(
-            height: 50,
-            width: 220,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.horizontal(left: Radius.circular(50), right: Radius.circular(50)),
-              color: Colors.transparent
-            ),
-            child: GestureDetector(
-              onTap: () {
-                controller.isCompleted ? reverseAnimation() : forwardAnimation();
-                toggleFormMode();
-              },
-            )
-          ),
+              height: 50,
+              width: 220,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.horizontal(
+                      left: Radius.circular(50), right: Radius.circular(50)),
+                  color: Colors.transparent),
+              child: GestureDetector(
+                onTap: () {
+                  controller.isCompleted
+                      ? reverseAnimation()
+                      : forwardAnimation();
+                  toggleFormMode();
+                },
+              )),
         ),
-        _title == 'Login' ? Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            height: MediaQuery.of(context).size.height / 4,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.transparent,
-            child: Stack(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: FlatButton(
-                    onPressed: (){}, 
-                    child: Text(
-                      'Forget password?',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold
+        _title == 'Login'
+            ? Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 4,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.transparent,
+                  child: Stack(
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: FlatButton(
+                            onPressed: () {},
+                            child: Text(
+                              'Forget password?',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )),
                       ),
-                    )
-                  ),
-                ),
-                Align(
-                  alignment: Alignment(0,-0.45),
-                  child: Text(
-                      'or',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold
+                      Align(
+                        alignment: Alignment(0, -0.45),
+                        child: Text(
+                          'or',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
+                      Align(
+                        alignment: Alignment(0.6, -0.4),
+                        child: Container(
+                          height: 2,
+                          width: 100,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment(-0.6, -0.4),
+                        child: Container(
+                          height: 2,
+                          width: 100,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment(0.3, 0.25),
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          child: IconButton(
+                              icon: Icon(LineAwesomeIcons.google),
+                              onPressed: () {
+                                print('google');
+                              }),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment(-0.3, 0.25),
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          child: IconButton(
+                              icon: Icon(LineAwesomeIcons.facebook),
+                              onPressed: () {
+                                print('facebook');
+                              }),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                Align(
-                  alignment: Alignment(0.6,-0.4),
-                  child: Container(
-                    height: 2,
-                    width: 100,
-                    color: Colors.white,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment(-0.6,-0.4),
-                  child: Container(
-                    height: 2,
-                    width: 100,
-                    color: Colors.white,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment(0.3,0.25),
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle
-                    ),
-                    child: IconButton(icon: Icon(LineAwesomeIcons.google), onPressed: (){
-                      print('google');
-                    }),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment(-0.3,0.25),
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle
-                    ),
-                    child: IconButton(icon: Icon(LineAwesomeIcons.facebook), onPressed: (){
-                      print('facebook');
-                    }),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ):PreferredSize(child: Container(), preferredSize: Size(0.0 ,0.0)),
+              )
+            : PreferredSize(child: Container(), preferredSize: Size(0.0, 0.0)),
         _showCircularProgress()
       ],
     );
@@ -489,7 +486,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     if (_isLoading) {
       return Center(child: CircularProgressIndicator());
     }
-    return PreferredSize(child: Container(), preferredSize: Size(0.0 ,0.0));
+    return PreferredSize(child: Container(), preferredSize: Size(0.0, 0.0));
   }
 
   Widget showNameInput() {
@@ -604,7 +601,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
       );
     }
   }
-
 }
 
 class SheetContainer extends StatelessWidget {
@@ -612,12 +608,12 @@ class SheetContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 25),
-      height: MediaQuery.of(context).size.height/2.5,
+      height: MediaQuery.of(context).size.height / 2.5,
       width: MediaQuery.of(context).size.width - 60,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20), bottom: Radius.circular(20)),
-        color: Colors.white
-      ),
+          borderRadius: BorderRadius.vertical(
+              top: Radius.circular(20), bottom: Radius.circular(20)),
+          color: Colors.white),
     );
   }
 }
