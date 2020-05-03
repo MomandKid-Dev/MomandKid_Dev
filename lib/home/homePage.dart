@@ -16,6 +16,8 @@ import 'package:momandkid/schedule/mainSchedulePage.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'package:quiver/iterables.dart';
 import 'package:uuid/uuid.dart';
+import 'package:momandkid/story/storyData.dart';
+
 
 //service
 import 'package:momandkid/services/auth.dart';
@@ -33,6 +35,7 @@ class MyHomePage extends StatefulWidget {
   final String userId;
   dataTest data;
 
+  
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -43,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _visible = true;
   bool _showappbar = true;
   String _title;
-
+  storyData story = storyData();
   @override
   void initState() {
     widget.data.getKiddo(widget.userId);
@@ -330,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   }),
             ),
             Container(child: mainArticle()),
-            Container(child: storyMain()),
+            Container(child: storyMain(data: story,)),
             Container(
                 child: mainKidScreen(userId: widget.userId, data: widget.data)),
             Container(child: mainSchedule(userId: widget.userId)),
