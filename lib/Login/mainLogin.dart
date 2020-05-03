@@ -467,8 +467,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                           width: 50,
                           decoration: BoxDecoration(
                               color: Colors.white, shape: BoxShape.circle),
-                          child: IconButton(
-                              icon: Icon(LineAwesomeIcons.google),
+                          child: RawMaterialButton(
+                            shape: CircleBorder(),
+                            child: Image.asset('assets/icons/google.png', height: 30, width: 30,),
                               onPressed: () {
                                 print('google');
                               }),
@@ -481,11 +482,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                           width: 50,
                           decoration: BoxDecoration(
                               color: Colors.white, shape: BoxShape.circle),
-                          child: IconButton(
-                              icon: Icon(LineAwesomeIcons.facebook),
-                              onPressed: () {
-                                print('facebook');
-                              }),
+                          child: RawMaterialButton(
+                            shape: CircleBorder(),
+                            child: Image.asset('assets/icons/facebook.png', height: 30, width: 30,),
+                            onPressed: (){
+                              print('facebook');
+                            }
+                            )
                         ),
                       )
                     ],
