@@ -233,7 +233,7 @@ class _postPageState extends State<postPage>{
               ],
             )
           ),
-          selfComment()
+          selfComment(userId :posts.of(context).currentUid)
         ]
       )
     );
@@ -438,12 +438,12 @@ class _postBoxState extends State<postBox>{
   Widget build(BuildContext context){
     img() {
         if (widget.data != null) {
-          if ((widget.data['image'] == null) |
-              (widget.data['image'] == '') |
-              (widget.data['image'] == 'image path')) {
+          if ((widget.data['userprofile'] == null) |
+              (widget.data['userprofile'] == '') |
+              (widget.data['userprofile'] == 'image path')) {
             return AssetImage('assets/icons/404.png');
           } else {
-            return NetworkImage(widget.data['image']);
+            return NetworkImage(widget.data['userprofile']);
           }
         }
         return AssetImage('assets/icons/404.png');
@@ -697,22 +697,34 @@ class _pictureViewState extends State<pictureView>{
 }
 
 class selfComment extends StatefulWidget{
+  String userId;
+  selfComment({this.userId});
   @override 
   _selfCommentState createState() => _selfCommentState();
 }
 class _selfCommentState extends State<selfComment>{
   // TextEditingController commentController;
   @override 
+  dynamic _userimg = AssetImage('assets/icons/404.png');
   void initState() {
     // TODO: implement initState
     super.initState();
     // commentController = TextEditingController();
+    Database(userId: widget.userId).getUserData().then((user){
+       if ((user.data['image'] != null) | (user.data['image'] != 'image path') | (user.data['image'] != '')) 
+       setState(() {
+         _userimg = NetworkImage(user.data['image']);
+       });
+    });
   }
   @override 
   Widget build(BuildContext context){
     // images(){
     //   if(post.of(context).)
     // }
+    bool _disable = false;
+    
+
     return Container(
       height: 100,
       decoration: BoxDecoration(
@@ -724,7 +736,7 @@ class _selfCommentState extends State<selfComment>{
         mainAxisAlignment: MainAxisAlignment.center,
         // crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          circleImg(img: '404.png',height: 50,width: 50,),
+          circleImg(img: _userimg,height: 50,width: 50,),
           Container(
             width: 200,
             height: 40,
@@ -740,12 +752,14 @@ class _selfCommentState extends State<selfComment>{
           ),
           GestureDetector(
             onTap: () async {
-              if(posts.of(context).commentController.text != ''){
-                posts.of(context).addComment(posts.of(context).testPost['pid'], posts.of(context).currentUid,posts.of(context).commentController.text ).whenComplete(()
+              if(posts.of(context).commentController.text != '' && !_disable){
+                _disable = true;
+                await posts.of(context).addComment(posts.of(context).testPost['pid'], posts.of(context).currentUid,posts.of(context).commentController.text ).whenComplete(()
                 {
                   posts.of(context).widget.data['commentcount'] +=1;
                   posts.of(context).commentController.text = '';
                   posts.of(context).scrollController.animateTo(posts.of(context).scrollController.position.maxScrollExtent + 100, duration: Duration(milliseconds: 500), curve: Curves.easeInOutExpo);
+                  _disable = false;
                 });
               }
             },

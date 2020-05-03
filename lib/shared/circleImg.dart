@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 class circleImg extends StatelessWidget{
   circleImg({this.img,this.height,this.width});
-  String img;
+  dynamic img;
   double height,width;
   @override
   Widget build(BuildContext context){
@@ -12,7 +12,7 @@ class circleImg extends StatelessWidget{
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         image: DecorationImage(
-          image: AssetImage('assets/icons/${img}'),
+          image: img,
           fit: BoxFit.cover
         )
       ),

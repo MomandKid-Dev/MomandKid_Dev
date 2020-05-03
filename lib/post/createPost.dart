@@ -13,6 +13,7 @@ class createPost extends StatefulWidget {
 class _createPostState extends State<createPost> {
 
   File _image;
+  TextEditingController _content;
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -27,6 +28,13 @@ class _createPostState extends State<createPost> {
     setState(() {
       _image = image;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _content = TextEditingController();
+    super.initState();
   }
 
   @override
@@ -56,7 +64,7 @@ class _createPostState extends State<createPost> {
               )
             ):
           FlatButton(
-            onPressed: (){ Navigator.pop(context); }, 
+            onPressed: (){ Navigator.pop(context, [_image, _content.text]); }, 
             child: Text(
               'post', 
               style: TextStyle(
@@ -105,40 +113,40 @@ class _createPostState extends State<createPost> {
                 ),
             ),
             SizedBox(height: 16,),
-            Container(
-              height: 30,
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(left: 20, right: 20),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Tag : ',
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.normal,
-                      color: Color(0xFF707070) 
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.755,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none
-                      ),
-                      inputFormatters: [
-                        WhitelistingTextInputFormatter(RegExp("[A-Za-z ]")),
-                        LengthLimitingTextInputFormatter(26),
-                      ],
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
-                        color: Color(0xFF707070) 
-                      ),
-                    ),
-                  )
-                ],
-              )
-            ),
+            // Container(
+            //   height: 30,
+            //   width: MediaQuery.of(context).size.width,
+            //   padding: EdgeInsets.only(left: 20, right: 20),
+            //   child: Row(
+            //     children: <Widget>[
+            //       Text(
+            //         'Tag : ',
+            //         style: TextStyle(
+            //           fontSize: 21,
+            //           fontWeight: FontWeight.normal,
+            //           color: Color(0xFF707070) 
+            //         ),
+            //       ),
+            //       Container(
+            //         width: MediaQuery.of(context).size.width*0.755,
+            //         child: TextField(
+            //           decoration: InputDecoration(
+            //             border: InputBorder.none
+            //           ),
+            //           inputFormatters: [
+            //             WhitelistingTextInputFormatter(RegExp("[A-Za-z ]")),
+            //             LengthLimitingTextInputFormatter(26),
+            //           ],
+            //           style: TextStyle(
+            //             fontSize: 16,
+            //             fontWeight: FontWeight.normal,
+            //             color: Color(0xFF707070) 
+            //           ),
+            //         ),
+            //       )
+            //     ],
+            //   )
+            // ),
             SizedBox(height: 16,),
             Container(
               height: 1,
@@ -154,6 +162,7 @@ class _createPostState extends State<createPost> {
               child: ListView(
                 children: <Widget>[
                   TextField(
+                    controller: _content,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'คำบรรยาย...',

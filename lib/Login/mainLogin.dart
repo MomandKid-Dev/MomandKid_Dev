@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/widgets.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:momandkid/kids/addkid.dart';
 import 'package:momandkid/services/auth.dart';
 import 'package:momandkid/services/database.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'dart:async';
+
+class SizeConfig {
+  static MediaQueryData _mediaQueryData;
+  static double screenWidth;
+  static double screenHeight;
+  static double blockSizeHorizontal;
+  static double blockSizeVertical;
+
+  void init(BuildContext context) {
+    _mediaQueryData = MediaQuery.of(context);
+    screenWidth = _mediaQueryData.size.width;
+    screenHeight = _mediaQueryData.size.height;
+    blockSizeHorizontal = screenWidth / 100;
+    blockSizeVertical = screenHeight / 100;
+  }
+}
 
 class mainLogin extends StatefulWidget {
   mainLogin({this.auth, this.loginCallback, this.data});
@@ -34,15 +51,10 @@ class _mainLoginState extends State<mainLogin> {
                 end: Alignment.bottomCenter,
                 colors: [Color(0xFFFF9AB3), Color(0xFF9CCBFF)])),
         padding: EdgeInsets.symmetric(horizontal: 30),
-        child: Stack(
-          children: <Widget>[
-            CustomBottomSheet(
-              auth: widget.auth,
-              loginCallback: widget.loginCallback,
-              data: widget.data,
-            ),
-          ],
-        ),
+        child: CustomBottomSheet(
+            auth: widget.auth,
+            loginCallback: widget.loginCallback,
+            data: widget.data),
       ),
     );
   }
@@ -227,10 +239,12 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Stack(
       children: <Widget>[
-        Align(
-          alignment: Alignment(0, -0.565),
+        Positioned(
+          top: SizeConfig.blockSizeVertical * 16,
+          left: SizeConfig.blockSizeHorizontal * 27,
           child: Image.asset(
             'assets/icons/020-hat.png',
             scale: 0.65,
@@ -246,8 +260,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
           left: 0,
           child: SheetContainer(),
         ),
-        Align(
-            alignment: Alignment(-0.4, -0.45),
+        Positioned(
+            top: SizeConfig.blockSizeVertical * 25.5,
+            left: SizeConfig.blockSizeHorizontal * 24,
             child: Container(
               width: 40,
               height: 40,
@@ -259,8 +274,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                   ),
                   color: Color(0xFFFFDAAA)),
             )),
-        Align(
-            alignment: Alignment(0.4, -0.45),
+        Positioned(
+            top: SizeConfig.blockSizeVertical * 25.5,
+            left: SizeConfig.blockSizeHorizontal * 52,
             child: Container(
               width: 40,
               height: 40,
@@ -296,7 +312,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
               )),
         ),
         Positioned(
-          top: 265,
+          top: SizeConfig.blockSizeVertical * 34.5,
           left: (MediaQuery.of(context).size.width) / 7,
           child: Container(
             height: 50,
@@ -308,9 +324,10 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
           ),
         ),
         Positioned(
-          top: 267.5,
+          top: SizeConfig.blockSizeVertical * 34.8,
           left: ((MediaQuery.of(context).size.width) / 6.5) +
               animationHorizontal.value, //45->146
+
           child: Container(
             height: 45,
             width: 110,
@@ -321,7 +338,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
           ),
         ),
         Positioned(
-          top: 272,
+          top: SizeConfig.blockSizeVertical * 35.5,
           left: (MediaQuery.of(context).size.width) / 5.15,
           child: Container(
             height: 40,
@@ -338,7 +355,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
           ),
         ),
         Positioned(
-          top: 272,
+          top: SizeConfig.blockSizeVertical * 35.5,
           left: (MediaQuery.of(context).size.width) / 2.36,
           child: Container(
             height: 40,
@@ -368,7 +385,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
               child: Form(
                   key: _formKey,
                   child: ListView(
-                    shrinkWrap: true,
                     children: <Widget>[
                       showNameInput(),
                       showEmailInput(),
@@ -379,7 +395,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                   ))),
         ),
         Positioned(
-          top: 265,
+          top: SizeConfig.blockSizeVertical * 34.5,
           left: (MediaQuery.of(context).size.width) / 7,
           child: Container(
               height: 50,

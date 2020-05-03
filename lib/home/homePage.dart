@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
@@ -13,6 +15,7 @@ import 'package:momandkid/Article/mainArticle.dart';
 import 'package:momandkid/schedule/mainSchedulePage.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'package:quiver/iterables.dart';
+import 'package:uuid/uuid.dart';
 
 //service
 import 'package:momandkid/services/auth.dart';
@@ -20,6 +23,7 @@ import '../post/postMain.dart';
 import '../services/database.dart';
 import '../shared/style.dart';
 import 'package:momandkid/post/createPost.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({this.auth, this.logoutCallback, this.userId, this.data});
@@ -106,34 +110,49 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  List<Map> _postFromFirebasePost(AsyncSnapshot posts, AsyncSnapshot users) {
+    List<Post> postss = [];
+    for (List<dynamic> pu in zip([posts.data.documents, users.data])) {
+      bool like = false;
+      if (pu[0].data['likes'] != null)
+        like = pu[0].data['likes'].contains(widget.userId);
+      postss.add(Post(
+        pid: pu[0].documentID,
+        content: pu[0].data['content'] ?? '',
+        image: pu[0].data['image'] ?? '',
+        time: pu[0].data['time'] ?? null,
+        uid: pu[0].data['uid'] ?? '',
+        likecount: pu[0].data['likecount'] ?? 0,
+        commentcount: pu[0].data['commentcount'] ?? 0,
+        username: pu[1].data['name'] ?? '',
+        userprofile: pu[1].data['image'] ??
+            'https://pbs.twimg.com/profile_images/1168928962917097472/gD5uWGj3_400x400.jpg',
+        likes: pu[0].data['likes'] ?? [],
+        liked: like ?? false,
+      ));
+    }
+    List<Map> postsss = postss.map((post) => post.getMap()).toList();
+    //postss.sort((a, b) => a.pid.compareTo(b.pid));
+    return postsss;
+  }
+  // List<Map> postsss = postss.map((post) => post.getMap()).toList();
+  // //FirebaseStorage storage = FirebaseStorage.getInstance();
+  // //postss.sort((a, b) => a.pid.compareTo(b.pid));
+  // return postsss;
+
+  Future uploadFile(File _image) async {
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child('images/${Uuid().v1()}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    print('Image Uploaded');
+    return await storageReference.getDownloadURL().then((fileURL) {
+      return fileURL;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Map> _postFromFirebasePost(AsyncSnapshot posts, AsyncSnapshot users) {
-      List<Post> postss = [];
-      for (List<dynamic> pu in zip([posts.data.documents, users.data])) {
-        bool like = false;
-        if (pu[0].data['likes'] != null)
-          like = pu[0].data['likes'].contains(widget.userId);
-        postss.add(Post(
-          pid: pu[0].documentID,
-          content: pu[0].data['content'] ?? '',
-          image: pu[0].data['image'] ?? '',
-          time: pu[0].data['time'] ?? null,
-          uid: pu[0].data['uid'] ?? '',
-          likecount: pu[0].data['likecount'] ?? 0,
-          commentcount: pu[0].data['commentcount'] ?? 0,
-          username: pu[1].data['name'] ?? '',
-          userprofile: pu[1].data['image'] ??
-              'https://pbs.twimg.com/profile_images/1168928962917097472/gD5uWGj3_400x400.jpg',
-          likes: pu[0].data['likes'] ?? [],
-          liked: like ?? false,
-        ));
-      }
-      List<Map> postsss = postss.map((post) => post.getMap()).toList();
-      //postss.sort((a, b) => a.pid.compareTo(b.pid));
-      return postsss;
-    }
-
     //print('test : ${dataTest().kiddo}');
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFB),
@@ -324,12 +343,18 @@ class _MyHomePageState extends State<MyHomePage> {
               Icons.edit,
               size: 30.0,
             ),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              final postCreated = await Navigator.push(
                   context,
                   PageRouteTransition(
                       animationType: AnimationType.slide_up,
                       builder: (context) => createPost()));
+              uploadFile(postCreated[0])
+                  .then((imageURL) => Database(userId: widget.userId)
+                      .createPost(postCreated[1], imageURL))
+                  .whenComplete(() {
+                setState(() {});
+              });
             }),
       ),
       bottomNavigationBar: Container(
