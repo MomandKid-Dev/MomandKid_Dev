@@ -7,36 +7,21 @@ class mainArticle extends StatefulWidget {
 
 class _mainArticleState extends State<mainArticle> {
 
+  static List listDrink = ['assets/article/drink/เครื่องดื่มชูกำลัง.png', 'assets/article/drink/โคล่า.png', 'assets/article/drink/ชาดำ.png', 'assets/article/drink/นมถั่วเหลือง.png', 'assets/article/drink/น้ำผึ้ง.png', 'assets/article/drink/น้ำส้ม.png', 'assets/article/drink/เบียร์.png'];
+  static List listMeat = ['assets/article/meat/กระดูกหมู.png', 'assets/article/meat/ไข่ไก่.png', 'assets/article/meat/เคบับแกะ.png', 'assets/article/meat/เครื่องในไก่.png', 'assets/article/meat/ตีนไก่.png', 'assets/article/meat/เนื้อวัว.png', 'assets/article/meat/เนื้อหมู.png', 'assets/article/meat/ปีกไก่.png', 'assets/article/meat/ไส้กรอกหมู.png'];
+  static List listMilk = ['assets/article/milk/เต้าหู้ขาวอ่อน.png', 'assets/article/milk/เต้าหู้ทอด.png', 'assets/article/milk/ถั่วพุ่ม.png', 'assets/article/milk/นมผง.png', 'assets/article/milk/โยเกิร์ต.png', 'assets/article/milk/ไอศกรีม.png'];
+  List all = listDrink + listMeat + listMilk;
   var selectedCard = '0';
 
   @override
   Widget build(BuildContext context) {
+    print(all.length);
+    
     return Container(
       color: Colors.white,
       child: ListView(
         padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),
         children: <Widget>[
-          Container(
-            height: 50,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Color(0xFFF8FAFB)
-            ),
-            
-            child: TextField(
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                hintText: "Search",
-                filled: false,
-                contentPadding: EdgeInsets.only(top: 15.0),
-                fillColor: Color(0xFFF8FAFB),
-                prefixIcon: Icon(Icons.search,size: 35.0,),
-                border: InputBorder.none
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
           Container(
             height: 40.0,
             child: ListView(
@@ -78,7 +63,6 @@ class _mainArticleState extends State<mainArticle> {
                 Container(
                   child: Row(
                     children: <Widget>[
-                      
                       _buildInfoCard('0', 'assets/Pictures/grai.png', 'GRAINS'),
                     ],
                   )
@@ -123,33 +107,22 @@ class _mainArticleState extends State<mainArticle> {
                     color: Color(0xFF131048)
                   ),
                 ),
-                Spacer(flex: 1),
-                FlatButton(
-                  padding: EdgeInsets.only(left:20),
-                  onPressed: (){
-                    
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        "view all",
-                        style: TextStyle(
-                          color: Color(0xFFACB2B9),
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20,
-                        color: Color(0xFFACB2B9),
-                        )
-                    ],
-                  ),
-                )
-                
               ],
             ),
           ),
+          SizedBox(height: 10,),
+          if(selectedCard == '0')
+            for (var i = 0; i < listDrink.length; i++) 
+              Image.asset(listDrink[i])
+          else if(selectedCard == '1')
+            for (var i = 0; i < listMeat.length; i++) 
+              Image.asset(listMeat[i])
+          else if(selectedCard == '2')
+            for (var i = 0; i < listMilk.length; i++) 
+              Image.asset(listMilk[i])
+          else
+            for (var i = 0; i < all.length; i++) 
+              Image.asset(all[i])
         ],
       ),
     );
