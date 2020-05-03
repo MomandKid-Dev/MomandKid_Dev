@@ -7,9 +7,9 @@ class mainArticle extends StatefulWidget {
 
 class _mainArticleState extends State<mainArticle> {
 
-  static List listDrink = ['assets/article/drink/เครื่องดื่มชูกำลัง.png', 'assets/article/drink/โคล่า.png', 'assets/article/drink/ชาดำ.png', 'assets/article/drink/นมถั่วเหลือง.png', 'assets/article/drink/น้ำผึ้ง.png', 'assets/article/drink/น้ำส้ม.png', 'assets/article/drink/เบียร์.png'];
-  static List listMeat = ['assets/article/meat/กระดูกหมู.png', 'assets/article/meat/ไข่ไก่.png', 'assets/article/meat/เคบับแกะ.png', 'assets/article/meat/เครื่องในไก่.png', 'assets/article/meat/ตีนไก่.png', 'assets/article/meat/เนื้อวัว.png', 'assets/article/meat/เนื้อหมู.png', 'assets/article/meat/ปีกไก่.png', 'assets/article/meat/ไส้กรอกหมู.png'];
-  static List listMilk = ['assets/article/milk/เต้าหู้ขาวอ่อน.png', 'assets/article/milk/เต้าหู้ทอด.png', 'assets/article/milk/ถั่วพุ่ม.png', 'assets/article/milk/นมผง.png', 'assets/article/milk/โยเกิร์ต.png', 'assets/article/milk/ไอศกรีม.png'];
+  static List listDrink = ['assets/article/drink/01.png', 'assets/article/drink/02.png', 'assets/article/drink/03.png', 'assets/article/drink/04.png', 'assets/article/drink/05.png', 'assets/article/drink/06.png', 'assets/article/drink/07.png'];
+  static List listMeat = ['assets/article/meat/01.png', 'assets/article/meat/02.png', 'assets/article/meat/03.png', 'assets/article/meat/04.png', 'assets/article/meat/05.png', 'assets/article/meat/06.png', 'assets/article/meat/07.png', 'assets/article/meat/08.png', 'assets/article/meat/09.png'];
+  static List listMilk = ['assets/article/milk/01.png', 'assets/article/milk/02.png', 'assets/article/milk/03.png', 'assets/article/milk/04.png', 'assets/article/milk/05.png', 'assets/article/milk/06.png'];
   List all = listDrink + listMeat + listMilk;
   var selectedCard = '0';
 
@@ -112,7 +112,6 @@ class _mainArticleState extends State<mainArticle> {
           if(selectedCard == '0')
             for (var i = 0; i < listDrink.length; i++) 
               Image.asset(listDrink[i])
-            // Image.asset('assets/article/drink/เครื่องดื่มชูกำลัง.png')
           else if(selectedCard == '1')
             for (var i = 0; i < listMeat.length; i++) 
               Image.asset(listMeat[i])
