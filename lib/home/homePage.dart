@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
@@ -12,6 +14,7 @@ import 'package:momandkid/Article/mainArticle.dart';
 import 'package:momandkid/schedule/mainSchedulePage.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'package:quiver/iterables.dart';
+import 'package:uuid/uuid.dart';
 
 //service
 import 'package:momandkid/services/auth.dart';
@@ -19,6 +22,8 @@ import '../post/postMain.dart';
 import '../services/database.dart';
 import '../shared/style.dart';
 import 'package:momandkid/post/createPost.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
 
 
 
@@ -107,11 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
       print(e);
     }
   }
-  @override
-  Widget build(BuildContext context) {
-
-
-    List<Map> _postFromFirebasePost(AsyncSnapshot posts,AsyncSnapshot users){
+  
+  List<Map> _postFromFirebasePost(AsyncSnapshot posts,AsyncSnapshot users){
     List<Post> postss = [];
     for (List<dynamic> pu in zip([posts.data.documents,users.data])){
       bool like = false;
@@ -133,10 +135,29 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
     List<Map> postsss = postss.map((post) => post.getMap()).toList();
+    //FirebaseStorage storage = FirebaseStorage.getInstance();
     //postss.sort((a, b) => a.pid.compareTo(b.pid));
     return postsss;
   }
-  
+
+  Future uploadFile(File _image) async {    
+  StorageReference storageReference = FirebaseStorage.instance    
+       .ref()    
+       .child('images/${Uuid().v1()}');    
+   StorageUploadTask uploadTask = storageReference.putFile(_image);    
+   await uploadTask.onComplete;    
+   print('Image Uploaded');    
+   return await storageReference.getDownloadURL().then((fileURL) {      
+       return fileURL;
+   });    
+ }
+
+  @override
+  Widget build(BuildContext context) {
+
+
+    
+
     //print('test : ${dataTest().kiddo}');
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFB),
@@ -310,13 +331,19 @@ class _MyHomePageState extends State<MyHomePage> {
         child: FloatingActionButton(
         backgroundColor: Color(0xFF76C5BA),
         child: Icon(Icons.edit,size: 30.0,),
-        onPressed: (){
-          Navigator.push(
+        onPressed: () async {
+          final postCreated = await Navigator.push(
               context,
               PageRouteTransition(
                 animationType: AnimationType.slide_up,
                 builder: (context) => createPost())
               );
+          uploadFile(postCreated[0]).then((imageURL)=> Database(userId: widget.userId).createPost(postCreated[1], imageURL)).whenComplete((){
+            setState(() {
+              
+            });
+          });
+          
         }
         ),
       ),

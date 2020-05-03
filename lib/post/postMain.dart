@@ -132,12 +132,13 @@ class _postState extends State<post> {
           if ((mainPostMainScreen.of(context).widget.data['userprofile'] == null) |
               (mainPostMainScreen.of(context).widget.data['userprofile'] == '') |
               (mainPostMainScreen.of(context).widget.data['userprofile'] == 'image path')) {
-            return '037-baby.png';
+            return AssetImage('assets/icons/037-baby.png');
           } else {
-            return NetworkImage(widget.data['image']);
+            //return AssetImage('assets/icons/037-baby.png');
+            return NetworkImage(widget.data['userprofile']);
           }
         }
-        return '037-baby.png';
+        return AssetImage('assets/icons/037-baby.png');
       }
 
       name() {

@@ -31,7 +31,7 @@ class appBar extends SliverPersistentHeaderDelegate{
                       children: <Widget>[
                         Hero(
                           tag: 'circleImg',
-                          child:circleImg(img: '037-baby.png',height: 80,width: 80,)
+                          child:circleImg(img: AssetImage('assets/icons/037-baby.png'),height: 80,width: 80,)
                         ),
                         Container(
                           margin: EdgeInsets.only(right: 20),
