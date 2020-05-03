@@ -180,6 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 iconSize: 30.0,
                 // onPressed: signOut
                 onPressed: () {
+                  print(widget.data.kiddo);
                   Navigator.push(
                       context,
                       PageRouteTransition(
@@ -188,6 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 userId: widget.userId,
                                 auth: widget.auth,
                                 logoutCallback: widget.logoutCallback,
+                                data: widget.data,
                               )));
                 },
               ),
