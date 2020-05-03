@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:momandkid/kids/healthMain.dart';
 import 'package:momandkid/shared/appbar.dart';
 import 'package:momandkid/shared/style.dart';
 import 'package:momandkid/story/addStoryPage.dart';
@@ -19,15 +20,25 @@ class storyMain extends StatefulWidget {
 }
 
 class _story extends State<storyMain>
-    with AutomaticKeepAliveClientMixin<storyMain> {
+    with TickerProviderStateMixin{
   PageController storyController;
-
+  
+  Animation<Offset> slideAnimationBlur2;
+  AnimationController slideController2;
+  Animation<double> opaAnimationBlur2;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     storyController =
         PageController(initialPage: widget.index, viewportFraction: 1 / 1.25);
+    slideController2 =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    slideAnimationBlur2 = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1))
+        .animate(CurvedAnimation(
+            curve: Curves.easeInOutExpo, parent: slideController2));
+    opaAnimationBlur2 =
+        Tween<double>(begin: 10, end: 0).animate(slideController2);
     // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     //   systemNavigationBarColor: Colors.white,
     //   statusBarIconBrightness: Brightness.light,
@@ -37,9 +48,11 @@ class _story extends State<storyMain>
 
   @override
   Widget build(BuildContext context) {
-    print('build');
-    super.build(context);
-    return Container(
+    if (true)
+      slideController2.forward();
+    return Stack(
+    children:<Widget>[
+    Container(
         color: Colors.white,
         child: Column(
           // physics: BouncingScrollPhysics() ,
@@ -128,7 +141,16 @@ class _story extends State<storyMain>
                 // ]),
                 )
           ],
-        ));
+        )
+        ),
+         SlideTransition(
+        position: slideAnimationBlur2,
+        child: blurTransition(
+          animation: opaAnimationBlur2,
+          controller: slideController2,
+        ),
+      ),
+    ]);
   }
 
   @override
