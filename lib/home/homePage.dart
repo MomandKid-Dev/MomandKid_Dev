@@ -46,7 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _visible = true;
   bool _showappbar = true;
   String _title;
-  StoryData story = StoryData();
   @override
   void initState() {
     widget.data.getKiddo(widget.userId);
@@ -331,7 +330,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   }),
             ),
             Container(child: mainArticle()),
-            Container(child: storyMain(data: story,)),
+            Container(child: storyMain(userId: widget.userId)),
             Container(
                 child: mainKidScreen(userId: widget.userId, data: widget.data)),
             Container(child: mainSchedule(userId: widget.userId)),

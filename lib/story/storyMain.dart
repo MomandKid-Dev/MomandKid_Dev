@@ -8,8 +8,9 @@ import 'package:momandkid/story/editStory.dart';
 import 'package:momandkid/story/storyData.dart';
 
 class storyMain extends StatefulWidget {
-  storyMain({Key key, this.data}) : super(key: key);
-  StoryData data;
+  storyMain({Key key, this.userId}) : super(key: key);
+  StoryData data = StoryData();
+  String userId;
   // PageController Stoontroller;
   int index = 0;
 
