@@ -200,7 +200,7 @@ class _postState extends State<post> {
         return null;
       }
     return Container(
-      margin: edgeLR(10),
+      margin: edgeTB(10),
         decoration: BoxDecoration(
           borderRadius: allRoundedCorner(15),
           color: Colors.white,
@@ -228,10 +228,10 @@ class _postState extends State<post> {
               child:Column(
                 children: <Widget>[
                   Container(
-                  height: 200,
+                  height: MediaQuery.of(context).size.width*2/3,
                   decoration: BoxDecoration(
-                      borderRadius: allRoundedCorner(15),
-                      color: Colors.grey,
+                      // borderRadius: allRoundedCorner(15),
+                      color: Colors.white,
                       image: DecorationImage(image: img())),
                   ),
                   Container(
