@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:momandkid/Login/mainLogin.dart';
 import 'package:momandkid/home/homePage.dart';
+import 'package:momandkid/kids/DataTest.dart';
 import 'package:momandkid/services/auth.dart';
 
 enum AuthStatus {
@@ -21,6 +22,7 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> {
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
   String _userId = "";
+  dataTest data = dataTest();
 
   @override
   void initState() {
@@ -73,6 +75,7 @@ class _RootPageState extends State<RootPage> {
         return mainLogin(
           auth: widget.auth,
           loginCallback: loginCallback,
+          data: data,
         );
         break;
       case AuthStatus.LOGGED_IN:
@@ -81,6 +84,7 @@ class _RootPageState extends State<RootPage> {
             userId: _userId,
             auth: widget.auth,
             logoutCallback: logoutCallback,
+            data: data,
           );
         } else {
           return buildWaitingScreen();
