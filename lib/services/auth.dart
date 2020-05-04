@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:momandkid/services/database.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 abstract class AuthService {
   Future<String> signIn(String email, String password);
@@ -15,7 +16,11 @@ abstract class AuthService {
 
   Future<bool> isEmailVerified();
 
+  Future loginWithFacebook();
+
+
   Future<String> signInWithGoogle();
+
 }
 
 class Auth implements AuthService {
@@ -37,6 +42,26 @@ class Auth implements AuthService {
     // create user info in firestore
     await Database(userId: user.uid).createUserInfo(name, email, 'image path');
 
+    return user.uid;
+  }
+
+  Future loginWithFacebook() async {
+    FacebookLogin facebookLogin = FacebookLogin();
+    FacebookLoginResult result = await facebookLogin
+        .logIn(['email', "public_profile"]);
+ 
+    String token = result.accessToken.token;
+    print("Access token = $token");
+    await _firebaseAuth.signInWithCredential(
+        FacebookAuthProvider.getCredential(accessToken: token));
+    // checkAuth(context); // after success, navigate to home.
+    FirebaseUser user = await _firebaseAuth.currentUser();
+    dynamic info;
+    await Database(userId: user.uid).getUserData().then((onValue) => info = onValue.data);
+    print(info);
+    if(info == null){
+      await Database(userId: user.uid).createUserInfo(user.displayName.split(' ')[0], user.email, 'image path');
+    }
     return user.uid;
   }
 

@@ -41,6 +41,7 @@ dependencies:
   cloud_firestore: ^0.12.9+4
   age: ^0.0.1
   uuid: ^2.0.4
+  flutter_facebook_login: ^3.0.0
 
   google_sign_in: ^4.0.4
 
