@@ -25,19 +25,21 @@ class _healthCardState extends State<healthCard> {
     list = widget.data.getData(type);
 
     print('list: $list');
-    print('list.length: ${list[0].length}');
+    // print('list.length: ${list[0].length}');
 
-    if (list[0].length > 0) {
-      if (type == 'weight') {
-        // update on firebase
-        Database().updateWeight(list[0][0]['val'], babyId);
-        // update on divice (kiddo)
-        widget.data.getSelectedKid()['weight'] = list[0][0]['val'];
-      } else {
-        // update on firebase
-        Database().updateHeight(list[0][0]['val'], babyId);
-        // update on divice (kiddo)
-        widget.data.getSelectedKid()['height'] = list[0][0]['val'];
+    if (list.length > 0) {
+      if (list[0].length > 0) {
+        if (type == 'weight') {
+          // update on firebase
+          Database().updateWeight(list[0][0]['val'], babyId);
+          // update on divice (kiddo)
+          widget.data.getSelectedKid()['weight'] = list[0][0]['val'];
+        } else {
+          // update on firebase
+          Database().updateHeight(list[0][0]['val'], babyId);
+          // update on divice (kiddo)
+          widget.data.getSelectedKid()['height'] = list[0][0]['val'];
+        }
       }
     }
   }
@@ -59,30 +61,34 @@ class _healthCardState extends State<healthCard> {
     widget.data.setDatas(widget.list['id'], widget.list['type']);
   }
 
-  updateVaccine(String logId, bool check) {
+  updateVaccine(String logId, bool check, Timestamp lastModified) {
     if (check) {
-      Database().updateVaccineLog(logId, 1);
+      Database().updateVaccineLog(logId, 1, lastModified);
       widget.list['stat'] = 1;
     } else {
-      Database().updateVaccineLog(logId, 0);
+      Database().updateVaccineLog(logId, 0, lastModified);
       widget.list['stat'] = 0;
     }
+    widget.list['last_modified'] = lastModified;
   }
 
-  updateDevelope(String logId, bool check, dynamic age) {
+  updateDevelope(
+      String logId, bool check, dynamic age, Timestamp lastModified) {
     if (check) {
       Database().updateDevelopeLog(
           logId,
           0,
           Timestamp.fromDate(DateTime(
               DateTime.now().year, DateTime.now().month, DateTime.now().day)),
-          age);
+          age,
+          lastModified);
       // widget.list['stat'] = 0;
       updateDataDevice(
           0,
           Timestamp.fromDate(DateTime(
               DateTime.now().year, DateTime.now().month, DateTime.now().day)),
-          age);
+          age,
+          lastModified);
     } else {
       int sumAge = (age.years * 12) + age.months;
       if (widget.list['due_date'] < sumAge) {
@@ -91,36 +97,42 @@ class _healthCardState extends State<healthCard> {
             2,
             Timestamp.fromDate(DateTime(
                 DateTime.now().year, DateTime.now().month, DateTime.now().day)),
-            age);
+            age,
+            lastModified);
         // widget.list['stat'] = 2;
         updateDataDevice(
             2,
             Timestamp.fromDate(DateTime(
                 DateTime.now().year, DateTime.now().month, DateTime.now().day)),
-            age);
+            age,
+            lastModified);
       } else {
         Database().updateDevelopeLog(
             logId,
             1,
             Timestamp.fromDate(DateTime(
                 DateTime.now().year, DateTime.now().month, DateTime.now().day)),
-            age);
+            age,
+            lastModified);
         // widget.list['stat'] = 1;
         updateDataDevice(
             1,
             Timestamp.fromDate(DateTime(
                 DateTime.now().year, DateTime.now().month, DateTime.now().day)),
-            age);
+            age,
+            lastModified);
       }
     }
   }
 
-  updateDataDevice(int stat, Timestamp dateDevelope, dynamic age) {
+  updateDataDevice(
+      int stat, Timestamp dateDevelope, dynamic age, Timestamp lastModified) {
     widget.list['date'] = dateDevelope;
     widget.list['stat'] = stat;
     widget.list['year'] = age.years;
     widget.list['month'] = age.months;
     widget.list['day'] = age.days;
+    widget.list['last_modified'] = lastModified;
   }
 
   @override
@@ -270,11 +282,15 @@ class _healthCardState extends State<healthCard> {
                               onPressed: () {
                                 switch (widget.type) {
                                   case 'vac':
-                                    updateVaccine(widget.list['logId'], true);
+                                    updateVaccine(widget.list['logId'], true,
+                                        Timestamp.fromDate(DateTime.now()));
                                     break;
                                   case 'evo':
-                                    updateDevelope(widget.list['logId'], true,
-                                        widget.data.getSelectedKid()['age']);
+                                    updateDevelope(
+                                        widget.list['logId'],
+                                        true,
+                                        widget.data.getSelectedKid()['age'],
+                                        Timestamp.fromDate(DateTime.now()));
                                     break;
                                   default:
                                     break;
@@ -297,6 +313,7 @@ class _healthCardState extends State<healthCard> {
                                         deleteHeight(
                                             widget.data.getSelectedKid()['kid'],
                                             widget.list['logId']);
+
                                         break;
                                       case 'weight':
                                         deleteWeight(
@@ -310,19 +327,20 @@ class _healthCardState extends State<healthCard> {
                                         break;
                                       case 'vac':
                                         updateVaccine(
-                                            widget.list['logId'], false);
+                                            widget.list['logId'],
+                                            false,
+                                            Timestamp.fromDate(DateTime.now()));
                                         break;
                                       case 'evo':
                                         updateDevelope(
                                             widget.list['logId'],
                                             false,
-                                            widget.data
-                                                .getSelectedKid()['age']);
+                                            widget.data.getSelectedKid()['age'],
+                                            Timestamp.fromDate(DateTime.now()));
                                         break;
                                       default:
                                         break;
                                     }
-
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -654,14 +672,14 @@ class _editCardState extends State<editCard> {
   }
 
   createHeight(dynamic value, DateTime dateTime, String babyId, dynamic subVal,
-      dynamic age) async {
+      dynamic age, Timestamp lastModified) async {
     dynamic logId;
     // create height log on firebase
-    logId = await Database().createHeightLog(
-        double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal, age);
+    logId = await Database().createHeightLog(double.parse(value),
+        Timestamp.fromDate(dateTime), babyId, subVal, age, lastModified);
     // create hieght log on device (datas)
     addHeight(double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal,
-        age, logId);
+        age, logId, lastModified);
 
     dynamic oldDate =
         widget.data.getData('height')[0][0]['date'].millisecondsSinceEpoch;
@@ -674,7 +692,7 @@ class _editCardState extends State<editCard> {
   }
 
   addHeight(double value, Timestamp dateTime, String babyId, dynamic subVal,
-      dynamic age, dynamic logId) {
+      dynamic age, dynamic logId, Timestamp lastModified) {
     widget.data.datas.add({
       'logId': logId,
       'type': 'height',
@@ -683,19 +701,20 @@ class _editCardState extends State<editCard> {
       'date': dateTime,
       'year': age.years,
       'month': age.months,
-      'day': age.days
+      'day': age.days,
+      'last_modified': lastModified,
     });
   }
 
   createWeight(dynamic value, DateTime dateTime, String babyId, dynamic subVal,
-      dynamic age) async {
+      dynamic age, Timestamp lastModified) async {
     dynamic logId;
     // create weight log on firebase
-    logId = await Database().createWeightLog(
-        double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal, age);
+    logId = await Database().createWeightLog(double.parse(value),
+        Timestamp.fromDate(dateTime), babyId, subVal, age, lastModified);
     // create wieght log on device (datas)
     addWeight(double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal,
-        age, logId);
+        age, logId, lastModified);
 
     dynamic oldDate =
         widget.data.getData('weight')[0][0]['date'].millisecondsSinceEpoch;
@@ -708,7 +727,7 @@ class _editCardState extends State<editCard> {
   }
 
   addWeight(double value, Timestamp dateTime, String babyId, dynamic subVal,
-      dynamic age, dynamic logId) {
+      dynamic age, dynamic logId, Timestamp lastModified) {
     widget.data.datas.add({
       'logId': logId,
       'type': 'weight',
@@ -717,23 +736,24 @@ class _editCardState extends State<editCard> {
       'date': dateTime,
       'year': age.years,
       'month': age.months,
-      'day': age.days
+      'day': age.days,
+      'last_modified': lastModified,
     });
   }
 
   createMedicine(dynamic value, DateTime dateTime, String babyId,
-      dynamic subVal, dynamic age) async {
+      dynamic subVal, dynamic age, Timestamp lastModified) async {
     dynamic logId;
     // create weight log on firebase
     logId = Database().createMedicineLog(
-        value, Timestamp.fromDate(dateTime), babyId, subVal, age);
+        value, Timestamp.fromDate(dateTime), babyId, subVal, age, lastModified);
     // update on divice
-    addMedicineDatas(
-        value, Timestamp.fromDate(dateTime), babyId, subVal, age, logId);
+    addMedicineDatas(value, Timestamp.fromDate(dateTime), babyId, subVal, age,
+        logId, lastModified);
   }
 
   addMedicineDatas(dynamic value, Timestamp dateTime, String babyId,
-      dynamic subVal, dynamic age, dynamic logId) {
+      dynamic subVal, dynamic age, dynamic logId, Timestamp lastModified) {
     widget.data.datas.add({
       'logId': logId,
       'type': 'med',
@@ -742,44 +762,23 @@ class _editCardState extends State<editCard> {
       'date': dateTime,
       'year': age.years,
       'month': age.months,
-      'day': age.days
+      'day': age.days,
+      'last_modified': lastModified,
     });
   }
 
-  // createDevelope(
-  //     dynamic value, DateTime dateTime, String babyId, dynamic subVal) {
-  //   dynamic logId;
-  //   // create weight log on firebase
-  //   logId = Database()
-  //       .createDevelopeLog(value, Timestamp.fromDate(dateTime), babyId, subVal);
-  //   // update on divice
-  //   addDevelopeDatas(
-  //       value, Timestamp.fromDate(dateTime), babyId, subVal, logId);
-  // }
-
-  // addDevelopeDatas(dynamic value, Timestamp dateTime, String babyId,
-  //     dynamic subVal, dynamic logId) {
-  //   widget.data.datas.add({
-  //     'logId': logId,
-  //     'type': 'evo',
-  //     'val': value,
-  //     'subval': subVal,
-  //     'date': dateTime,
-  //     'stat': 0
-  //   });
-  // }
-
   createLog(String type, dynamic value, DateTime dateTime, String babyId,
-      dynamic subVal, dynamic age) {
+      dynamic subVal, dynamic age, Timestamp lastModified) {
     switch (type) {
       case 'height':
-        return createHeight(value, dateTime, babyId, subVal, age);
+        return createHeight(value, dateTime, babyId, subVal, age, lastModified);
         break;
       case 'weight':
-        return createWeight(value, dateTime, babyId, subVal, age);
+        return createWeight(value, dateTime, babyId, subVal, age, lastModified);
         break;
       case 'med':
-        return createMedicine(value, dateTime, babyId, subVal, age);
+        return createMedicine(
+            value, dateTime, babyId, subVal, age, lastModified);
         break;
       case 'vac':
         // return createVaccine(value, dateTime, babyId, subVal);
@@ -928,7 +927,8 @@ class _editCardState extends State<editCard> {
                                       selectedDate,
                                       widget.data.getSelectedKid()['kid'],
                                       '',
-                                      widget.data.getSelectedKid()['age']);
+                                      widget.data.getSelectedKid()['age'],
+                                      Timestamp.fromDate(DateTime.now()));
                                   // print('TYPE: ${widget.type}');
                                   // //here
                                   // print(
