@@ -40,8 +40,8 @@ class _editState extends State<editKidData> {
     widget.dataList.getvaccineEdit(birthDate, babyId);
   }
 
-  updateDevelopeLog(DateTime birthDate, String babyId) {
-    widget.dataList.getDevelopeEdit(birthDate, babyId);
+  Future updateDevelopeLog(DateTime birthDate, String babyId) {
+    return widget.dataList.getDevelopeEdit(birthDate, babyId);
   }
 
   updateDataDevice(String name, String gender, DateTime birthDate) {
@@ -268,11 +268,6 @@ class _editState extends State<editKidData> {
                             print(nameController.text);
                             print('gender: ${gender}');
 
-                            await updateVaccineLog(
-                                birthDate, widget.data['kid']);
-                            await updateDevelopeLog(
-                                birthDate, widget.data['kid']);
-
                             updateDateFirebase(
                               widget.data['kid'],
                               nameController.text,
@@ -285,6 +280,11 @@ class _editState extends State<editKidData> {
                               birthDate,
                             );
 
+                            await updateVaccineLog(
+                                birthDate, widget.data['kid']);
+                            await updateDevelopeLog(
+                                birthDate, widget.data['kid']);
+                            // .whenComplete(() => Navigator.pop(context));
                             Navigator.pop(context);
                           },
                           child: SizedBox(

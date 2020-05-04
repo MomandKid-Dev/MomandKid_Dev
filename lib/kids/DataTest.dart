@@ -1551,11 +1551,8 @@ class dataTest {
     // var tempDatas = new List.from(datas);
     if (getData('weight').length > 0) out.add(getData('weight')[0][0]);
     if (getData('height').length > 0) out.add(getData('height')[0][0]);
-    if (getDataWithType('vac', 1).length > 0) {
+    if (getDataWithType('vac', 1).length > 0)
       out.add(getDataWithType('vac', 1)[0][0]);
-
-      print(getDataWithType('vac', 1)[0][0]);
-    }
     if (getData('med').length > 0) out.add(getData('med')[0][0]);
     if (getDataWithType('evo', 0).length > 0)
       out.add(getDataWithType('evo', 0)[0][0]);

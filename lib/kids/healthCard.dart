@@ -20,14 +20,38 @@ class healthCard extends StatefulWidget {
 }
 
 class _healthCardState extends State<healthCard> {
+  updateData(String type, String babyId) {
+    List list = List();
+    list = widget.data.getData(type);
+
+    print('list: $list');
+    print('list.length: ${list[0].length}');
+
+    if (list[0].length > 0) {
+      if (type == 'weight') {
+        // update on firebase
+        Database().updateWeight(list[0][0]['val'], babyId);
+        // update on divice (kiddo)
+        widget.data.getSelectedKid()['weight'] = list[0][0]['val'];
+      } else {
+        // update on firebase
+        Database().updateHeight(list[0][0]['val'], babyId);
+        // update on divice (kiddo)
+        widget.data.getSelectedKid()['height'] = list[0][0]['val'];
+      }
+    }
+  }
+
   deleteHeight(String babyId, String logId) {
     Database().deleteHeightLog(babyId, logId);
     widget.data.setDatas(widget.list['id'], widget.list['type']);
+    updateData('height', babyId);
   }
 
   deleteWeight(String babyId, String logId) {
     Database().deleteWeightLog(babyId, logId);
     widget.data.setDatas(widget.list['id'], widget.list['type']);
+    updateData('weight', babyId);
   }
 
   deleteMedicine(String babyId, String logId) {
