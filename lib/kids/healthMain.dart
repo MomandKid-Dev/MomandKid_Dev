@@ -675,7 +675,12 @@ Widget recent(BuildContext context, dataTest data) => Container(
           children: data
               .getRecent()
               .map<Widget>((e) => cards(
-                  context, data, e['type'], data.getData(e['type'])[0][0]))
+                  context,
+                  data,
+                  e['type'],
+                  e['type'] == 'vac'
+                      ? data.getDataWithType(e['type'], 1)[0][0]
+                      : data.getData(e['type'])[0][0]))
               .toList()),
     );
 

@@ -132,6 +132,10 @@ class _addState extends State<_add> {
             DateTime(_mainAddKid.of(context).year,
                 _mainAddKid.of(context).month, _mainAddKid.of(context).day),
             kid);
+        await widget.data.getDevelopeListFirst(
+            DateTime(_mainAddKid.of(context).year,
+                _mainAddKid.of(context).month, _mainAddKid.of(context).day),
+            kid);
 
         print('kid: $kid');
         Navigator.pop(context);
