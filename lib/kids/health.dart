@@ -14,7 +14,10 @@ class health extends StatefulWidget {
   bool pushed = false;
   String userId;
   String type;
-
+  int color = 0;
+  var color0;
+  var color1;
+  var color2;
   @override
   _healthState createState() => _healthState();
 }
@@ -24,6 +27,9 @@ class _healthState extends State<health> {
 
   @override
   void initState() {
+    widget.color0 = Colors.white;
+    widget.color1 = Colors.amber[600];
+    widget.color2 = Colors.white;
     // TODO: implement initState
     super.initState();
     pageController = PageController(initialPage: 1);
@@ -70,10 +76,16 @@ class _healthState extends State<health> {
                                     ? MainAxisAlignment.start
                                     : MainAxisAlignment.center,
                             children: <Widget>[
-                              isEvo(context, widget.type, pageController),
+                              isEvo(
+                                  type: widget.type,
+                                  pageController: pageController,
+                                  page: pageController.hasClients
+                                      ? pageController.page
+                                      : 1),
                               Container(
+                                  // padding: EdgeInsets.only(bottom: 10),
                                   height: widget.type == 'evo'
-                                      ? MediaQuery.of(context).size.height - 300
+                                      ? MediaQuery.of(context).size.height - 260
                                       : MediaQuery.of(context).size.height -
                                           100,
                                   width: MediaQuery.of(context).size.width,
@@ -187,7 +199,7 @@ class _healthState extends State<health> {
                                                             ? widget.data
                                                                 .getDataWithType(
                                                                     widget.type,
-                                                                    1)
+                                                                    2)
                                                                 .map(
                                                                     (e) => card(
                                                                           data:
@@ -219,7 +231,7 @@ class _healthState extends State<health> {
                                               ListView(
                                                   physics:
                                                       BouncingScrollPhysics(),
-                                                  padding: EdgeInsets.all(0),
+                                                  // padding: EdgeInsets.all(0),
                                                   children: <Widget>[
                                                     Container(
                                                       child: Column(
@@ -385,82 +397,152 @@ class appBarH extends SliverPersistentHeaderDelegate {
   }
 }
 
-isEvo(BuildContext context, String type, PageController pageController) {
-  if (type == 'evo') {
-    return Container(
-      padding: EdgeInsets.only(top: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              pageController.animateToPage(0,
-                  duration: Duration(milliseconds: 200),
-                  curve: Curves.easeInOutExpo);
-            },
-            child: Container(
-                height: MediaQuery.of(context).size.width / 3.6,
-                width: MediaQuery.of(context).size.width / 3.6,
-                decoration: BoxDecoration(
-                    color: Color(0xff57C77C),
-                    borderRadius: allRoundedCorner(20)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset('assets/icons/grin-wink.png'),
-                    Text(
-                      'ตามเกณฑ์',
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 26,
-                          color: Colors.white),
-                    )
-                  ],
-                )),
-          ),
-          GestureDetector(
-            onTap: () {
-              pageController.animateToPage(1,
-                  duration: Duration(milliseconds: 200),
-                  curve: Curves.easeInOutExpo);
-            },
-            child: Container(
-                height: MediaQuery.of(context).size.width / 3.6,
-                width: MediaQuery.of(context).size.width / 3.6,
-                decoration: BoxDecoration(
-                    color: Colors.white, borderRadius: allRoundedCorner(20)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset('assets/icons/meh.png'),
-                    Text('ต้องฝึกฝน',
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width / 26))
-                  ],
-                )),
-          ),
-          GestureDetector(
+class isEvo extends StatefulWidget {
+  isEvo({this.type, this.pageController, this.page});
+  Key key;
+  String type;
+  PageController pageController;
+  var color0 = Colors.white;
+  var color1 = Colors.amber[600];
+  var color2 = Colors.white;
+  double page;
+
+  _isEvoState createState() => _isEvoState();
+}
+
+class _isEvoState extends State<isEvo> {
+  Widget build(BuildContext context) {
+    if (widget.page == 1) {
+      widget.color0 = Colors.white;
+      widget.color1 = Colors.amber[600];
+      widget.color2 = Colors.white;
+    } else if (widget.page == 0) {
+      widget.color1 = Colors.white;
+      widget.color0 = Color(0xff57c77c);
+      widget.color2 = Colors.white;
+    } else {
+      widget.color0 = Colors.white;
+      widget.color2 = Colors.redAccent;
+      widget.color1 = Colors.white;
+    }
+    if (widget.type == 'evo') {
+      return Container(
+        padding: EdgeInsets.only(top: 20, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            GestureDetector(
               onTap: () {
-                pageController.animateToPage(2,
+                widget.pageController.animateToPage(0,
                     duration: Duration(milliseconds: 200),
                     curve: Curves.easeInOutExpo);
+                setState(() {
+                  widget.page = 0;
+                  widget.color0 = Color(0xff57c77c);
+                  widget.color1 = Colors.white;
+                  widget.color2 = Colors.white;
+                });
               },
               child: Container(
                   height: MediaQuery.of(context).size.width / 3.6,
                   width: MediaQuery.of(context).size.width / 3.6,
                   decoration: BoxDecoration(
-                      color: Colors.white, borderRadius: allRoundedCorner(20)),
+                      color: widget.color0, borderRadius: allRoundedCorner(20)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Image.asset('assets/icons/sad-cry.png'),
-                      Text('ช้ากว่าเกณฑ์',
-                          style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width / 26))
+                      Image.asset(
+                        'assets/icons/grin-wink.png',
+                        color: widget.color0 == Color(0xff57c77c)
+                            ? Colors.white
+                            : Color(0xff57c77c),
+                      ),
+                      Text(
+                        'ตามเกณฑ์',
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width / 26,
+                            color: widget.color0 == Color(0xff57c77c)
+                                ? Colors.white
+                                : Color(0xff57c77c)),
+                      )
                     ],
-                  )))
-        ],
-      ),
-    );
+                  )),
+            ),
+            GestureDetector(
+              onTap: () {
+                widget.pageController.animateToPage(1,
+                    duration: Duration(milliseconds: 200),
+                    curve: Curves.easeInOutExpo);
+                setState(() {
+                  widget.page = 1;
+                  widget.color1 = Colors.amber[600];
+                  widget.color0 = Colors.white;
+                  widget.color2 = Colors.white;
+                });
+              },
+              child: Container(
+                  height: MediaQuery.of(context).size.width / 3.6,
+                  width: MediaQuery.of(context).size.width / 3.6,
+                  decoration: BoxDecoration(
+                      color: widget.color1, borderRadius: allRoundedCorner(20)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Image.asset(
+                        'assets/icons/meh.png',
+                        color: widget.color1 == Colors.amber[600]
+                            ? Colors.white
+                            : Colors.amber[600],
+                      ),
+                      Text('ต้องฝึกฝน',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width / 26,
+                            color: widget.color1 == Colors.amber[600]
+                                ? Colors.white
+                                : Colors.amber[600],
+                          ))
+                    ],
+                  )),
+            ),
+            GestureDetector(
+                onTap: () {
+                  widget.pageController.animateToPage(2,
+                      duration: Duration(milliseconds: 200),
+                      curve: Curves.easeInOutExpo);
+                  setState(() {
+                    widget.page = 2;
+                    widget.color2 = Colors.redAccent;
+                    widget.color1 = Colors.white;
+                    widget.color0 = Colors.white;
+                  });
+                },
+                child: Container(
+                    height: MediaQuery.of(context).size.width / 3.6,
+                    width: MediaQuery.of(context).size.width / 3.6,
+                    decoration: BoxDecoration(
+                        color: widget.color2,
+                        borderRadius: allRoundedCorner(20)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset('assets/icons/sad-cry.png',
+                            color: widget.color2 == Colors.redAccent
+                                ? Colors.white
+                                : Colors.redAccent),
+                        Text('ช้ากว่าเกณฑ์',
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width / 26,
+                              color: widget.color2 == Colors.redAccent
+                                  ? Colors.white
+                                  : Colors.redAccent,
+                            ))
+                      ],
+                    )))
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
-  return Container();
 }

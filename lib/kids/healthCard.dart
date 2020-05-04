@@ -20,6 +20,45 @@ class healthCard extends StatefulWidget {
 }
 
 class _healthCardState extends State<healthCard> {
+  updateData(String type, String babyId) {
+    List list = List();
+    list = widget.data.getData(type);
+
+    print('list: $list');
+    print('list.length: ${list[0].length}');
+
+    if (list[0].length > 0) {
+      if (type == 'weight') {
+        // update on firebase
+        Database().updateWeight(list[0][0]['val'], babyId);
+        // update on divice (kiddo)
+        widget.data.getSelectedKid()['weight'] = list[0][0]['val'];
+      } else {
+        // update on firebase
+        Database().updateHeight(list[0][0]['val'], babyId);
+        // update on divice (kiddo)
+        widget.data.getSelectedKid()['height'] = list[0][0]['val'];
+      }
+    }
+  }
+
+  deleteHeight(String babyId, String logId) {
+    Database().deleteHeightLog(babyId, logId);
+    widget.data.setDatas(widget.list['id'], widget.list['type']);
+    updateData('height', babyId);
+  }
+
+  deleteWeight(String babyId, String logId) {
+    Database().deleteWeightLog(babyId, logId);
+    widget.data.setDatas(widget.list['id'], widget.list['type']);
+    updateData('weight', babyId);
+  }
+
+  deleteMedicine(String babyId, String logId) {
+    Database().deleteMedicineLog(babyId, logId);
+    widget.data.setDatas(widget.list['id'], widget.list['type']);
+  }
+
   updateVaccine(String logId, bool check) {
     if (check) {
       Database().updateVaccineLog(logId, 1);
@@ -28,6 +67,60 @@ class _healthCardState extends State<healthCard> {
       Database().updateVaccineLog(logId, 0);
       widget.list['stat'] = 0;
     }
+  }
+
+  updateDevelope(String logId, bool check, dynamic age) {
+    if (check) {
+      Database().updateDevelopeLog(
+          logId,
+          0,
+          Timestamp.fromDate(DateTime(
+              DateTime.now().year, DateTime.now().month, DateTime.now().day)),
+          age);
+      // widget.list['stat'] = 0;
+      updateDataDevice(
+          0,
+          Timestamp.fromDate(DateTime(
+              DateTime.now().year, DateTime.now().month, DateTime.now().day)),
+          age);
+    } else {
+      int sumAge = (age.years * 12) + age.months;
+      if (widget.list['due_date'] < sumAge) {
+        Database().updateDevelopeLog(
+            logId,
+            2,
+            Timestamp.fromDate(DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day)),
+            age);
+        // widget.list['stat'] = 2;
+        updateDataDevice(
+            2,
+            Timestamp.fromDate(DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day)),
+            age);
+      } else {
+        Database().updateDevelopeLog(
+            logId,
+            1,
+            Timestamp.fromDate(DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day)),
+            age);
+        // widget.list['stat'] = 1;
+        updateDataDevice(
+            1,
+            Timestamp.fromDate(DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day)),
+            age);
+      }
+    }
+  }
+
+  updateDataDevice(int stat, Timestamp dateDevelope, dynamic age) {
+    widget.list['date'] = dateDevelope;
+    widget.list['stat'] = stat;
+    widget.list['year'] = age.years;
+    widget.list['month'] = age.months;
+    widget.list['day'] = age.days;
   }
 
   @override
@@ -56,7 +149,7 @@ class _healthCardState extends State<healthCard> {
     }
     var cardHeight = 0.0;
     if (widget.type == 'evo') {
-      cardHeight = 1;
+      cardHeight = 2;
     } else if (widget.type == 'vac') {
       cardHeight = 1;
     }
@@ -94,8 +187,9 @@ class _healthCardState extends State<healthCard> {
                       },
                       child: Container(
                         // height: (120*test().getKeys().length).toDouble(),
-                        height: (220 + 56 * (2 + cardHeight)).toDouble(),
-                        padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                        // height: (220 + 56 * (2 + cardHeight)).toDouble(),
+                        padding: EdgeInsets.only(
+                            top: 20, left: 20, right: 20, bottom: 20),
                         width: MediaQuery.of(context).size.width / 1.13,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -174,7 +268,18 @@ class _healthCardState extends State<healthCard> {
                                 color: Color(0xff131048).withOpacity(0.6),
                               )),
                               onPressed: () {
-                                updateVaccine(widget.list['logId'], true);
+                                switch (widget.type) {
+                                  case 'vac':
+                                    updateVaccine(widget.list['logId'], true);
+                                    break;
+                                  case 'evo':
+                                    updateDevelope(widget.list['logId'], true,
+                                        widget.data.getSelectedKid()['age']);
+                                    break;
+                                  default:
+                                    break;
+                                }
+
                                 Navigator.pop(context);
                               },
                             ),
@@ -187,13 +292,37 @@ class _healthCardState extends State<healthCard> {
                                 child: RawMaterialButton(
                                   child: Container(child: trashIcon),
                                   onPressed: () {
-                                    if (widget.type == 'vac' ||
-                                        widget.type == 'evo')
-                                      updateVaccine(
-                                          widget.list['logId'], false);
-                                    else
-                                      widget.data.setDatas(widget.list['id'],
-                                          widget.list['type']);
+                                    switch (widget.type) {
+                                      case 'height':
+                                        deleteHeight(
+                                            widget.data.getSelectedKid()['kid'],
+                                            widget.list['logId']);
+                                        break;
+                                      case 'weight':
+                                        deleteWeight(
+                                            widget.data.getSelectedKid()['kid'],
+                                            widget.list['logId']);
+                                        break;
+                                      case 'med':
+                                        deleteMedicine(
+                                            widget.data.getSelectedKid()['kid'],
+                                            widget.list['logId']);
+                                        break;
+                                      case 'vac':
+                                        updateVaccine(
+                                            widget.list['logId'], false);
+                                        break;
+                                      case 'evo':
+                                        updateDevelope(
+                                            widget.list['logId'],
+                                            false,
+                                            widget.data
+                                                .getSelectedKid()['age']);
+                                        break;
+                                      default:
+                                        break;
+                                    }
+
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -238,16 +367,7 @@ class _tableState extends State<table> {
         tableList = [
           tab(
             keys: 'ช่วงอายุ',
-            value: widget.list['range'],
-            date: widget.date,
-            callback: callback,
-          ),
-          Divider(
-            height: 30,
-          ),
-          tab(
-            keys: widget.card.getTitle(widget.type),
-            value: widget.list['val'].toString(),
+            value: widget.list['subval'],
             date: widget.date,
             callback: callback,
           ),
@@ -442,9 +562,12 @@ class _tabState extends State<tab> {
                               });
                             },
                           ))
-                : Text(widget.value,
+                : Text(
+                    widget.value,
                     textAlign: TextAlign.right,
-                    style: TextStyle(fontSize: 20, color: Color(0xff625BD4))),
+                    style: TextStyle(fontSize: 18, color: Color(0xff625BD4)),
+                    overflow: TextOverflow.fade,
+                  ),
 
             // Expanded(
             //   flex: 4,
@@ -622,28 +745,6 @@ class _editCardState extends State<editCard> {
       'day': age.days
     });
   }
-
-  // createVaccine(
-  //     dynamic value, DateTime dateTime, String babyId, dynamic subVal) {
-  //   dynamic logId;
-  //   // create weight log on firebase
-  //   logId = Database()
-  //       .createVaccineLog(value, Timestamp.fromDate(dateTime), babyId, subVal);
-  //   // update on divice
-  //   addVaccineDatas(value, Timestamp.fromDate(dateTime), babyId, subVal, logId);
-  // }
-
-  // addVaccineDatas(dynamic value, Timestamp dateTime, String babyId,
-  //     dynamic subVal, dynamic logId) {
-  //   widget.data.datas.add({
-  //     'logId': logId,
-  //     'type': 'vac',
-  //     'val': value,
-  //     'subval': subVal,
-  //     'date': dateTime,
-  //     'stat': 0
-  //   });
-  // }
 
   // createDevelope(
   //     dynamic value, DateTime dateTime, String babyId, dynamic subVal) {
