@@ -7,7 +7,6 @@ import 'package:momandkid/services/auth.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'dart:async';
 
-
 class SizeConfig {
   static MediaQueryData _mediaQueryData;
   static double screenWidth;
@@ -38,7 +37,6 @@ class mainLogin extends StatefulWidget {
 String _title = 'Login'; //default
 
 class _mainLoginState extends State<mainLogin> {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,8 +93,6 @@ class CustomBottomSheet extends StatefulWidget {
   _CustomBottomSheetState createState() => _CustomBottomSheetState();
 }
 
-
-
 class _CustomBottomSheetState extends State<CustomBottomSheet>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
@@ -119,34 +115,34 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     return false;
   }
 
-
-  void validateWithFacebook() async{
+  void validateWithFacebook() async {
     String userId = "";
     userId = await widget.auth.loginWithFacebook();
     dynamic info;
-    await Database(userId: userId).getUserData().then((onValue) => info = onValue.data);
-    if(info['amount-baby'] == 0){
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => mainAddScreen(
-                      userId: userId,
-                      data: widget.data,
-                    )),
-          );
+    await Database(userId: userId)
+        .getUserData()
+        .then((onValue) => info = onValue.data);
+    if (info['amount-baby'] == 0) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => mainAddScreen(
+                  userId: userId,
+                  data: widget.data,
+                )),
+      );
       print('Signed up: $userId');
-    }
-    else{
+    } else {
       print('Signed in: $userId');
     }
     setState(() {
-          _isLoading = false;
-        });
+      _isLoading = false;
+    });
     if (userId.length > 0 && userId != null) {
       print('Login complete');
       widget.loginCallback();
     }
-
+  }
 
   void validateWithGoogle() async {
     setState(() {
@@ -190,7 +186,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
         _formKey.currentState.reset();
       });
     }
-
   }
 
   void validateAndSubmit() async {
@@ -316,10 +311,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _message = 'Log in/out by pressing the buttons below.';
-
-  
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -566,18 +557,18 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                       Align(
                         alignment: Alignment(-0.3, 0.25),
                         child: Container(
-
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: RawMaterialButton(
-                            shape: CircleBorder(),
-                            child: Image.asset('assets/icons/facebook.png', height: 30, width: 30,),
-                            onPressed: validateWithFacebook
-                            )
-                        ),
-
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                                color: Colors.white, shape: BoxShape.circle),
+                            child: RawMaterialButton(
+                                shape: CircleBorder(),
+                                child: Image.asset(
+                                  'assets/icons/facebook.png',
+                                  height: 30,
+                                  width: 30,
+                                ),
+                                onPressed: validateWithFacebook)),
                       )
                     ],
                   ),

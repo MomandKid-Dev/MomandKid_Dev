@@ -392,7 +392,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   GButton(
                     icon: Icons.face,
-                    text: 'Profile',
+                    text: 'Diaries',
                   ),
                   GButton(
                     icon: Icons.assignment_ind,
