@@ -88,22 +88,16 @@ class Auth implements AuthService {
     if (info == null) {
       String name = user.displayName;
       String email = user.email;
+      String imageUrl = user.photoUrl;
 
       if (name.contains(" ")) {
         name = name.substring(0, name.indexOf(" "));
       }
 
-      await Database(userId: user.uid)
-          .createUserInfo(name, email, 'image path');
+      await Database(userId: user.uid).createUserInfo(name, email, imageUrl);
     }
 
     print('Login with google');
     return user.uid;
-  }
-
-  void signOutGoogle() async {
-    await googleSignIn.signOut();
-
-    print("User Sign Out");
   }
 }
