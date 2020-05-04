@@ -45,8 +45,8 @@ class _mainProfileState extends State<mainProfile> {
   @override
   void initState() {
     getInfo();
+    print('hello world');
     super.initState();
-    
   }
   
   @override
@@ -110,6 +110,7 @@ class _mainProfileState extends State<mainProfile> {
                                               userId: widget.userId,
                                               auth: widget.auth,
                                               logoutCallback: widget.logoutCallback,
+                                              info: info,
                                             )));
                               }),
                         )

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class DatabaseService {
   // this is data control of user info
@@ -289,6 +290,25 @@ class Database extends DatabaseService {
 
   Future getUserData() async {
     return await userCollection.document(userId).get();
+  }
+
+  Future updateUserData(String name) async {
+    return await userCollection.document(userId).updateData({
+      'name': name
+    });
+  }
+
+  Future updateUserDataNotification(bool notification) async {
+    print('noti : $notification');
+    return await userCollection.document(userId).updateData({
+      'notification': notification
+    });
+  }
+
+  Future deleteUserData() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    return await userCollection.document(userId).delete().then((onValue) => user.delete());
+     
   }
 
   Future getUserFromPost(DocumentSnapshot post) async {
