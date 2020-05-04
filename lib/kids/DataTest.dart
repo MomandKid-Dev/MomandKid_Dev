@@ -42,13 +42,6 @@ class dataTest {
 
   // initail kiddo in class
   Future getKiddo(String userId) async {
-    // old version
-    // getBabyInfo(userId).then((val) {
-    //   this.kiddo = (mapBaby(val));
-
-    //   print('Baby info: ${kiddo}');
-    // });
-
     // new version (map baby model)
     await getBabyInfo(userId).then((value) {
       dynamic babyInfo = mapBaby(value);
@@ -79,67 +72,7 @@ class dataTest {
   //     'range': 'แรกเกิด',
   //     'Date': '12012021'
   //   },
-  //   {
-  //     'id': 2,
-  //     'kidID': '1',
-  //     'type': 'med',
-  //     'val': 'Para',
-  //     'subval': '',
-  //     'stat': '1',
-  //     'ยา': 'Para',
-  //     'Date': '12012021'
-  //   },
-  //   {
-  //     'id': 3,
-  //     'kidID': '1',
-  //     'type': 'evo',
-  //     'val': 'ส่งเสียงอ้อแอ้',
-  //     'subval': 'พัฒนาการด้านภาษา',
-  //     'stat': '1',
-  //     'range': 'แรกเกิด',
-  //     'Date': '12012021'
-  //   },
-  //   {
-  //     'id': 4,
-  //     'kidID': '1',
-  //     'type': 'weight',
-  //     'val': '10kg',
-  //     'subval': '',
-  //     'stat': '1',
-  //     'Weight': '10kg',
-  //     'Date': '12012021'
-  //   },
-  //   {
-  //     'id': 5,
-  //     'kidID': '1',
-  //     'type': 'height',
-  //     'val': '100cm',
-  //     'subval': '',
-  //     'stat': '1',
-  //     'Height': '100cm',
-  //     'Date': '12012021'
-  //   },
-  //   {
-  //     'id': 6,
-  //     'kidID': '1',
-  //     'type': 'height',
-  //     'val': '100cm',
-  //     'subval': '',
-  //     'stat': '1',
-  //     'Height': '100cm',
-  //     'Date': '02012022'
-  //   },
-  //   {
-  //     'id': 7,
-  //     'kidID': '1',
-  //     'type': 'height',
-  //     'val': '100cm',
-  //     'subval': '',
-  //     'stat': '1',
-  //     'Height': '100cm',
-  //     'Date': '02012022'
-  //   }
-  // ];
+  // ]
 
   List<dynamic> mapLog(List<dynamic> logList) {
     return (logList.map((log) {
@@ -211,7 +144,7 @@ class dataTest {
     if (listDevelope != null) {
       for (var i = 0; i < listDevelope.length; i++) {
         dynamic data;
-        await Database().getVaccineLog(listDevelope[i]).then((val) {
+        await Database().getDevelopeLog(listDevelope[i]).then((val) {
           data = val;
         });
         this.datas_raw.add(data);
@@ -536,125 +469,125 @@ class dataTest {
     if (babyAge.years > 0) {
       if (babyAge.years > 4) {
         if (babyWeight < 15.0) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 15.0 && babyWeight <= 22.6) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.years > 3) {
         if (babyWeight < 13.6) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 13.6 && babyWeight <= 19.9) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.years > 2) {
         if (babyWeight < 12.1) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 12.1 && babyWeight <= 17.2) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.years > 1) {
         if (babyWeight < 10.5) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 10.5 && babyWeight <= 14.4) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else {
         if (babyWeight < 8.3) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 8.3 && babyWeight <= 11.0) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       }
     } else {
       if (babyAge.months > 10) {
         if (babyWeight < 8.1) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 8.1 && babyWeight <= 10.6) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 9) {
         if (babyWeight < 7.9) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 7.9 && babyWeight <= 10.3) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 8) {
         if (babyWeight < 7.6) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 7.6 && babyWeight <= 9.9) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 7) {
         if (babyWeight < 7.2) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 7.2 && babyWeight <= 9.5) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 6) {
         if (babyWeight < 6.8) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 6.8 && babyWeight <= 9.0) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 5) {
         if (babyWeight < 6.3) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 6.3 && babyWeight <= 8.4) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 4) {
         if (babyWeight < 5.8) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 5.8 && babyWeight <= 7.8) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 3) {
         if (babyWeight < 5.3) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 5.3 && babyWeight <= 7.1) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 2) {
         if (babyWeight < 4.8) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 4.8 && babyWeight <= 6.4) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 1) {
         if (babyWeight < 4.2) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 4.2 && babyWeight <= 5.5) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 0) {
         if (babyWeight < 3.4) {
@@ -662,15 +595,15 @@ class dataTest {
         } else if (babyWeight >= 3.4 && babyWeight <= 4.7) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else {
         if (babyWeight < 2.3) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 2.3 && babyWeight <= 3.9) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       }
     }
@@ -1113,141 +1046,141 @@ class dataTest {
     if (babyAge.years > 0) {
       if (babyAge.years > 4) {
         if (babyWeight < 14.4) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 14.4 && babyWeight <= 21.7) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.years > 3) {
         if (babyWeight < 13.0) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 13.0 && babyWeight <= 19.2) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.years > 2) {
         if (babyWeight < 11.5) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 11.5 && babyWeight <= 16.5) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.years > 1) {
         if (babyWeight < 9.7) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 9.7 && babyWeight <= 13.7) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else {
         if (babyWeight < 7.7) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 7.7 && babyWeight <= 10.5) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       }
     } else {
       if (babyAge.months > 10) {
         if (babyWeight < 7.5) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 7.5 && babyWeight <= 10.2) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 9) {
         if (babyWeight < 7.2) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 7.2 && babyWeight <= 9.8) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 8) {
         if (babyWeight < 6.9) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 6.9 && babyWeight <= 9.3) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 7) {
         if (babyWeight < 6.6) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 6.6 && babyWeight <= 9.0) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 6) {
         if (babyWeight < 6.2) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 6.2 && babyWeight <= 8.5) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 5) {
         if (babyWeight < 5.8) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 5.8 && babyWeight <= 7.9) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 4) {
         if (babyWeight < 5.3) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 5.3 && babyWeight <= 7.3) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 3) {
         if (babyWeight < 4.9) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 4.9 && babyWeight <= 6.7) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 2) {
         if (babyWeight < 4.4) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 4.4 && babyWeight <= 6.0) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 1) {
         if (babyWeight < 3.8) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 3.8 && babyWeight <= 5.2) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else if (babyAge.months > 0) {
         if (babyWeight < 3.3) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 3.3 && babyWeight <= 4.4) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       } else {
         if (babyWeight < 2.7) {
-          return 'ต่ำกว่าเกณฑ์';
+          return 'น้อยกว่าเกณฑ์';
         } else if (babyWeight >= 2.7 && babyWeight <= 3.7) {
           return 'ตามเกณฑ์';
         } else {
-          return 'สูงกว่าเกณฑ์';
+          return 'มากกว่าเกณฑ์';
         }
       }
     }
@@ -1618,40 +1551,16 @@ class dataTest {
     // var tempDatas = new List.from(datas);
     if (getData('weight').length > 0) out.add(getData('weight')[0][0]);
     if (getData('height').length > 0) out.add(getData('height')[0][0]);
-    if (getDataWithType('vac', 1).length > 0)
+    if (getDataWithType('vac', 1).length > 0) {
       out.add(getDataWithType('vac', 1)[0][0]);
+
+      print(getDataWithType('vac', 1)[0][0]);
+    }
     if (getData('med').length > 0) out.add(getData('med')[0][0]);
-    if (getDataWithType('evo', 1).length > 0)
-      out.add(getDataWithType('evo', 1)[0][0]);
-    print(out);
-    print(getDataWithType('vac', 1));
-    // tempDatas.
-    // if (datas.length > 0) {
-    //   for (var i = 0; i < datas.length; i++) {
-    //     for (var j = 0; j < datas.length; j++) {
-    //       if (tempDatas[i]['date'].millisecondsSinceEpoch >=
-    //           tempDatas[j]['date'].millisecondsSinceEpoch) {
-    //         var temp = tempDatas[i];
-    //         tempDatas[i] = tempDatas[j];
-    //         tempDatas[j] = temp;
-    //       }
-    //     }
-    //   }
-    //   for (var i = 0; i < 5; i++) {
-    //     out.add(tempDatas[i]);
-    //   }
-    // }
+    if (getDataWithType('evo', 0).length > 0)
+      out.add(getDataWithType('evo', 0)[0][0]);
     return out;
   }
-
-  // setRecent(int id) {
-  //   if (isInRecent(id)) {
-  //     recent.remove(id);
-  //     recent.insert(0, id);
-  //   } else {
-  //     recent.insert(0, id);
-  //   }
-  // }
 
   isInRecent(int id) {
     for (var i = 0; i < recent.length; i++) {
@@ -1774,81 +1683,26 @@ class dataTest {
   }
 
   // add vaccine for edit kid data
-  getvaccineEdit(dynamic ageOld, dynamic ageNew) async {
-    int monthOld = (ageOld.years * 12) + ageOld.months;
-    int monthNew = (ageNew.years * 12) + ageNew.months;
-    int indexOld;
-    int indexNew;
-    vaccineRaw = [];
-    vaccine = [];
-
-    print(ageNew.toString());
-    print('monthold: $monthOld | indexold: $indexOld');
-    print('monthnew: $monthNew | indexnew: $indexNew');
-
-    for (indexOld = 0; indexOld < vaccineDue.length; indexOld++) {
-      if (monthOld <= vaccineDue[indexOld]) {
-        break;
+  getvaccineEdit(dynamic birthDate, String babyId) async {
+    print('delete develope');
+    List<Map<dynamic, dynamic>> temp = new List();
+    // print('datas : $datas');
+    for (var i = 0; i < datas.length; i++) {
+      if ((datas[i])['type'] == 'vac') {
+        temp.add(datas[i]);
       }
     }
 
-    for (indexNew = 0; indexNew < vaccineDue.length; indexNew++) {
-      if (monthNew <= vaccineDue[indexNew]) {
-        break;
-      }
+    print(temp);
+
+    for (int i = 0; i < temp.length; i++) {
+      await Database()
+          .deleteVaccineLog((temp[i])['logId'], getSelectedKid()['kid']);
     }
 
-    print('monthold: $monthOld | indexold: $indexOld');
-    print('monthnew: $monthNew | indexnew: $indexNew');
-
-    if (indexOld < indexNew) {
-      for (int i = indexOld + 1; i <= indexNew; i++) {
-        List<dynamic> listVaccine =
-            await Database().getVaccineList('${vaccineDue[i]}_month');
-        if (listVaccine != null) {
-          for (var i = 0; i < listVaccine.length; i++) {
-            dynamic data;
-            await Database().getVaccineData(listVaccine[i]).then((val) {
-              data = val;
-            });
-            this.vaccineRaw.add(data);
-          }
-        }
-      }
-
-      vaccine = mapVaccine(vaccineRaw);
-
-      for (var i = 0; i < vaccine.length; i++) {
-        createVaccine(
-            vaccine[i]['val'],
-            await DateTime(
-                DateTime.now().year, DateTime.now().month, DateTime.now().day),
-            getSelectedKid()['kid'],
-            vaccine[i]['subval'],
-            vaccine[i]['due_date'],
-            getSelectedKid()['age']);
-      }
-    } else if (indexOld > indexNew) {
-      List<Map<dynamic, dynamic>> temp = new List();
-      // print('datas : $datas');
-      for (var i = 0; i < datas.length; i++) {
-        if ((datas[i])['type'] == 'vac') {
-          temp.add(datas[i]);
-        }
-      }
-      temp.sort((a, b) => a['due_date'].compareTo(b['due_date']));
-      print('vaccineList: $temp');
-
-      for (int i = 0; i < temp.length; i++) {
-        if ((temp[i])['due_date'] > vaccineDue[indexNew]) {
-          await Database()
-              .deleteVaccineLog((temp[i])['logId'], getSelectedKid()['kid']);
-        }
-      }
-
-      print('delete datas');
-      datas.removeWhere((item) => item['due_date'] > vaccineDue[indexNew]);
-    }
+    print('delete datas');
+    datas.removeWhere((item) => item['type'] == 'vac');
+    getVaccineListFirst(birthDate, babyId);
   }
 
   List<dynamic> mapVaccine(List<dynamic> dataList) {
@@ -1880,6 +1734,147 @@ class dataTest {
       'date': dateTime,
       'due_date': dueDate,
       'stat': 0,
+      'year': age.years,
+      'month': age.months,
+      'day': age.days
+    });
+  }
+
+  // develope
+  List developeDue = [
+    0,
+    1,
+    3,
+    5,
+    7,
+    9,
+    10,
+    16,
+    18,
+    19,
+    25,
+    30,
+    31,
+    37,
+    42,
+    43,
+    49,
+    55,
+    60,
+    61,
+    67,
+    73
+  ];
+  List developeRaw = List();
+  List develope = List();
+
+  // add develope first time
+  getDevelopeListFirst(dynamic birthDate, String babyId) async {
+    AgeDuration age =
+        Age.dateDifference(fromDate: birthDate, toDate: DateTime.now());
+    int sumAge = (age.years * 12) + age.months;
+    int i = 0;
+    developeRaw = [];
+    develope = [];
+
+    while (sumAge >= developeDue[i]) {
+      List<dynamic> listDevelope =
+          await Database().getDevelopeList('${developeDue[i]}_month');
+      print(listDevelope);
+      // get develope log data
+      if (listDevelope != null) {
+        for (var i = 0; i < listDevelope.length; i++) {
+          dynamic data;
+          await Database().getDevelopeData(listDevelope[i]).then((val) {
+            data = val;
+          });
+          this.developeRaw.add(data);
+        }
+      }
+      // update state
+      i++;
+    }
+
+    develope = mapDevelope(developeRaw);
+
+    print(develope);
+
+    for (var i = 0; i < develope.length; i++) {
+      if (develope[i]['due_date'] < sumAge) {
+        createDevelope(
+            develope[i]['val'],
+            DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day),
+            babyId,
+            develope[i]['subval'],
+            develope[i]['due_date'],
+            getSelectedKid()['age'],
+            2);
+      } else {
+        createDevelope(
+            develope[i]['val'],
+            DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day),
+            babyId,
+            develope[i]['subval'],
+            develope[i]['due_date'],
+            getSelectedKid()['age'],
+            1);
+      }
+    }
+  }
+
+  // add develope from edit
+  getDevelopeEdit(dynamic birthDate, String babyId) async {
+    print('delete develope');
+    List<Map<dynamic, dynamic>> temp = new List();
+    // print('datas : $datas');
+    for (var i = 0; i < datas.length; i++) {
+      if ((datas[i])['type'] == 'evo') {
+        temp.add(datas[i]);
+      }
+    }
+
+    print(temp);
+
+    for (int i = 0; i < temp.length; i++) {
+      await Database()
+          .deleteDavalopeLog(getSelectedKid()['kid'], (temp[i])['logId']);
+    }
+
+    print('delete datas');
+    datas.removeWhere((item) => item['type'] == 'evo');
+    getDevelopeListFirst(birthDate, babyId);
+  }
+
+  List<dynamic> mapDevelope(List<dynamic> dataList) {
+    return (dataList.map((dataList) => dataList.data)).toList();
+  }
+
+  createDevelope(dynamic value, DateTime dateTime, String babyId,
+      dynamic subVal, int dueDate, dynamic age, int stat) async {
+    dynamic logId;
+    // create weight log on firebase
+    await Database()
+        .createDevelopeLog(value, Timestamp.fromDate(dateTime), babyId, subVal,
+            dueDate, age, stat)
+        .then((val) {
+      logId = val.documentID;
+    });
+    // update on divice
+    addDevelopeDatas(value, Timestamp.fromDate(dateTime), babyId, subVal, logId,
+        dueDate, age, stat);
+  }
+
+  addDevelopeDatas(dynamic value, Timestamp dateTime, String babyId,
+      dynamic subVal, dynamic logId, int dueDate, dynamic age, int stat) {
+    datas.add({
+      'logId': logId,
+      'type': 'evo',
+      'val': value,
+      'subval': subVal,
+      'date': dateTime,
+      'stat': stat,
       'year': age.years,
       'month': age.months,
       'day': age.days

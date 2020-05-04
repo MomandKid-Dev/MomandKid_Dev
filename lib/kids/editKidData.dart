@@ -35,10 +35,13 @@ class _editState extends State<editKidData> {
     birthDate = widget.data['birthdate'];
   }
 
-  updateVaccineLog(DateTime birthDate) {
+  updateVaccineLog(DateTime birthDate, String babyId) {
     print('birthDate: $birthDate');
-    widget.dataList.getvaccineEdit(widget.data['age'],
-        Age.dateDifference(fromDate: birthDate, toDate: DateTime.now()));
+    widget.dataList.getvaccineEdit(birthDate, babyId);
+  }
+
+  updateDevelopeLog(DateTime birthDate, String babyId) {
+    widget.dataList.getDevelopeEdit(birthDate, babyId);
   }
 
   updateDataDevice(String name, String gender, DateTime birthDate) {
@@ -138,8 +141,9 @@ class _editState extends State<editKidData> {
       return showDatePicker(
               context: context,
               initialDate: birthDate,
-              firstDate: DateTime(1980),
-              lastDate: DateTime(2222))
+              firstDate: DateTime(birthDate.year - 5),
+              lastDate: DateTime(DateTime.now().year, DateTime.now().month,
+                  DateTime.now().day))
           .then((date) {
         setState(() {
           String newDate = '';
@@ -264,7 +268,10 @@ class _editState extends State<editKidData> {
                             print(nameController.text);
                             print('gender: ${gender}');
 
-                            await updateVaccineLog(birthDate);
+                            await updateVaccineLog(
+                                birthDate, widget.data['kid']);
+                            await updateDevelopeLog(
+                                birthDate, widget.data['kid']);
 
                             updateDateFirebase(
                               widget.data['kid'],
@@ -278,9 +285,6 @@ class _editState extends State<editKidData> {
                               birthDate,
                             );
 
-                            // widget.dataList
-                            //     .getDataLogAll()
-                            //     .whenComplete(() => Navigator.pop(context));
                             Navigator.pop(context);
                           },
                           child: SizedBox(

@@ -50,7 +50,7 @@ abstract class DatabaseService {
 
   // create develope log collection in firebase
   createDevelopeLog(String nameDavelope, Timestamp dateDevelope, String babyId,
-      dynamic subVal, dynamic dueDate);
+      dynamic subVal, dynamic dueDate, dynamic age, int stat);
 
   Future<void> saveKID_Develope(
       String developeLogId, Timestamp dateDevelope, String babyId);
@@ -106,6 +106,10 @@ class Database extends DatabaseService {
       Firestore.instance.collection('vaccine');
   final CollectionReference vaccineList =
       Firestore.instance.collection('vaccine_list');
+  final CollectionReference developeInfo =
+      Firestore.instance.collection('develope');
+  final CollectionReference developeList =
+      Firestore.instance.collection('develope_list');
 
   // Create user info in firebase (user_info)
   Future<void> createUserInfo(String name, String email, String image) async {
@@ -402,8 +406,11 @@ class Database extends DatabaseService {
   }
 
   // delete height log data
-  deleteHeightLog(String logId) async {
-    await heightCollection.document(logId).delete();
+  deleteHeightLog(String babyId, String logId) async {
+    await heightCollection
+        .document(logId)
+        .delete()
+        .whenComplete(() => deleteHeightLogId(babyId, logId));
   }
 
   // delete height log id from KID
@@ -461,8 +468,11 @@ class Database extends DatabaseService {
   }
 
   // delete weight log data
-  deleteWeightLog(String logId) async {
-    await weightCollection.document(logId).delete();
+  deleteWeightLog(String babyId, String logId) async {
+    await weightCollection
+        .document(logId)
+        .delete()
+        .whenComplete(() => deleteWeightLogId(babyId, logId));
   }
 
   // delete Weight log id from KID
@@ -515,8 +525,11 @@ class Database extends DatabaseService {
   }
 
   // delete medicine log data
-  deleteMedicineLog(String logId) async {
-    await medicineCollection.document(logId).delete();
+  deleteMedicineLog(String babyId, String logId) async {
+    await medicineCollection
+        .document(logId)
+        .delete()
+        .whenComplete(() => deleteMedicineLogId(babyId, logId));
   }
 
   // delete medicine log id from KID
@@ -592,8 +605,6 @@ class Database extends DatabaseService {
 
   // delete vaccine data
   deleteVaccineLog(String logId, String babyId) async {
-    print('lodId: $logId');
-    print('babyId: $babyId');
     await vaccineCollection
         .document(logId)
         .delete()
@@ -605,22 +616,46 @@ class Database extends DatabaseService {
     kidVaccine.document(babyId).updateData({logId: FieldValue.delete()});
   }
 
+  // get develope data from firebase
+  getDevelopeData(String developeId) async {
+    return await developeInfo.document(developeId).get();
+  }
+
+  // get develope list from firebase
+  getDevelopeList(String developeDue) async {
+    dynamic developeListA;
+    await developeList.document(developeDue).get().then((value) {
+      if (value.data == null) {
+        return null;
+      }
+      developeListA = value.data.keys.toList();
+    });
+    return developeListA;
+  }
+
   // create develope log in firebase (develope_log)
-  createDevelopeLog(String nameDevelope, Timestamp dateDevelope, String babyId,
-      dynamic subVal, dynamic dueDate) async {
-    dynamic logId;
-    await developeCollection.add({
+  Future createDevelopeLog(
+      String nameDevelope,
+      Timestamp dateDevelope,
+      String babyId,
+      dynamic subVal,
+      dynamic dueDate,
+      dynamic age,
+      int stat) async {
+    return await developeCollection.add({
       'type': 'evo',
       'val': nameDevelope,
       'subval': subVal,
       'date': dateDevelope,
       'due_date': dueDate,
-      'stat': 0
+      'stat': stat,
+      'year': age.years,
+      'month': age.months,
+      'day': age.days
     }).then((value) {
       saveKID_Develope(value.documentID, dateDevelope, babyId);
-      logId = value.documentID;
+      return value;
     });
-    return logId;
   }
 
   // keep develope log id in KID (kid_develope)
@@ -646,5 +681,30 @@ class Database extends DatabaseService {
   // get develope log data
   getDevelopeLog(String developeLogId) async {
     return await developeCollection.document(developeLogId).get();
+  }
+
+  // update stat
+  updateDevelopeLog(
+      String logId, int val, Timestamp dateDevelope, dynamic age) async {
+    return await developeCollection.document(logId).updateData({
+      'date': dateDevelope,
+      'stat': val,
+      'year': age.years,
+      'month': age.months,
+      'day': age.days
+    });
+  }
+
+  // delete develope data
+  deleteDavalopeLog(String babyId, String logId) async {
+    await developeCollection
+        .document(logId)
+        .delete()
+        .whenComplete(() => deleteDevelopeId(babyId, logId));
+  }
+
+  // delete develope id
+  deleteDevelopeId(String babyId, String logId) {
+    kidDevelope.document(babyId).updateData({logId: FieldValue.delete()});
   }
 }
