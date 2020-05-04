@@ -78,12 +78,13 @@ class _mainArticleState extends State<mainArticle> {
               Container(
                 height: 120.0,
                 child: ListView(
+                  padding: EdgeInsets.only(left: 10, right:10),
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
                     Container(
                       child: Row(
                         children: <Widget>[
-                          _buildInfoCard('5', 'assets/Pictures/grai.png', 'All')
+                          _buildInfoCard('5', 'assets/Pictures/stores.png', 'All')
                         ],
                       )
                     ),
@@ -107,7 +108,7 @@ class _mainArticleState extends State<mainArticle> {
                     Container(
                       child: Row(
                         children: <Widget>[
-                          _buildInfoCard('2', 'assets/Pictures/grai.png', 'DRINKS'),
+                          _buildInfoCard('2', 'assets/Pictures/drink.png', 'DRINKS'),
                         ],
                       )
                     ),
@@ -115,7 +116,7 @@ class _mainArticleState extends State<mainArticle> {
                     Container(
                       child: Row(
                         children: <Widget>[
-                          _buildInfoCard('3', 'assets/Pictures/fru.png', 'MEATS'),
+                          _buildInfoCard('3', 'assets/Pictures/meat.png', 'MEATS'),
                         ],
                       )
                     ),
@@ -123,7 +124,7 @@ class _mainArticleState extends State<mainArticle> {
                     Container(
                       child: Row(
                         children: <Widget>[
-                          _buildInfoCard('4', 'assets/Pictures/fru.png', 'BEANS'),
+                          _buildInfoCard('4', 'assets/Pictures/cheese.png', 'Dairy'),
                         ],
                       )
                     ),

@@ -63,6 +63,10 @@ flutter:
     - assets/Pictures/grai.png
     - assets/Pictures/veg.png
     - assets/Pictures/fru.png
+    - assets/Pictures/meat.png 
+    - assets/Pictures/stores.png 
+    - assets/Pictures/cheese.png  
+    - assets/Pictures/drink.png
     - assets/Pictures/pinkBG.jpg
     - assets/icons/
     - assets/article/drink/
