@@ -116,6 +116,50 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     return false;
   }
 
+  void validateWithGoogle() async {
+    setState(() {
+      _errorMessage = "";
+      _isLoading = true;
+    });
+
+    print('google Login');
+    String userId = "";
+    try {
+      userId = await widget.auth.signInWithGoogle();
+      dynamic info;
+      await Database(userId: userId).getUserData().then((val) {
+        info = val.data;
+      });
+      if (info['amount-baby'] == 0) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => mainAddScreen(
+                    userId: userId,
+                    data: widget.data,
+                  )),
+        );
+      }
+      print('Signed up: $userId');
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (userId.length > 0 && userId != null) {
+        print('Login complete');
+        widget.loginCallback();
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.message;
+        _formKey.currentState.reset();
+      });
+    }
+  }
+
   void validateAndSubmit() async {
     setState(() {
       _errorMessage = "";
@@ -468,28 +512,34 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                           decoration: BoxDecoration(
                               color: Colors.white, shape: BoxShape.circle),
                           child: RawMaterialButton(
-                            shape: CircleBorder(),
-                            child: Image.asset('assets/icons/google.png', height: 30, width: 30,),
+                              shape: CircleBorder(),
+                              child: Image.asset(
+                                'assets/icons/google.png',
+                                height: 30,
+                                width: 30,
+                              ),
                               onPressed: () {
-                                print('google');
+                                validateWithGoogle();
                               }),
                         ),
                       ),
                       Align(
                         alignment: Alignment(-0.3, 0.25),
                         child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: RawMaterialButton(
-                            shape: CircleBorder(),
-                            child: Image.asset('assets/icons/facebook.png', height: 30, width: 30,),
-                            onPressed: (){
-                              print('facebook');
-                            }
-                            )
-                        ),
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                                color: Colors.white, shape: BoxShape.circle),
+                            child: RawMaterialButton(
+                                shape: CircleBorder(),
+                                child: Image.asset(
+                                  'assets/icons/facebook.png',
+                                  height: 30,
+                                  width: 30,
+                                ),
+                                onPressed: () {
+                                  print('facebook');
+                                })),
                       )
                     ],
                   ),
