@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:momandkid/kids/DataTest.dart';
+import 'package:momandkid/kids/healthMain.dart';
 import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/circleImg.dart';
 import 'package:momandkid/shared/style.dart';
@@ -18,10 +19,14 @@ class editKidData extends StatefulWidget {
   _editState createState() => _editState();
 }
 
-class _editState extends State<editKidData> {
+class _editState extends State<editKidData> with TickerProviderStateMixin {
   TextEditingController nameController;
   TextEditingController weightController;
   TextEditingController heightController;
+
+  Animation<Offset> slideAnimationBlur2;
+  AnimationController slideController2;
+  Animation<double> opaAnimationBlur2;
   String gender;
   int day, month, year;
   DateTime birthDate;
@@ -33,6 +38,13 @@ class _editState extends State<editKidData> {
     nameController = TextEditingController(text: widget.data['name']);
     gender = widget.data['gender'];
     birthDate = widget.data['birthdate'];
+    slideController2 =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    slideAnimationBlur2 = Tween<Offset>(begin: Offset(0, -1), end: Offset(0, 0))
+        .animate(CurvedAnimation(
+            curve: Curves.easeInOutExpo, parent: slideController2));
+    opaAnimationBlur2 =
+        Tween<double>(begin: 0, end: 10).animate(slideController2);
   }
 
   updateVaccineLog(DateTime birthDate, String babyId) {
@@ -268,7 +280,7 @@ class _editState extends State<editKidData> {
                           onTap: () async {
                             print(nameController.text);
                             print('gender: ${gender}');
-
+                            slideController2.forward();
                             updateDateFirebase(
                               widget.data['kid'],
                               nameController.text,
@@ -286,6 +298,7 @@ class _editState extends State<editKidData> {
                             await updateDevelopeLog(
                                 birthDate, widget.data['kid']);
                             // .whenComplete(() => Navigator.pop(context));
+
                             Navigator.pop(context);
                           },
                           child: SizedBox(
@@ -343,6 +356,22 @@ class _editState extends State<editKidData> {
                       ),
                       Text('eiei')
                     ],
+                  ),
+                ),
+                //hear
+                // Container(
+                //   color: Colors.red,
+                //   width: 200,
+                //   height: 300,
+                // )
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  child: SlideTransition(
+                    position: slideAnimationBlur2,
+                    child: blurTransition(
+                      animation: opaAnimationBlur2,
+                      controller: slideController2,
+                    ),
                   ),
                 )
               ],
