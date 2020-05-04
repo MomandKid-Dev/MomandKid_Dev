@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:momandkid/services/database.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
@@ -14,11 +15,17 @@ abstract class AuthService {
   Future<void> signOut();
 
   Future<bool> isEmailVerified();
+
   Future loginWithFacebook();
+
+
+  Future<String> signInWithGoogle();
+
 }
 
 class Auth implements AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<String> signIn(String email, String password) async {
     AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(
@@ -64,6 +71,10 @@ class Auth implements AuthService {
   }
 
   Future<void> signOut() async {
+    await googleSignIn.signOut();
+
+    print("User Sign Out");
+
     return _firebaseAuth.signOut();
   }
 
@@ -75,5 +86,43 @@ class Auth implements AuthService {
   Future<bool> isEmailVerified() async {
     FirebaseUser user = await _firebaseAuth.currentUser();
     return user.isEmailVerified;
+  }
+
+  Future<String> signInWithGoogle() async {
+    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      idToken: googleSignInAuthentication.idToken,
+      accessToken: googleSignInAuthentication.accessToken,
+    );
+
+    final AuthResult authResult =
+        await _firebaseAuth.signInWithCredential(credential);
+    final FirebaseUser user = authResult.user;
+
+    // check new user
+    dynamic info;
+    await Database(userId: user.uid).getUserData().then((val) {
+      info = val.data;
+    });
+
+    print('info: $info');
+
+    if (info == null) {
+      String name = user.displayName;
+      String email = user.email;
+      String imageUrl = user.photoUrl;
+
+      if (name.contains(" ")) {
+        name = name.substring(0, name.indexOf(" "));
+      }
+
+      await Database(userId: user.uid).createUserInfo(name, email, imageUrl);
+    }
+
+    print('Login with google');
+    return user.uid;
   }
 }

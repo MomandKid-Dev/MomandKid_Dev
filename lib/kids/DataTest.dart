@@ -1546,16 +1546,30 @@ class dataTest {
     return _age;
   }
 
-  getRecent() {
-    var out = new List();
-    // var tempDatas = new List.from(datas);
-    if (getData('weight').length > 0) out.add(getData('weight')[0][0]);
-    if (getData('height').length > 0) out.add(getData('height')[0][0]);
-    if (getDataWithType('vac', 1).length > 0)
-      out.add(getDataWithType('vac', 1)[0][0]);
-    if (getData('med').length > 0) out.add(getData('med')[0][0]);
-    if (getDataWithType('evo', 0).length > 0)
-      out.add(getDataWithType('evo', 0)[0][0]);
+  List<Map<dynamic, dynamic>> getRecent() {
+    List<Map<dynamic, dynamic>> out = new List();
+    var tempDatas = new List.from(datas);
+    if (tempDatas.length > 0) {
+      tempDatas
+          .sort((a, b) => a['last_modified'].compareTo(b['last_modified']));
+      print('temp datas : $tempDatas');
+
+      for (var i = 0; i < tempDatas.length; i++) {
+        out.add(tempDatas[i]);
+        if ((tempDatas[i]['type'] == 'vac' && tempDatas[i]['stat'] == 0) ||
+            (tempDatas[i]['type'] == 'evo' && tempDatas[i]['stat'] != 0)) {
+          out.removeLast();
+        }
+      }
+    }
+    out = out.reversed.toList();
+    // if (getData('weight').length > 0) out.add(getData('weight')[0][0]);
+    // if (getData('height').length > 0) out.add(getData('height')[0][0]);
+    // if (getDataWithType('vac', 1).length > 0)
+    //   out.add(getDataWithType('vac', 1)[0][0]);
+    // if (getData('med').length > 0) out.add(getData('med')[0][0]);
+    // if (getDataWithType('evo', 0).length > 0)
+    //   out.add(getDataWithType('evo', 0)[0][0]);
     return out;
   }
 
@@ -1636,48 +1650,50 @@ class dataTest {
           babyId,
           vaccine[i]['subval'],
           vaccine[i]['due_date'],
-          getSelectedKid()['age']);
+          age,
+          Timestamp.fromDate(DateTime.now()));
     }
   }
 
   // add vaccine each month
-  getVaccine(dynamic age) async {
-    int index;
-    int sumAge = (age.years * 12) + age.months;
-    vaccineRaw = [];
-    vaccine = [];
+  // getVaccine(dynamic age) async {
+  //   int index;
+  //   int sumAge = (age.years * 12) + age.months;
+  //   vaccineRaw = [];
+  //   vaccine = [];
 
-    for (index = 0; index < vaccineDue.length; index++) {
-      if (sumAge == vaccineDue[index]) {
-        break;
-      }
-    }
+  //   for (index = 0; index < vaccineDue.length; index++) {
+  //     if (sumAge == vaccineDue[index]) {
+  //       break;
+  //     }
+  //   }
 
-    List<dynamic> listVaccine =
-        await Database().getVaccineList('${vaccineDue[index]}_month');
-    if (listVaccine != null) {
-      for (var i = 0; i < listVaccine.length; i++) {
-        dynamic data;
-        await Database().getVaccineData(listVaccine[i]).then((val) {
-          data = val;
-        });
-        this.vaccineRaw.add(data);
-      }
-    }
+  //   List<dynamic> listVaccine =
+  //       await Database().getVaccineList('${vaccineDue[index]}_month');
+  //   if (listVaccine != null) {
+  //     for (var i = 0; i < listVaccine.length; i++) {
+  //       dynamic data;
+  //       await Database().getVaccineData(listVaccine[i]).then((val) {
+  //         data = val;
+  //       });
+  //       this.vaccineRaw.add(data);
+  //     }
+  //   }
 
-    vaccine = mapVaccine(vaccineRaw);
+  //   vaccine = mapVaccine(vaccineRaw);
 
-    for (var i = 0; i < vaccine.length; i++) {
-      createVaccine(
-          vaccine[i]['val'],
-          DateTime(
-              DateTime.now().year, DateTime.now().month, DateTime.now().day),
-          getSelectedKid()['kid'],
-          vaccine[i]['subval'],
-          vaccine[i]['due_date'],
-          getSelectedKid()['age']);
-    }
-  }
+  //   for (var i = 0; i < vaccine.length; i++) {
+  //     createVaccine(
+  //         vaccine[i]['val'],
+  //         DateTime(
+  //             DateTime.now().year, DateTime.now().month, DateTime.now().day),
+  //         getSelectedKid()['kid'],
+  //         vaccine[i]['subval'],
+  //         vaccine[i]['due_date'],
+  //         getSelectedKid()['age'],
+  //         Timestamp.fromDate(DateTime.now()));
+  //   }
+  // }
 
   // add vaccine for edit kid data
   getvaccineEdit(dynamic birthDate, String babyId) async {
@@ -1693,12 +1709,14 @@ class dataTest {
     print(temp);
 
     for (int i = 0; i < temp.length; i++) {
-      await Database()
-          .deleteVaccineLog((temp[i])['logId'], getSelectedKid()['kid']);
+      await Database().deleteVaccineLog((temp[i])['logId'], babyId);
     }
 
     print('delete datas');
-    datas.removeWhere((item) => item['type'] == 'vac');
+    if (babyId == getSelectedKid()['kid']) {
+      datas.removeWhere((item) => item['type'] == 'vac');
+    }
+
     getVaccineListFirst(birthDate, babyId);
   }
 
@@ -1707,22 +1725,31 @@ class dataTest {
   }
 
   createVaccine(dynamic value, DateTime dateTime, String babyId, dynamic subVal,
-      int dueDate, dynamic age) async {
+      int dueDate, dynamic age, Timestamp lastModified) async {
     dynamic logId;
     // create weight log on firebase
     await Database()
-        .createVaccineLog(
-            value, Timestamp.fromDate(dateTime), babyId, subVal, dueDate, age)
+        .createVaccineLog(value, Timestamp.fromDate(dateTime), babyId, subVal,
+            dueDate, age, lastModified)
         .then((val) {
       logId = val.documentID;
     });
     // update on divice
-    addVaccineDatas(value, Timestamp.fromDate(dateTime), babyId, subVal, logId,
-        dueDate, age);
+    if (babyId == getSelectedKid()['kid']) {
+      addVaccineDatas(value, Timestamp.fromDate(dateTime), babyId, subVal,
+          logId, dueDate, age, lastModified);
+    }
   }
 
-  addVaccineDatas(dynamic value, Timestamp dateTime, String babyId,
-      dynamic subVal, dynamic logId, int dueDate, dynamic age) {
+  addVaccineDatas(
+      dynamic value,
+      Timestamp dateTime,
+      String babyId,
+      dynamic subVal,
+      dynamic logId,
+      int dueDate,
+      dynamic age,
+      Timestamp lastModified) {
     datas.add({
       'logId': logId,
       'type': 'vac',
@@ -1733,7 +1760,8 @@ class dataTest {
       'stat': 0,
       'year': age.years,
       'month': age.months,
-      'day': age.days
+      'day': age.days,
+      'last_modified': lastModified,
     });
   }
 
@@ -1771,8 +1799,15 @@ class dataTest {
         Age.dateDifference(fromDate: birthDate, toDate: DateTime.now());
     int sumAge = (age.years * 12) + age.months;
     int i = 0;
+    int index;
     developeRaw = [];
     develope = [];
+
+    for (index = 0; index < developeDue.length; index++) {
+      if (sumAge < developeDue[index]) {
+        break;
+      }
+    }
 
     while (sumAge >= developeDue[i]) {
       List<dynamic> listDevelope =
@@ -1797,7 +1832,7 @@ class dataTest {
     print(develope);
 
     for (var i = 0; i < develope.length; i++) {
-      if (develope[i]['due_date'] < sumAge) {
+      if (develope[i]['due_date'] < developeDue[index - 1]) {
         createDevelope(
             develope[i]['val'],
             DateTime(
@@ -1805,8 +1840,9 @@ class dataTest {
             babyId,
             develope[i]['subval'],
             develope[i]['due_date'],
-            getSelectedKid()['age'],
-            2);
+            age,
+            2,
+            Timestamp.fromDate(DateTime.now()));
       } else {
         createDevelope(
             develope[i]['val'],
@@ -1815,8 +1851,9 @@ class dataTest {
             babyId,
             develope[i]['subval'],
             develope[i]['due_date'],
-            getSelectedKid()['age'],
-            1);
+            age,
+            1,
+            Timestamp.fromDate(DateTime.now()));
       }
     }
   }
@@ -1835,12 +1872,14 @@ class dataTest {
     print(temp);
 
     for (int i = 0; i < temp.length; i++) {
-      await Database()
-          .deleteDavalopeLog(getSelectedKid()['kid'], (temp[i])['logId']);
+      await Database().deleteDavalopeLog(babyId, (temp[i])['logId']);
     }
 
     print('delete datas');
-    datas.removeWhere((item) => item['type'] == 'evo');
+    if (babyId == getSelectedKid()['kid']) {
+      datas.removeWhere((item) => item['type'] == 'evo');
+    }
+
     getDevelopeListFirst(birthDate, babyId);
   }
 
@@ -1848,23 +1887,40 @@ class dataTest {
     return (dataList.map((dataList) => dataList.data)).toList();
   }
 
-  createDevelope(dynamic value, DateTime dateTime, String babyId,
-      dynamic subVal, int dueDate, dynamic age, int stat) async {
+  createDevelope(
+      dynamic value,
+      DateTime dateTime,
+      String babyId,
+      dynamic subVal,
+      int dueDate,
+      dynamic age,
+      int stat,
+      Timestamp lastModified) async {
     dynamic logId;
     // create weight log on firebase
     await Database()
         .createDevelopeLog(value, Timestamp.fromDate(dateTime), babyId, subVal,
-            dueDate, age, stat)
+            dueDate, age, stat, lastModified)
         .then((val) {
       logId = val.documentID;
     });
     // update on divice
-    addDevelopeDatas(value, Timestamp.fromDate(dateTime), babyId, subVal, logId,
-        dueDate, age, stat);
+    if (babyId == getSelectedKid()['kid']) {
+      addDevelopeDatas(value, Timestamp.fromDate(dateTime), babyId, subVal,
+          logId, dueDate, age, stat, lastModified);
+    }
   }
 
-  addDevelopeDatas(dynamic value, Timestamp dateTime, String babyId,
-      dynamic subVal, dynamic logId, int dueDate, dynamic age, int stat) {
+  addDevelopeDatas(
+      dynamic value,
+      Timestamp dateTime,
+      String babyId,
+      dynamic subVal,
+      dynamic logId,
+      int dueDate,
+      dynamic age,
+      int stat,
+      Timestamp lastModified) {
     datas.add({
       'logId': logId,
       'type': 'evo',
@@ -1874,7 +1930,8 @@ class dataTest {
       'stat': stat,
       'year': age.years,
       'month': age.months,
-      'day': age.days
+      'day': age.days,
+      'last_modified': lastModified,
     });
   }
 }
