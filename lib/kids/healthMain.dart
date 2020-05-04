@@ -384,7 +384,7 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
 
                                     return childrenList(
                                       index: i,
-                                      img: widget.data.getKids()[i]['img'],
+                                      img: widget.data.getKids()[i]['image'],
                                       name: widget.data.getKids()[i]['name'],
                                       controller: slideController,
                                       data: _kids.of(context).data,
@@ -775,7 +775,7 @@ class _childrenListState extends State<childrenList> {
                     Hero(
                       tag: 'child${widget.index}',
                       child: circleImg(
-                        img: AssetImage('assets/icons/037-baby.png'),
+                        img: ((widget.img == null) | (widget.img == 'image path')) ? AssetImage('assets/icons/037-baby.png') : NetworkImage(widget.img),
                         width: 50,
                         height: 50,
                       ),

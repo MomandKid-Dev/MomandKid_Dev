@@ -38,17 +38,30 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print('show kid: ${widget.kid}');
+    if (widget.open != null) {
+      if (widget.open) {
+        setState(() {
+          controller.forward();
+        });
+        
+      } else {
+        setState(() {
+          controller.reverse();
+        });
+        
+      }
+    }
+    //print('show kid: ${widget.kid}');
     // TODO: implement build
     return LayoutBuilder(
       builder: (context, constraints) {
         img() {
           if ((widget.kid == null)) {
-            return AssetImage('assets/icons/404.png');
-          } else if ((widget.kid['img'] == null)) {
-            return AssetImage('assets/icons/404.png');
+            return AssetImage('assets/icons/037-baby.png');
+          } else if ((widget.kid['image'] == null) | (widget.kid['image'] == 'image path')) {
+            return AssetImage('assets/icons/037-baby.png');
           }
-          return AssetImage('assets/icons/${widget.kid['img']}');
+          return NetworkImage(widget.kid['image']);
         }
 
         name() {
@@ -102,13 +115,7 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
                     children: <Widget>[
                       GestureDetector(
                         onTap: () {
-                          if (widget.open != null) {
-                            if (widget.open) {
-                              controller.reverse();
-                            } else {
-                              controller.forward();
-                            }
-                          }
+                          
                           widget.onTap();
                           // if(_kids.of(context).open){
                           //   widget.controller.reverse();

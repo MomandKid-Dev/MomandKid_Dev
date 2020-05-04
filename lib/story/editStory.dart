@@ -2,15 +2,15 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:momandkid/kids/healthMain.dart';
+import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/style.dart';
-import 'package:momandkid/story/storyData.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/services.dart';
+import 'package:momandkid/services/database.dart';
 
 class editStoryScreen extends StatefulWidget{
-  editStoryScreen({this.data});
+  editStoryScreen({this.data,this.kidId});
   Map data;
+  String kidId;
   @override 
   _editStoryScreenState createState() => _editStoryScreenState();
 }
@@ -18,7 +18,7 @@ class _editStoryScreenState extends State<editStoryScreen>{
   @override 
   Widget build(BuildContext context){
     // print(widget.data);
-    return _story(child: editStory(),data: widget.data,);
+    return _story(child: editStory(),data: widget.data,kidId: widget.kidId);
   }
 
 }
@@ -37,9 +37,11 @@ class editStory extends StatefulWidget{
 class _story extends StatefulWidget{
   final Widget child;
   Map data;
+  String kidId;
   _story({
     @required this.child,
-    @required this.data
+    @required this.data,
+    @required this.kidId
   });
  
   static _storyState of(BuildContext context) => (context.dependOnInheritedWidgetOfExactType<_inheritedStory>() as _inheritedStory).data;
@@ -73,14 +75,24 @@ class _storyState extends State<_story>{
       this.remove = false;
     });
   }
-  removePic(int index){
-    setState(() {
-      widget.data['images'].removeAt(index);
-    });
+  removePic(int index) async {
+    if(widget.data['images'][index].runtimeType != String) {
+      setState(() {
+        widget.data['images'].removeAt(index);
+      });
+    }
+    else{
+      await Database().removeImageFromStory(widget.data['sid'],widget.data['images'][index]).whenComplete((){
+        setState(() {
+          widget.data['images'].removeAt(index);
+        });
+      });
+    }
+    
   }
   setStory(String story){
     setState(() {
-      widget.data['Story'] = story;
+      widget.data['content'] = story;
     });
   }
   updateStory(){
@@ -165,11 +177,26 @@ class _editStoryState extends State<editStory> with TickerProviderStateMixin{
                   position: _slideAnimation,
                   child:FloatingActionButton(
                     backgroundColor: Colors.white,
-                    onPressed: (){
-                      
-                      Navigator.pop(context,false);
+                    onPressed: () async 
+                    {
+                      List<dynamic> imagess = [];
+                      List<dynamic> temp = [];
+                      for (dynamic image in _story.of(context).widget.data['images']) {
+                        if (image.runtimeType != String) imagess.add(image);
+                        else temp.add(image);
+                      }
+                      await Future.wait(imagess.map((image) => Database().uploadFile(image))).then((urls) async {
+                        await Future.wait(urls.map((url) async {
+                            temp.add(url);
+                            await Database().addImageToStory(_story.of(context).widget.data['sid'], url);
+                          })
+                        );
+                      }).whenComplete((){
+                        _story.of(context).widget.data['images'] = temp;
+                        Navigator.pop(context,false);
+                      });
+                      //Navigator.pop(context,false);
                     },
-                    
                     heroTag: "btn1",
                     child:Icon(Icons.arrow_downward,color: Color(0xff131048),),
                   )
@@ -355,8 +382,8 @@ class _editStoryState extends State<editStory> with TickerProviderStateMixin{
                           heroTag: "btn5",
                           backgroundColor: Colors.white,
                           child: Icon(Icons.delete,color:Color(0xff131048)),
-                          onPressed: (){
-                            Navigator.pop(context,true);
+                          onPressed: ()async {
+                            await Database().removeStory(widget.data['sid'],_story.of(context).widget.kidId).whenComplete(()=>Navigator.pop(context,true));
                           },
                         ),
                       ),
@@ -415,7 +442,7 @@ class _editStoryState extends State<editStory> with TickerProviderStateMixin{
       // print(_story.of(context).widget.data);
     // bool enabled = _story.of(context).editing;
     textController = TextEditingController(
-        text: widget.data['Story'] == '' ? 'edit to add some text':  widget.data['Story'],
+        text: widget.data['content'] == '' ? 'edit to add some text':  widget.data['content'],
       );
     return ListView(
       physics: BouncingScrollPhysics(),
@@ -440,10 +467,10 @@ class _editStoryState extends State<editStory> with TickerProviderStateMixin{
                     decoration:  widget.data['coverImg'] == null ? BoxDecoration(
                       shape: BoxShape.circle,
                       color: Color(0xffF2C7C7) )
-                      : BoxDecoration(
+                      :  BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: widget.data['coverImg'].runtimeType == String ? AssetImage(widget.data['coverImg']) : FileImage(widget.data['coverImg']) ,
+                        image: widget.data['coverImg'].runtimeType == String ? NetworkImage(widget.data['coverImg']) : FileImage(widget.data['coverImg']) ,
                         fit: BoxFit.cover
                       ),
 
@@ -469,6 +496,7 @@ class _editStoryState extends State<editStory> with TickerProviderStateMixin{
                     children: <Widget>[
                       Text(widget.data['title'] == ''? 'Daily Note' : widget.data['title'],style: TextStyle(fontSize: 27,color: Color(0xff131048),fontWeight: FontWeight.bold)),
                       Text(toDate(widget.data['date']),style: TextStyle(fontSize: 20,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.bold)),
+                      // Text(widget.data['date'].toString(),style: TextStyle(fontSize: 20,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -479,17 +507,17 @@ class _editStoryState extends State<editStory> with TickerProviderStateMixin{
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text('Your Daily Note',style: TextStyle(fontSize: 22,color: Color(0xff131048),fontWeight: FontWeight.normal)),
-                      // widget.data['Story'] == '' ? Text('edit to add some text',style: TextStyle(fontSize: 18,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.normal)):
-                      TextField(
-                        controller: textController,
-                        enabled: _story.of(context).editing,
-                        maxLines: 20,
-                        minLines: 1,
-                        style: TextStyle(fontSize: 18,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.normal),
-                        decoration: InputDecoration(
-                          border: _story.of(context).editing ? UnderlineInputBorder(): InputBorder.none
-                        ),
-                      ),
+                      widget.data['content'] == '' ? Text('edit to add some text',style: TextStyle(fontSize: 18,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.normal))
+                      :Text(widget.data['content'],style: TextStyle(fontSize: 18,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.normal))// TextField(
+                      //   controller: textController,
+                      //   enabled: _story.of(context).editing,
+                      //   maxLines: 20,
+                      //   minLines: 1,
+                      //   style: TextStyle(fontSize: 18,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.normal),
+                      //   decoration: InputDecoration(
+                      //     border: _story.of(context).editing ? UnderlineInputBorder(): InputBorder.none
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -514,9 +542,10 @@ class _editStoryState extends State<editStory> with TickerProviderStateMixin{
                           // height: 20,
                             decoration: BoxDecoration(
                               borderRadius: allRoundedCorner(20),
-                              color: Colors.red,
+                              color: Colors.grey[300],
+                              
                             ),
-                          
+                            child: Icon(Icons.add,color: Colors.white,),
                             width: MediaQuery.of(context).size.width / 3,
                           )
 
@@ -544,7 +573,7 @@ class _editStoryState extends State<editStory> with TickerProviderStateMixin{
 
 class images extends StatefulWidget{
   images({this.image,this.index,this.data});
-  File image;
+  dynamic image;
   int index;
   Map data;
   @override 
@@ -585,8 +614,9 @@ class _imagesState extends State<images>with TickerProviderStateMixin{
       
       GestureDetector(
         onTap: (){
-          if(!_story.of(context).remove)
+          if(!_story.of(context).remove){
             Navigator.push(context, MaterialPageRoute(builder: (context)=>picture(image: widget.image,index: widget.index,)));
+            }
           else{
             _story.of(context).setRemoveFalse();
           }
@@ -618,8 +648,8 @@ class _imagesState extends State<images>with TickerProviderStateMixin{
                     borderRadius: allRoundedCorner(20),
                     boxShadow: _story.of(context).remove ?[BoxShadow(blurRadius: 7,spreadRadius: 3,color: Color(0xff999999))] : null,
                     image: DecorationImage(
-                      image: FileImage(widget.image),
-                      fit: BoxFit.cover
+                      fit: BoxFit.cover,
+                      image: (widget.image.runtimeType == String) ? ((widget.image == null) | (widget.image == 'image path')) ? AssetImage('assets/icons/cover.jpg') : NetworkImage(widget.image) : FileImage(widget.image),
                     )
                   ),
                 )
@@ -642,7 +672,9 @@ class _imagesState extends State<images>with TickerProviderStateMixin{
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.red,
+                      
                     ),
+                    child: Icon(Icons.clear,color: Colors.white,),
                   ),
                 ),
               )
@@ -668,27 +700,27 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
   Animation<Offset> animation;
   bool pressable = false;
   bool storyChanged=false,titleChanged=false,dayChanged=false,coverImgChanged=false;
-  String _oldStory,_oldTitle,_oldDay;
+  var _oldStory,_oldTitle,_oldDay;
   var _oldCoverImg;
-  String tempDay,tempStory,tempTitle;
+  var tempDay,tempStory,tempTitle;
   var tempCoverImg;
   calendarBox(BuildContext context){
-    return showDatePicker(context: context, initialDate:toDateTime(tempDay) , firstDate: DateTime(1980), lastDate: DateTime(2222)).then((date){setState(() {
-      String newDate = '';
-      if(date.day < 10){
-        newDate += '0${date.day.toString()}';
-      }
-      else{
-        newDate += date.day.toString();
-      }
-      if(date.month < 10){
-        print(date.month);
-        newDate += '0${date.month.toString()}';
-      }
-      else{
-        newDate += date.month.toString();
-      }
-      newDate += date.year.toString();
+    return showDatePicker(context: context, initialDate:tempDay , firstDate: DateTime(1980), lastDate: DateTime(2222)).then((newDate){setState(() {
+      // String newDate = '';
+      // if(date.day < 10){
+      //   newDate += '0${date.day.toString()}';
+      // }
+      // else{
+      //   newDate += date.day.toString();
+      // }
+      // if(date.month < 10){
+      //   print(date.month);
+      //   newDate += '0${date.month.toString()}';
+      // }
+      // else{
+      //   newDate += date.month.toString();
+      // }
+      // newDate += date.year.toString();
       if(newDate != _oldDay){
         setState(() {
           dayChanged = true;
@@ -719,12 +751,12 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
       controller.forward();
       _oldDay = widget.data['date'];
       _oldCoverImg = widget.data['coverImg'];
-      _oldStory = widget.data['Story'];
+      _oldStory = widget.data['content'];
       _oldTitle = widget.data['title'];
       tempCoverImg = widget.data['coverImg'];
       tempDay = widget.data['date'];
       tempTitle = widget.data['title'];
-      tempStory = widget.data['Story'];
+      tempStory = widget.data['content'];
       textController = TextEditingController(
         text: tempStory,
       );
@@ -805,7 +837,7 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
                                   : BoxDecoration(
                                   borderRadius: topRoundedCorner(20),
                                   image: DecorationImage(
-                                    image: tempCoverImg.runtimeType == String ? AssetImage(tempCoverImg) : FileImage(tempCoverImg) ,
+                                    image: tempCoverImg.runtimeType == String ? NetworkImage(tempCoverImg) : FileImage(tempCoverImg) ,
                                     fit: BoxFit.cover
                                   ),
 
@@ -908,7 +940,7 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text('Your Daily Note',style: TextStyle(fontSize: 22,color: Color(0xff131048),fontWeight: FontWeight.normal)),
-                                  // widget.data['Story'] == '' ? Text('edit to add some text',style: TextStyle(fontSize: 18,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.normal)):
+                                  // widget.data['content'] == '' ? Text('edit to add some text',style: TextStyle(fontSize: 18,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.normal)):
                                   TextField(
                                     controller: textController,
                                     enabled: true,
@@ -957,23 +989,28 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
                   color: Colors.white,
                 ),
                 child: GestureDetector(
-                  onTap: (){
+                  onTap: () async {
                     // print('eiei');
                     if(pressable){
-                      setState(() {
-                        widget.data['Story'] = textController.text;
-                        _oldStory = widget.data['Story'];
-                        widget.data['coverImg'] = tempCoverImg;
-                        widget.data['date'] = tempDay;
-                        widget.data['title'] = tempTitle;
-                        _oldDay = widget.data['date'];
-                        _oldTitle = widget.data['title'];
-                        pressable = false;
-                        dayChanged = false;
-                        storyChanged = false;
-                        titleChanged = false;
-                        coverImgChanged = false;
+                      await Database().uploadFile(tempCoverImg).then((url) async {
+                        await Database().updateStoryData(widget.data['sid'], url,textController.text).whenComplete((){
+                          setState(() {
+                            widget.data['content'] = textController.text;
+                            _oldStory = widget.data['content'];
+                            widget.data['coverImg'] = url;
+                            widget.data['date'] = tempDay;
+                            widget.data['title'] = tempTitle;
+                            _oldDay = widget.data['date'];
+                            _oldTitle = widget.data['title'];
+                            pressable = false;
+                            dayChanged = false;
+                            storyChanged = false;
+                            titleChanged = false;
+                            coverImgChanged = false;
+                          });
+                        });
                       });
+
                     }
                     
                   },
@@ -1006,9 +1043,10 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
 
 
 class picture extends StatelessWidget{
+
   picture({this.image,this.index});
   int index;
-  File image;
+  dynamic image;
   @override 
   Widget build(BuildContext context){
     return Hero(
@@ -1017,26 +1055,34 @@ class picture extends StatelessWidget{
         body:Container(
           color: Colors.black,
           alignment: Alignment.center,
-          child:Image.file(image)
+          child: (image.runtimeType == File) ? Image.file(image) : ((image == null) | (image == 'image path')) ? Image.asset('assets/icons/cover.jpg') : Image.network(image) ,
         )
       ),
     );
   }
 }
 
-toDate(String date){
+toDate(DateTime date) {
   String newDate = '';
-  List month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  if(int.parse(date.substring(0,2)) < 10){
-    newDate += date.substring(1,2);
-  }
-  else{
-    newDate += date.substring(0,2);
-  }
+  List month = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  newDate += date.day.toString();
   newDate += ' ';
-  newDate += month[int.parse(date.substring(2,4))-1];
+  newDate += month[date.month-1];
   newDate += ' ';
-  newDate += date.substring(4,8);
+  newDate += date.year.toString();
   return newDate;
 }
 

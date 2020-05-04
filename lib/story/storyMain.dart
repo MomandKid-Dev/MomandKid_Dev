@@ -1,17 +1,138 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:momandkid/kids/DataTest.dart';
+import 'package:momandkid/kids/addkid.dart';
 import 'package:momandkid/kids/healthMain.dart';
+import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/appbar.dart';
+import 'package:momandkid/shared/circleImg.dart';
 import 'package:momandkid/shared/style.dart';
 import 'package:momandkid/story/addStoryPage.dart';
 import 'package:momandkid/story/editStory.dart';
 import 'package:momandkid/story/storyData.dart';
 
-class storyMain extends StatefulWidget {
-  storyMain({Key key, this.userId}) : super(key: key);
-  StoryData data = StoryData();
+class mainStoryPage extends StatefulWidget {
+  @override
+  _mainStoryPageState createState() => _mainStoryPageState();
   String userId;
+  dataTest kiddata;
+  mainStoryPage({Key key, this.userId, this.kiddata}) : super(key: key);
+}
+
+class _mainStoryPageState extends State<mainStoryPage> {
+  @override
+  Widget build(BuildContext context) {
+    return storyPage(child: storyMain(userId:widget.userId,kiddata:widget.kiddata),data: widget.kiddata,);
+  }
+}
+
+
+class storyPage extends StatefulWidget {
+  Widget child;
+  dataTest data;
+  
+  
+  storyPage({this.child,this.data});
+   static _storyPageState of(BuildContext context) =>
+      (context.dependOnInheritedWidgetOfExactType<_inheritedStory>()
+              as _inheritedStory)
+          .data;
+  @override
+  _storyPageState createState() => _storyPageState();
+}
+
+class _storyPageState extends State<storyPage> with TickerProviderStateMixin{
+  dataTest data;
+  bool update = false;
+   bool open = false;
+    AnimationController slideController;
+    Animation<Offset> slideAnimation;
+    
+  Animation<Offset> slideAnimationBlur2;
+  Animation<double> opaAnimationBlur2;
+  AnimationController slideController2;
+  @override 
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    data = widget.data;
+     slideController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    slideAnimation = Tween<Offset>(begin: Offset(0, -1), end: Offset(0, 0))
+    .animate(CurvedAnimation(
+        curve: Curves.easeInOutExpo, parent: slideController));
+    slideController2 =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+         slideAnimationBlur2 = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1))
+        .animate(CurvedAnimation(
+            curve: Curves.easeInOutExpo, parent: slideController2));
+    opaAnimationBlur2 =
+        Tween<double>(begin: 10, end: 0).animate(slideController2);
+  }
+  @override
+  Widget build(BuildContext context) {
+    return _inheritedStory(this,widget.child);
+    
+  }
+  setSS(){
+    setState(() {
+    });
+  }
+
+  setTrue() {
+    setState(() {
+      this.open = true;
+    });
+  }
+
+  setFalse() {
+    setState(() {
+      this.open = false;
+    });
+  }
+  setSelectedKid(int id) {
+    setState(() {
+      data.setSelectedKid(id);
+    });
+    // data.getDataLogAll().whenComplete(() => loaded());
+  }
+
+  getSelectedKid() {
+    setState(() {
+      data.getSelectedKid();
+    });
+  }
+  forward(){
+    setState(() {
+      slideController.forward();
+    });
+  }
+  reverse(){
+    setState(() {
+      slideController.reverse();
+    });
+  }
+}
+
+class _inheritedStory extends InheritedWidget{
+  final _storyPageState data;
+  _inheritedStory(this.data, @required Widget child):super(child:child);
+  @override
+  bool updateShouldNotify(InheritedWidget oldWidget) {
+    // TODO: implement updateShouldNotify
+    return true;
+  }
+  
+}
+
+
+
+class storyMain extends StatefulWidget {
+  storyMain({Key key, this.userId, this.kiddata}) : super(key: key);
+  String userId;
+  
+  dataTest kiddata;
   // PageController Stoontroller;
   int index = 0;
 
@@ -19,37 +140,76 @@ class storyMain extends StatefulWidget {
   _story createState() => _story();
 }
 
+
+
 class _story extends State<storyMain>
     with TickerProviderStateMixin{
   PageController storyController;
+  StoryData storyData;
+  Map kids;
+ 
   
-  Animation<Offset> slideAnimationBlur2;
-  AnimationController slideController2;
-  Animation<double> opaAnimationBlur2;
+  int kidsCount;
+  Future loadStory() async {
+    //print('test ${widget.kiddata.kiddo[0]['kid']}');
+    await Database().getStoryFromKid(widget.kiddata.getSelectedKid()['kid']).then((storyId) async {
+      await Database().getStoriesData(storyId.data.keys.toList()).then((stories) {
+        int i = 0;
+         for (DocumentSnapshot story in stories){
+           storyData.addStory(i++,story.documentID, story.data['title'], story.data['coverImg'], story.data['images'].toList(), story.data['content'], story.data['date'].toDate());
+         }
+      });
+    });
+    // await Database(userId: widget.userId).getBabyId().then((babyIds) async {
+    //   await Future.wait(<Future>[
+    //     Database().getStoryFromKid(babyIds[0]),
+    //     Database().getBaby(babyIds)
+    //   ]).then((datas) async {
+    //     print(datas[1][0]);
+    //     await Database().getStoriesData(datas[0].data.keys.toList()).then((stories) async {
+    //       int i = 0;
+    //      for (DocumentSnapshot story in stories){
+    //        storyData.addStory(i, story.data['title'], story.data['coverImg'], story.data['images'], story.data['content'], story.data['date'].toDate());
+    //      }
+    //     });
+    //   });
+    // });
+  }
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    storyData = StoryData();
+   
+    
     storyController =
         PageController(initialPage: widget.index, viewportFraction: 1 / 1.25);
-    slideController2 =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    slideAnimationBlur2 = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1))
-        .animate(CurvedAnimation(
-            curve: Curves.easeInOutExpo, parent: slideController2));
-    opaAnimationBlur2 =
-        Tween<double>(begin: 10, end: 0).animate(slideController2);
+   
+   
     // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     //   systemNavigationBarColor: Colors.white,
     //   statusBarIconBrightness: Brightness.light,
     //   systemNavigationBarIconBrightness: Brightness.light // status bar color
     // ));
+    loadStory().whenComplete((){
+      setState(() {
+        
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if(storyPage.of(context).update){
+      storyData = StoryData();
+        loadStory().whenComplete(()=>setState(() {}));
+      storyPage.of(context).update = false;
+    }
+    kidsCount = widget.kiddata.kiddo.length;
     if (true)
-      slideController2.forward();
+      storyPage.of(context).slideController2.forward();
     return Stack(
     children:<Widget>[
     Container(
@@ -57,9 +217,20 @@ class _story extends State<storyMain>
         child: Column(
           // physics: BouncingScrollPhysics() ,
           children: <Widget>[
+            
             Container(
               child: appBar(
-                kid: null,
+                kid: widget.kiddata.getSelectedKid(),
+                open: storyPage.of(context).open,
+                onTap: () {
+                  if (storyPage.of(context).open) {
+                    storyPage.of(context).slideController.reverse();
+                    storyPage.of(context).setFalse();
+                  } else {
+                    storyPage.of(context).slideController.forward();
+                    storyPage.of(context).setTrue();
+                  }
+                },
               ),
               // pinned: false,
             ),
@@ -78,7 +249,8 @@ class _story extends State<storyMain>
                               context,
                               MaterialPageRoute(
                                   builder: (context) => addStoryPage(
-                                        data: widget.data,
+                                        data: storyData,
+                                        kidId: widget.kiddata.getSelectedKid()['kid']
                                       )));
                         },
                         child: Container(
@@ -103,7 +275,7 @@ class _story extends State<storyMain>
                       physics: BouncingScrollPhysics(),
                       // controller: storyController,
                       controller: storyController,
-                      itemCount: widget.data.getAllStory().length + 1,
+                      itemCount: storyData.getAllStory().length + 1,
                       onPageChanged: (int i) {
                         setState(() {
                           widget.index = i;
@@ -116,25 +288,97 @@ class _story extends State<storyMain>
                         if (widget.index == null) {
                           widget.index = 0;
                         }
-                        if (i == widget.data.getAllStory().length) {
+                        if (i == storyData.getAllStory().length) {
                           return addStoryCard(
-                            data: widget.data,
+                            data: storyData,
                             active: i == widget.index,
                             index: i,
                             controller: storyController,
+                            kidId: widget.kiddata.getSelectedKid()['kid'],
                           );
                         }
 
                         return storyPreviewCard(
                           index: i,
                           active: i == widget.index,
-                          data: widget.data.getStory(i),
+                          data: storyData.getStory(i),
                           controller: storyController,
-                          datas: widget.data,
+                          datas: storyData,
+                          kidId: widget.kiddata.getSelectedKid()['kid'],
                         );
                       },
                     ),
-                  )
+                  ),
+                  SlideTransition(
+          position: storyPage.of(context).slideAnimation,
+          child: Container(
+              height: (kidsCount) * 90.0,
+              constraints: BoxConstraints(
+                  maxHeight:
+                      MediaQuery.of(context).size.height -
+                          150),
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white,
+              child: ListView.builder(
+                padding: edgeAll(0),
+                //childrenList\
+                physics: BouncingScrollPhysics(),
+                itemCount: kidsCount,
+                itemBuilder: (_, i) {
+                  // if (i == kidsCount) {
+                  //   return GestureDetector(
+                  //       onTap: () async {
+                  //         //Add dek here
+                  //         int temp = kidsCount;
+                  //         await Navigator.push(
+                  //             context,
+                  //             MaterialPageRoute(
+                  //                 builder: (context) =>
+                  //                     mainAddScreen(
+                  //                       userId: widget.userId,
+                  //                       data: widget.kiddata,
+                  //                     ))).whenComplete(() {
+                  //           // kidsCount =
+                  //           //     widget.data.kiddo.length;
+                  //           // _kids
+                  //           //     .of(context)
+                  //           //     .setSelectedKid(kidsCount);
+                  //         });
+                  //       },
+                  //       child: Container(
+                  //         height: 83,
+                  //         width: 200,
+                  //         margin: edgeLR(20),
+                  //         decoration: BoxDecoration(
+                  //           borderRadius:
+                  //               allRoundedCorner(15),
+                  //           border: Border.all(
+                  //               width: 2,
+                  //               color: Color(0xff131048)
+                  //                   .withOpacity(0.2)),
+                  //           // color: Colors.red
+                  //         ),
+                  //         alignment: Alignment.center,
+                  //         child: Text('Add Kid',
+                  //             style: TextStyle(
+                  //                 color: Color(0xff131048),
+                  //                 fontSize: 18)),
+                  //       ));
+                  // }
+
+                  return childrenList(
+                    index: i,
+                    img: widget.kiddata.getKids()[i]['image'],
+                    name: widget.kiddata.getKids()[i]['name'],
+                    controller: storyPage.of(context).slideController,
+                    data: widget.kiddata,
+                    userId: widget.userId,
+                    // key: ValueKey('childrenListKEy'),
+                  );
+                },
+                // children:<Widget>[childrenList(img: 'assets/icons/037-baby.png',name: 'nackkie',controller: slideController,)]
+              )),
+        ),
                 ],
               ),
             )
@@ -143,24 +387,26 @@ class _story extends State<storyMain>
           ],
         )
         ),
-         SlideTransition(
-        position: slideAnimationBlur2,
+
+        
+        
+        SlideTransition(
+        position: storyPage.of(context).slideAnimationBlur2,
         child: blurTransition(
-          animation: opaAnimationBlur2,
-          controller: slideController2,
+          animation: storyPage.of(context).opaAnimationBlur2,
+          controller: storyPage.of(context).slideController2,
         ),
       ),
     ]);
   }
 
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
+  
 }
 
 class addStoryCard extends StatefulWidget {
-  addStoryCard({this.data, this.active, this.index, this.controller});
+  addStoryCard({this.data, this.active, this.index, this.controller, this.kidId});
   StoryData data;
+  String kidId;
   bool active;
   PageController controller;
   int index;
@@ -208,6 +454,7 @@ class _addStoryState extends State<addStoryCard> with TickerProviderStateMixin {
                             MaterialPageRoute(
                                 builder: (context) => addStoryPage(
                                       data: widget.data,
+                                      kidId: widget.kidId
                                     )));
                       }
                     },
@@ -256,12 +503,14 @@ class storyPreviewCard extends StatefulWidget {
       this.data,
       this.controller,
       this.datas,
-      this.newest});
+      this.newest,
+      this.kidId});
   int index, current;
   bool active, newest;
   StoryData datas;
   Map data;
   bool exit;
+  String kidId;
   PageController controller;
   @override
   _storyPreviewState createState() => _storyPreviewState();
@@ -303,7 +552,7 @@ class _storyPreviewState extends State<storyPreviewCard>
                   //   // widget.controller.jumpToPage(widget.current);
                   //   // if(!widget.active){
                   //   //   widget.controller.animateToPage(widget.index, duration: Duration(milliseconds: 100), curve: Curves.easeIn);
-
+                
                   //   // }
                   //   // widget.exit = await Navigator.push(context, MaterialPageRoute(builder: (context)=>editStory(data:widget.data)));
                   //   // print(widget.exit);
@@ -317,7 +566,7 @@ class _storyPreviewState extends State<storyPreviewCard>
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                editStoryScreen(data: widget.data)));
+                                editStoryScreen(data: widget.data, kidId: widget.kidId)));
 
                     if (remove == null) {
                       null;
@@ -333,7 +582,7 @@ class _storyPreviewState extends State<storyPreviewCard>
                         tag: 'pic${widget.data['id']}',
                         child: Container(
                           margin: edgeAll(10),
-                          decoration: widget.data['coverImg'] == null
+                          decoration: ((widget.data['coverImg'] == null) | (widget.data['coverImg'] == 'image path'))
                               ? BoxDecoration(
                                   borderRadius: allRoundedCorner(40),
                                   boxShadow: [
@@ -355,10 +604,8 @@ class _storyPreviewState extends State<storyPreviewCard>
                                         offset: Offset(0, 3))
                                   ],
                                   image: DecorationImage(
-                                    image: widget
-                                                .data['coverImg'].runtimeType ==
-                                            String
-                                        ? AssetImage(widget.data['coverImg'])
+                                    image: (widget.data['coverImg'].runtimeType == String)
+                                        ? NetworkImage(widget.data['coverImg'])
                                         : FileImage(widget.data['coverImg']),
                                     fit: BoxFit.cover,
                                   )),
@@ -368,6 +615,7 @@ class _storyPreviewState extends State<storyPreviewCard>
                         left: 25,
                         top: 50,
                         child: Text(
+                          // widget.data['date'].toString(),
                           toDate(widget.data['date']).replaceAll(' ', '\n'),
                           style: TextStyle(
                               color: Colors.white,
@@ -399,7 +647,7 @@ class _storyPreviewState extends State<storyPreviewCard>
   }
 }
 
-toDate(String date) {
+toDate(DateTime date) {
   String newDate = '';
   List month = [
     'January',
@@ -415,15 +663,104 @@ toDate(String date) {
     'November',
     'December'
   ];
-  if (int.parse(date.substring(0, 2)) < 10) {
-    newDate += date.substring(1, 2);
-  } else {
-    newDate += date.substring(0, 2);
-  }
-
+  newDate += date.day.toString();
   newDate += ' ';
-  newDate += month[int.parse(date.substring(2, 4)) - 1];
+  newDate += month[date.month-1];
   newDate += ' ';
-  newDate += date.substring(4, 8);
+  newDate += date.year.toString();
   return newDate;
 }
+
+class childrenList extends StatefulWidget {
+  childrenList(
+      {this.index,
+      this.img,
+      this.name,
+      this.controller,
+      this.data,
+      this.userId, Key key}):super(key:key);
+  String img, name;
+  String userId;
+  int index;
+  bool open;
+  dataTest data;
+  AnimationController controller;
+  @override
+  _childrenListState createState() => _childrenListState();
+}
+
+class _childrenListState extends State<childrenList> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: edgeAll(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            child: GestureDetector(
+                 onTap: () {
+                   setState(() {
+                     storyPage.of(context).update = true;
+                   });
+                  
+                  storyPage.of(context).setFalse();
+                  widget.controller.reverse();
+
+                  // _kids.of(context).data.kiddo);
+                  storyPage.of(context).setSelectedKid(widget.index + 1);
+                  storyPage.of(context).slideController2.forward();
+                  // storyPage.of(context).slideController.reverse();
+                  // if (!storyPage.of(context).loading)
+                  //   storyPage.of(context).slideController.forward();
+                  print(storyPage.of(context).open);
+                  // widget.data.setSelectedKid(widget.index);
+                  //push new kid use push replacement
+                },
+                child: Row(
+                  children: <Widget>[
+                    Hero(
+                      tag: 'child${widget.index}',
+                      child: circleImg(
+                        img: ((widget.img == null) | (widget.img == 'image path')) ? AssetImage('assets/icons/037-baby.png') : NetworkImage(widget.img),
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                    Text(
+                      '   ' + widget.name,
+                    ),
+                  ],
+                )),
+          ),
+          // GestureDetector(
+          //   onTap: () async {
+          //     var remove = await Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //             builder: (context) => editKidData(
+          //                   index: widget.index,
+          //                   data: widget.data.getKids()[widget.index],
+          //                   userId: widget.userId,
+          //                   dataList: widget.data,
+          //                 )));
+          //     if (remove == null) {
+          //       null;
+          //     } else {
+          //       setState(() {
+          //         widget.data.getKids().removeAt(widget.index);
+
+          //         widget.data.setSelectedKidAny();
+          //         // widget.data.getSelectedKid());
+          //       });
+          //       // widget.data.getKids().removeAt(widget.index);
+          //     }
+          //   },
+          //   child: Icon(Icons.edit),
+          // )
+        ],
+      ),
+    );
+  }
+}
+

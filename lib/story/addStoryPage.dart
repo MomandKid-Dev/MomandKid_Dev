@@ -2,28 +2,44 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/circleImg.dart';
 import 'package:momandkid/shared/style.dart';
 import 'package:momandkid/story/editStory.dart';
 import 'package:momandkid/story/storyData.dart';
 import 'carousel.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
-import 'package:flutter/services.dart';
+
+Future uploadFile(File _image) async {
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child('images/${Uuid().v1()}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    print('Image Uploaded');
+    return await storageReference.getDownloadURL().then((fileURL) {
+      return fileURL;
+    });
+  }
 
 class addStoryPage extends StatefulWidget{
-  addStoryPage({this.data});
+  addStoryPage({this.data,this.kidId});
   int _pageIndex = 0;
+  String kidId;
   StoryData data;
   PageController controller = new PageController(initialPage: 0);
   @override 
   _addStory createState() => _addStory();
+  
 }
 
 class _addStory extends State<addStoryPage>{
     
   coverImages ci = new coverImages();
-
+  
+  
   @override 
   void initState() {
     // TODO: implement initState
@@ -79,13 +95,13 @@ class _addStory extends State<addStoryPage>{
                         height: 80,
                         width: 80,
                         // color: Colors.red,
-                        child:circleImg(img:'037-baby.png',height: 80,width: 80,),
+                        child:circleImg(img:AssetImage('assets/icons/037-baby.png'),height: 80,width: 80,),
                         
                       ),
                       SizedBox(
                         height: 20,
                       ),
-                      dates(controller: widget.controller,data: widget.data,)
+                      dates(controller: widget.controller,data: widget.data,kidId: widget.kidId,)
                     ],
                   ),
                 ]
@@ -148,18 +164,31 @@ upbutton(String title,PageController controller,int index,File img){
 }
 
 class dates extends StatefulWidget{
-  dates({this.controller,this.data});
+  dates({this.controller,this.data,this.kidId});
   PageController controller;
   StoryData data;
   int index;
+  String kidId;
   coverImages ci;
   @override 
   _dateState createState() => _dateState();
 }
 
 class _dateState extends State<dates>{
+  int day, month;
+  int selectedMonth = DateTime.now().month, selectedDay = DateTime.now().day;
+  
+  DateTime date ;
+  callback(newDay,newMonth){
+    setState(() {
+      selectedDay = newDay;
+      selectedMonth = newMonth;
+      date = DateTime(DateTime.now().year, selectedMonth,selectedDay);
+      // print('${selectedDay} + $selectedMonth');
+    });
+  }
   var _image;
-  int selectedMonth = DateTime.now().month, selectedDay=  DateTime.now().day;
+  // int selectedMonth = DateTime.now().month, selectedDay=  DateTime.now().day;
   TextEditingController textController = TextEditingController();
   Future getImageFromGallery() async {
  
@@ -168,6 +197,15 @@ class _dateState extends State<dates>{
     setState(() {
       _image = image;
     });
+  }
+
+  @override 
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // selectedMonth  = DateTime.now().month;
+    // selectedDay =  DateTime.now().day;
+    date = DateTime(DateTime.now().year, selectedMonth,selectedDay);
   }
 
   @override
@@ -179,6 +217,8 @@ class _dateState extends State<dates>{
 
   @override 
   Widget build(BuildContext context){
+    
+    
     return Container(
       height: MediaQuery.of(context).size.height - 220,
       child:PageView(
@@ -192,7 +232,7 @@ class _dateState extends State<dates>{
             children: <Widget>[
               Text('Ready to create a new story ?',style: TextStyle(fontSize: 22,color: Colors.white),),
               // pickDate(d.getMonth(), d.getDay()),
-              carousel(selectedMonth:selectedMonth,selectedDay: selectedDay,),
+              carousel(selectedMonth:selectedMonth,selectedDay: selectedDay,callback: callback,),
               
               button('LET\'S DO IT',widget.controller,0)
             ],
@@ -269,18 +309,21 @@ class _dateState extends State<dates>{
                                       children: <Widget>[
                                         GestureDetector(
                                           onTap: ()async{
-                                            //print(_image);
-                                            print(toDate(selectedMonth, selectedDay));
-                                            widget.data.addStory(widget.data.getAllStory().length , textController.text, _image, [], textController.text,toDate(selectedMonth, selectedDay));
-                                            //print(widget.data.datas);
-                                            var remove = await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-                                              
-                                              return editStoryScreen(data:widget.data.getStory(widget.data.getAllStory().length-1));}));
-                                            if(remove == null){
-                                              null;
-                                            }
-                                            else if(remove == true){
-                                              widget.data.getAllStory().removeAt(widget.data.getAllStory().length-1);
+                                            if(_image != null){
+
+                                            uploadFile(_image).then((url) async{
+                                              await Database().createStory(widget.kidId,textController.text,url,date,[]).then((storyId) async {
+                                                widget.data.addStory(widget.data.getAllStory().length ,storyId.documentID, textController.text, url, [], '',date);
+                                                var remove = await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+                                                return editStoryScreen(data:widget.data.getStory(widget.data.getAllStory().length-1));}));
+                                                if(remove == null){
+                                                  null;
+                                                }
+                                                else if(remove == true){
+                                                  widget.data.getAllStory().removeAt(widget.data.getAllStory().length-1);
+                                                }
+                                              });
+                                            });
                                             }
                                           },
                                           child:Image.asset('assets/icons/check.png'),
@@ -315,7 +358,7 @@ class _dateState extends State<dates>{
                           color: Colors.white,
                           boxShadow: shadow(2.0)
                         ),
-                        child: Text('eiei',textAlign: TextAlign.center,),
+                        child: Text('UPLOAD',textAlign: TextAlign.center,),
                       ),
                     )
                   )
