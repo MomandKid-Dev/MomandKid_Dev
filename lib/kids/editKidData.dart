@@ -35,10 +35,14 @@ class _editState extends State<editKidData> {
     birthDate = widget.data['birthdate'];
   }
 
-  updateVaccineLog(DateTime birthDate) {
-    print('birthDate: $birthDate');
-    widget.dataList.getvaccineEdit(widget.data['age'],
-        Age.dateDifference(fromDate: birthDate, toDate: DateTime.now()));
+  updateVaccineLog(DateTime birthDate, String babyId) {
+    print('Vaccine');
+    widget.dataList.getvaccineEdit(birthDate, babyId);
+  }
+
+  Future updateDevelopeLog(DateTime birthDate, String babyId) {
+    print('Develope');
+    return widget.dataList.getDevelopeEdit(birthDate, babyId);
   }
 
   updateDataDevice(String name, String gender, DateTime birthDate) {
@@ -138,8 +142,9 @@ class _editState extends State<editKidData> {
       return showDatePicker(
               context: context,
               initialDate: birthDate,
-              firstDate: DateTime(1980),
-              lastDate: DateTime(2222))
+              firstDate: DateTime(birthDate.year - 5),
+              lastDate: DateTime(DateTime.now().year, DateTime.now().month,
+                  DateTime.now().day))
           .then((date) {
         setState(() {
           String newDate = '';
@@ -264,8 +269,6 @@ class _editState extends State<editKidData> {
                             print(nameController.text);
                             print('gender: ${gender}');
 
-                            await updateVaccineLog(birthDate);
-
                             updateDateFirebase(
                               widget.data['kid'],
                               nameController.text,
@@ -278,9 +281,11 @@ class _editState extends State<editKidData> {
                               birthDate,
                             );
 
-                            // widget.dataList
-                            //     .getDataLogAll()
-                            //     .whenComplete(() => Navigator.pop(context));
+                            await updateVaccineLog(
+                                birthDate, widget.data['kid']);
+                            await updateDevelopeLog(
+                                birthDate, widget.data['kid']);
+                            // .whenComplete(() => Navigator.pop(context));
                             Navigator.pop(context);
                           },
                           child: SizedBox(

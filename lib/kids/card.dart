@@ -17,7 +17,7 @@ class _cardState extends State<card> {
   Widget build(BuildContext context) {
     // print(widget.list.runtimeType);
     return Container(
-        margin: EdgeInsets.only(top: 30),
+        margin: EdgeInsets.only(top: 0),
         padding: EdgeInsets.only(bottom: 20),
         // width: MediaQuery.of(context).size.width / 1.13,
         decoration: BoxDecoration(
@@ -153,19 +153,29 @@ Widget cards(BuildContext context, dataTest data, String type,
                               ]
                             : <Widget>[
                                 Text('${list['val']}'),
-                                Text('${data.getSubval(type)}')
+                                Text('${list['subval']}')
                               ],
                       ))
                 ],
               ),
               Column(
-                  children: type == 'vac'
+                  children: type == 'vac' || type == 'evo'
                       ? [
-                          Icon(
-                            Icons.check_circle_outline,
-                            color:
-                                list['stat'] == 0 ? Colors.grey : Colors.green,
-                          ),
+                          type == 'evo'
+                              ? Icon(
+                                  list['stat'] == 2
+                                      ? Icons.highlight_off
+                                      : Icons.check_circle_outline,
+                                  color: list['stat'] == 1
+                                      ? Colors.grey
+                                      : list['stat'] == 0
+                                          ? Colors.green
+                                          : Colors.red,
+                                )
+                              : Icon(Icons.check_circle_outline,
+                                  color: list['stat'] == 1
+                                      ? Colors.green
+                                      : Colors.grey),
                           Container(
                               width: 80, child: Text('อายุ${getDateLog(list)}'))
                         ]
