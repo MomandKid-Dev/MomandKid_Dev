@@ -36,11 +36,12 @@ class _editState extends State<editKidData> {
   }
 
   updateVaccineLog(DateTime birthDate, String babyId) {
-    print('birthDate: $birthDate');
+    print('Vaccine');
     widget.dataList.getvaccineEdit(birthDate, babyId);
   }
 
   Future updateDevelopeLog(DateTime birthDate, String babyId) {
+    print('Develope');
     return widget.dataList.getDevelopeEdit(birthDate, babyId);
   }
 

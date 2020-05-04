@@ -318,7 +318,6 @@ class _healthCardState extends State<healthCard> {
                                             false,
                                             widget.data
                                                 .getSelectedKid()['age']);
-
                                         break;
                                       default:
                                         break;

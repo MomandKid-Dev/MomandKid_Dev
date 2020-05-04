@@ -188,10 +188,11 @@ class Database extends DatabaseService {
 
   // delete kid data
   Future deleteBabyInfo(String babyId) async {
-    return await babyCollection
-        .document(babyId)
-        .delete()
-        .whenComplete(() => deleteBabyId(babyId));
+    return await babyCollection.document(babyId).delete().then((val) {
+      userCollection
+          .document(userId)
+          .updateData({'amount-baby': FieldValue.increment(-1)});
+    }).whenComplete(() => deleteBabyId(babyId));
   }
 
   // delete kid in uid
