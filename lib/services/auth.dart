@@ -18,6 +18,7 @@ abstract class AuthService {
 
   Future loginWithFacebook();
 
+  Future resetPassword(String email);
 
   Future<String> signInWithGoogle();
 
@@ -43,6 +44,15 @@ class Auth implements AuthService {
     await Database(userId: user.uid).createUserInfo(name, email, 'image path');
 
     return user.uid;
+  }
+
+  Future resetPassword(String email) async {
+    try {
+      return await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      return e.toString();
+    }
+    
   }
 
   Future loginWithFacebook() async {
