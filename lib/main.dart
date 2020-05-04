@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:momandkid/root_page.dart';
 import 'package:momandkid/services/auth.dart';
-import 'package:momandkid/Profile/profilePage.dart';
-import 'Profile/settingPage.dart';
-import 'post/createPost.dart';
 
 void main() => runApp(MyApp());
 
