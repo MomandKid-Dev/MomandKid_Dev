@@ -13,116 +13,134 @@ class _mainArticleState extends State<mainArticle> {
   List all = listDrink + listMeat + listMilk;
   var selectedCard = '0';
 
+  ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: ListView(
-        padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),
+      child: Stack(
         children: <Widget>[
-          Container(
-            height: 40.0,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                Container(
-                  width: 8,
+          Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 1.6,
+                  width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                    color: Color(0xFF131048)
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+                    color: Color(0xFFEFF5F8)
                   ),
                 ),
-                SizedBox(width: 8.0),
-                Text(
-                  "Catagories",
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.6,
-                    color: Color(0xFF131048)
-                  ),
+              ),
+          ListView(
+            controller: _scrollController,
+            padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 15.0),
+            children: <Widget>[
+              Container(
+                height: 40.0,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    Container(
+                      width: 8,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF131048)
+                      ),
+                    ),
+                    SizedBox(width: 8.0),
+                    Text(
+                      "Catagories",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.6,
+                        color: Color(0xFF131048)
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 20,),
+              Container(
+                height: 120.0,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          _buildInfoCard('3', 'assets/Pictures/grai.png', 'All')
+                        ],
+                      )
+                    ),
+                    SizedBox(width: 20.0,),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          _buildInfoCard('0', 'assets/Pictures/grai.png', 'GRAINS'),
+                        ],
+                      )
+                    ),
+                    SizedBox(width: 20.0),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          _buildInfoCard('1', 'assets/Pictures/veg.png', 'VEGGIES'),
+                        ],
+                      )
+                    ),
+                    SizedBox(width: 20.0),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          _buildInfoCard('2', 'assets/Pictures/fru.png', 'FRUITS'),
+                        ],
+                      )
+                    ),
+                  ],
+                )
+              ),
+              SizedBox(height: 20,),
+              Container(
+                height: 40.0,
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      width: 8,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF131048)
+                      ),
+                    ),
+                    SizedBox(width: 8.0),
+                    Text(
+                      "Post",
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.6,
+                        color: Color(0xFF131048)
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10,),
+              if(selectedCard == '0')
+                for (var i = 0; i < listDrink.length; i++) 
+                  Image.asset(listDrink[i])
+              else if(selectedCard == '1')
+                for (var i = 0; i < listMeat.length; i++) 
+                  Image.asset(listMeat[i])
+              else if(selectedCard == '2')
+                for (var i = 0; i < listMilk.length; i++) 
+                  Image.asset(listMilk[i])
+              else
+                for (var i = 0; i < all.length; i++) 
+                  Image.asset(all[i])
+            ],
           ),
-          SizedBox(height: 20,),
-          Container(
-            height: 120.0,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      _buildInfoCard('3', 'assets/Pictures/grai.png', 'All')
-                    ],
-                  )
-                ),
-                SizedBox(width: 20.0,),
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      _buildInfoCard('0', 'assets/Pictures/grai.png', 'GRAINS'),
-                    ],
-                  )
-                ),
-                SizedBox(width: 20.0),
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      _buildInfoCard('1', 'assets/Pictures/veg.png', 'VEGGIES'),
-                    ],
-                  )
-                ),
-                SizedBox(width: 20.0),
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      _buildInfoCard('2', 'assets/Pictures/fru.png', 'FRUITS'),
-                    ],
-                  )
-                ),
-              ],
-            )
-          ),
-          SizedBox(height: 20,),
-          Container(
-            height: 40.0,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: 8,
-                  decoration: BoxDecoration(
-                    color: Color(0xFF131048)
-                  ),
-                ),
-                SizedBox(width: 8.0),
-                Text(
-                  "Post",
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.6,
-                    color: Color(0xFF131048)
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 10,),
-          if(selectedCard == '0')
-            for (var i = 0; i < listDrink.length; i++) 
-              Image.asset(listDrink[i])
-          else if(selectedCard == '1')
-            for (var i = 0; i < listMeat.length; i++) 
-              Image.asset(listMeat[i])
-          else if(selectedCard == '2')
-            for (var i = 0; i < listMilk.length; i++) 
-              Image.asset(listMilk[i])
-          else
-            for (var i = 0; i < all.length; i++) 
-              Image.asset(all[i])
         ],
-      ),
+      )
     );
   }
 

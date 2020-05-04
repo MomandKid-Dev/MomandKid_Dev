@@ -249,29 +249,32 @@ class _mainScheduleState extends State<mainSchedule> {
                                       Spacer(flex: 3,)
                                     ],
                                   ),
-                                  subtitle: Row(
-                                    children: <Widget>[
-                                      Text(
-                                        dataDesSche[index],
-                                        style: TextStyle(
-                                          fontSize: 18
+                                  subtitle: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(right: 20),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          dataDesSche[index],
+                                          style: TextStyle(
+                                            fontSize: 18
+                                          ),
                                         ),
-                                        ),
-                                      Spacer(flex: 18,),
-                                      Switch(
-                                        value: notiSche[index], 
-                                        activeColor: colorSche[index],
-                                        onChanged: (value) async {
-                                          await Database(userId: widget.userId).switchNotificationSetting(scheduleIds[index], value).whenComplete((){
-                                            setState(() {
-                                              notiSche[index] = value;
+                                        Switch(
+                                          value: notiSche[index], 
+                                          activeColor: colorSche[index],
+                                          onChanged: (value) async {
+                                            await Database(userId: widget.userId).switchNotificationSetting(scheduleIds[index], value).whenComplete((){
+                                              setState(() {
+                                                notiSche[index] = value;
+                                              });
                                             });
-                                          });
-                                        }
-                                      ),
-                                      Spacer(flex: 2,)
-                                    ],
-                                  ),
+                                          }
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                 ),
                               )
                             ): PreferredSize(child: Container(), preferredSize: Size(0.0 ,0.0));
