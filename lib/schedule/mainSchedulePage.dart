@@ -116,7 +116,7 @@ class _mainScheduleState extends State<mainSchedule> {
                     height: 250.0,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/Pictures/pinkBG.jpg'),
+                        image: AssetImage('assets/Pictures/3459610.png'),
                         fit: BoxFit.cover
                         ), 
                       borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0))
