@@ -55,6 +55,7 @@ class _kidsState extends State<_kids> with TickerProviderStateMixin {
   Animation<double> opaAnimationBlur2;
   int kidsCount;
   loaded() {
+    if(!mounted) return;
     setState(() {
       loading = false;
     });
@@ -64,7 +65,7 @@ class _kidsState extends State<_kids> with TickerProviderStateMixin {
   void initState() {
     // kidsCount = data.kiddo.length;
     data = widget.data;
-    data.getDataLogAll().whenComplete(() => loaded());
+    data.getDataLogAll().whenComplete(() {if(!mounted) return; loaded();});
     slideController2 =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     slideAnimationBlur2 = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1))

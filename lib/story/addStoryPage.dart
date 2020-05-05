@@ -315,7 +315,7 @@ class _dateState extends State<dates>{
                                               await Database().createStory(widget.kidId,textController.text,url,date,[]).then((storyId) async {
                                                 widget.data.addStory(widget.data.getAllStory().length ,storyId.documentID, textController.text, url, [], '',date);
                                                 var remove = await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-                                                return editStoryScreen(data:widget.data.getStory(widget.data.getAllStory().length-1));}));
+                                                return editor2(data:widget.data.getStory(widget.data.getAllStory().length-1));}));
                                                 if(remove == null){
                                                   null;
                                                 }

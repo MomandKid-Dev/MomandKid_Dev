@@ -903,6 +903,7 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
                                     enabled: true,
                                     maxLines: 20,
                                     minLines: 1,
+                                    
                                     onChanged: (text){
                                       // tempTitle = text;
                                       if(_oldTitle == text){
@@ -919,7 +920,9 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
                                     },
                                     style: TextStyle(fontSize: 27,color: Color(0xff131048),fontWeight: FontWeight.bold),
                                     decoration: InputDecoration(
-                                      border: InputBorder.none
+                                      border: InputBorder.none,
+                                      hintText: 'EDIT TITLE',
+                                      hintStyle: TextStyle(color: Color(0xff131048))
                                     ),
                                   ),
                                   GestureDetector(
@@ -939,7 +942,7 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text('Your Daily Note',style: TextStyle(fontSize: 22,color: Color(0xff131048),fontWeight: FontWeight.normal)),
+                                  Text('Your Daily Note3',style: TextStyle(fontSize: 22,color: Color(0xff131048),fontWeight: FontWeight.normal)),
                                   // widget.data['content'] == '' ? Text('edit to add some text',style: TextStyle(fontSize: 18,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.normal)):
                                   TextField(
                                     controller: textController,
@@ -992,14 +995,14 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
                   onTap: () async {
                     // print('eiei');
                     if(pressable){
-                      await Database().uploadFile(tempCoverImg).then((url) async {
-                        await Database().updateStoryData(widget.data['sid'], url,textController.text).whenComplete((){
+                      if (!coverImgChanged) {
+                        await Database().updateStoryData(widget.data['sid'], tempCoverImg,titleTextController.text,textController.text).whenComplete((){
                           setState(() {
                             widget.data['content'] = textController.text;
                             _oldStory = widget.data['content'];
-                            widget.data['coverImg'] = url;
+                            widget.data['coverImg'] = tempCoverImg;
                             widget.data['date'] = tempDay;
-                            widget.data['title'] = tempTitle;
+                            widget.data['title'] = titleTextController.text;
                             _oldDay = widget.data['date'];
                             _oldTitle = widget.data['title'];
                             pressable = false;
@@ -1009,10 +1012,28 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
                             coverImgChanged = false;
                           });
                         });
-                      });
-
+                      }
+                      else {
+                        await Database().uploadFile(tempCoverImg).then((url) async {
+                          await Database().updateStoryData(widget.data['sid'], url,titleTextController.text,textController.text).whenComplete((){
+                            setState(() {
+                              widget.data['content'] = textController.text;
+                              _oldStory = widget.data['content'];
+                              widget.data['coverImg'] = url;
+                              widget.data['date'] = tempDay;
+                              widget.data['title'] = titleTextController.text;
+                              _oldDay = widget.data['date'];
+                              _oldTitle = widget.data['title'];
+                              pressable = false;
+                              dayChanged = false;
+                              storyChanged = false;
+                              titleChanged = false;
+                              coverImgChanged = false;
+                            });
+                          });
+                        });
+                      }
                     }
-                    
                   },
                   child: Stack(
                     alignment: AlignmentDirectional.center,

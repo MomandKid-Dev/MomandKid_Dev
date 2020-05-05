@@ -715,9 +715,10 @@ class Database extends DatabaseService {
     });
   }
 
-  Future updateStoryData(String sid, String coverImg, String content) async {
+  Future updateStoryData(String sid, String coverImg, String title, String content) async {
     return await storyCollection.document(sid).updateData({
       'coverImg' : coverImg,
+      'title' : title,
       'content': content
     });
   }

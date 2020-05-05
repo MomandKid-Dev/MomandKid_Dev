@@ -46,6 +46,7 @@ class _storyPageState extends State<storyPage> with TickerProviderStateMixin{
   dataTest data;
   bool update = false;
    bool open = false;
+   int index = 0;
     AnimationController slideController;
     Animation<Offset> slideAnimation;
     
@@ -70,6 +71,14 @@ class _storyPageState extends State<storyPage> with TickerProviderStateMixin{
     opaAnimationBlur2 =
         Tween<double>(begin: 10, end: 0).animate(slideController2);
   }
+  @override 
+  void dispose() {
+    // TODO: implement dispose
+    slideController.dispose();
+    slideController2.dispose();
+    super.dispose();
+    
+  }
   @override
   Widget build(BuildContext context) {
     return _inheritedStory(this,widget.child);
@@ -77,6 +86,12 @@ class _storyPageState extends State<storyPage> with TickerProviderStateMixin{
   }
   setSS(){
     setState(() {
+    });
+  }
+
+  setIndex(int index){
+    setState((){
+      this.index = index;
     });
   }
 
@@ -151,8 +166,10 @@ class _story extends State<storyMain>
   
   int kidsCount;
   Future loadStory() async {
+    
     //print('test ${widget.kiddata.kiddo[0]['kid']}');
     await Database().getStoryFromKid(widget.kiddata.getSelectedKid()['kid']).then((storyId) async {
+      if (storyId.data == null) return;
       await Database().getStoriesData(storyId.data.keys.toList()).then((stories) {
         int i = 0;
          for (DocumentSnapshot story in stories){
@@ -193,6 +210,7 @@ class _story extends State<storyMain>
     //   statusBarIconBrightness: Brightness.light,
     //   systemNavigationBarIconBrightness: Brightness.light // status bar color
     // ));
+    
     loadStory().whenComplete((){
       setState(() {
         
@@ -203,12 +221,24 @@ class _story extends State<storyMain>
   @override
   Widget build(BuildContext context) {
     if(storyPage.of(context).update){
+      
+      // storyPage.of(context).update = true;
+      storyPage.of(context).slideController2.reverse();
       storyData = StoryData();
-        loadStory().whenComplete(()=>setState(() {}));
-      storyPage.of(context).update = false;
+      // storyPage.of(context).slideController2.forward();
+        
+        loadStory().whenComplete((){
+        setState(() {
+          // storyPage.of(context).slideController2.reverse();
+          // storyPage.of(context).update = false;
+        });
+        storyPage.of(context).update = false;
+        storyPage.of(context).slideController2.forward();
+        }
+      );
     }
     kidsCount = widget.kiddata.kiddo.length;
-    if (true)
+    if (storyPage.of(context).update == false)
       storyPage.of(context).slideController2.forward();
     return Stack(
     children:<Widget>[
@@ -277,21 +307,19 @@ class _story extends State<storyMain>
                       controller: storyController,
                       itemCount: storyData.getAllStory().length + 1,
                       onPageChanged: (int i) {
-                        setState(() {
-                          widget.index = i;
-                        });
+                        storyPage.of(context).setIndex(i);
 
                         // print(index);
                       },
 
                       itemBuilder: (_, i) {
-                        if (widget.index == null) {
-                          widget.index = 0;
+                        if (storyPage.of(context).index == null) {
+                          storyPage.of(context).index = 0;
                         }
                         if (i == storyData.getAllStory().length) {
                           return addStoryCard(
                             data: storyData,
-                            active: i == widget.index,
+                            active: i == storyPage.of(context).index,
                             index: i,
                             controller: storyController,
                             kidId: widget.kiddata.getSelectedKid()['kid'],
@@ -300,7 +328,7 @@ class _story extends State<storyMain>
 
                         return storyPreviewCard(
                           index: i,
-                          active: i == widget.index,
+                          active: i == storyPage.of(context).index,
                           data: storyData.getStory(i),
                           controller: storyController,
                           datas: storyData,
@@ -428,6 +456,13 @@ class _addStoryState extends State<addStoryCard> with TickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    controller.dispose();
+    super.dispose();
+    
+  }
+  @override
   Widget build(BuildContext context) {
     if (widget.active) {
       controller.forward();
@@ -534,7 +569,15 @@ class _storyPreviewState extends State<storyPreviewCard>
     delAnimation = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, 1))
         .animate(delController);
   }
+  @override 
+  void dispose() {
+    // TODO: implement dispose
+    controller.dispose();
+    delController.dispose();
+    super.dispose();
+    
 
+  }
   @override
   Widget build(BuildContext context) {
     if (widget.active) {
@@ -573,6 +616,7 @@ class _storyPreviewState extends State<storyPreviewCard>
                     } else if (remove) {
                       widget.datas.getAllStory().removeAt(widget.index);
                     }
+                    storyPage.of(context).setIndex(widget.index);
                   }
                 },
                 child: ScaleTransition(
