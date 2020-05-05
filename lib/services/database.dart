@@ -756,15 +756,12 @@ class Database extends DatabaseService {
   }
 
   // delete develope data
-  deleteDavalopeLog(String babyId, String logId) async {
-    await developeCollection
-        .document(logId)
-        .delete()
-        .whenComplete(() => deleteDevelopeId(babyId, logId));
+  deleteDavalopeLog(String logId) async {
+    await developeCollection.document(logId).delete();
   }
 
   // delete develope id
-  deleteDevelopeId(String babyId, String logId) {
-    kidDevelope.document(babyId).updateData({logId: FieldValue.delete()});
+  deleteDevelopeId(String babyId) {
+    kidDevelope.document(babyId).delete();
   }
 }
