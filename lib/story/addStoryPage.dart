@@ -25,10 +25,11 @@ Future uploadFile(File _image) async {
   }
 
 class addStoryPage extends StatefulWidget{
-  addStoryPage({this.data,this.kidId});
+  addStoryPage({this.data,this.kidId,this.userId});
   int _pageIndex = 0;
   String kidId;
   StoryData data;
+  String userId;
   PageController controller = new PageController(initialPage: 0);
   @override 
   _addStory createState() => _addStory();
@@ -52,6 +53,7 @@ class _addStory extends State<addStoryPage>{
   }
   @override 
   Widget build(BuildContext context){
+    
     return Stack(
       alignment: AlignmentDirectional.topCenter,
       children:<Widget>[
@@ -101,7 +103,7 @@ class _addStory extends State<addStoryPage>{
                       SizedBox(
                         height: 20,
                       ),
-                      dates(controller: widget.controller,data: widget.data,kidId: widget.kidId,)
+                      dates(controller: widget.controller,data: widget.data,kidId: widget.kidId,userId: widget.userId,)
                     ],
                   ),
                 ]
@@ -164,11 +166,12 @@ upbutton(String title,PageController controller,int index,File img){
 }
 
 class dates extends StatefulWidget{
-  dates({this.controller,this.data,this.kidId});
+  dates({this.controller,this.data,this.kidId,this.userId});
   PageController controller;
   StoryData data;
   int index;
   String kidId;
+  String userId;
   coverImages ci;
   @override 
   _dateState createState() => _dateState();
@@ -312,7 +315,8 @@ class _dateState extends State<dates>{
                                             if(_image != null){
 
                                             uploadFile(_image).then((url) async{
-                                              await Database().createStory(widget.kidId,textController.text,url,date,[]).then((storyId) async {
+                                              print(widget.userId);
+                                              await Database(userId: widget.userId).createStory(widget.kidId,textController.text,url,date,[]).then((storyId) async {
                                                 widget.data.addStory(widget.data.getAllStory().length ,storyId.documentID, textController.text, url, [], '',date);
                                                 var remove = await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
                                                 return editor2(data:widget.data.getStory(widget.data.getAllStory().length-1));}));

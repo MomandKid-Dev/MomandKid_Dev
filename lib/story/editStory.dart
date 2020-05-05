@@ -8,9 +8,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:momandkid/services/database.dart';
 
 class editStoryScreen extends StatefulWidget{
-  editStoryScreen({this.data,this.kidId});
+  editStoryScreen({this.data,this.kidId,this.userId});
   Map data;
   String kidId;
+  String userId;
   @override 
   _editStoryScreenState createState() => _editStoryScreenState();
 }
@@ -18,7 +19,7 @@ class _editStoryScreenState extends State<editStoryScreen>{
   @override 
   Widget build(BuildContext context){
     // print(widget.data);
-    return _story(child: editStory(),data: widget.data,kidId: widget.kidId);
+    return _story(child: editStory(),data: widget.data,kidId: widget.kidId, userId: widget.userId);
   }
 
 }
@@ -38,10 +39,12 @@ class _story extends StatefulWidget{
   final Widget child;
   Map data;
   String kidId;
+  String userId;
   _story({
     @required this.child,
     @required this.data,
-    @required this.kidId
+    @required this.kidId,
+    @required this.userId
   });
  
   static _storyState of(BuildContext context) => (context.dependOnInheritedWidgetOfExactType<_inheritedStory>() as _inheritedStory).data;
@@ -383,7 +386,7 @@ class _editStoryState extends State<editStory> with TickerProviderStateMixin{
                           backgroundColor: Colors.white,
                           child: Icon(Icons.delete,color:Color(0xff131048)),
                           onPressed: ()async {
-                            await Database().removeStory(widget.data['sid'],_story.of(context).widget.kidId).whenComplete(()=>Navigator.pop(context,true));
+                            await Database(userId: _story.of(context).widget.userId).removeStory(widget.data['sid'],_story.of(context).widget.kidId).whenComplete(()=>Navigator.pop(context,true));
                           },
                         ),
                       ),
@@ -942,7 +945,7 @@ class _editor2State extends State<editor2>with TickerProviderStateMixin{
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text('Your Daily Note3',style: TextStyle(fontSize: 22,color: Color(0xff131048),fontWeight: FontWeight.normal)),
+                                  Text('Your Daily Note',style: TextStyle(fontSize: 22,color: Color(0xff131048),fontWeight: FontWeight.normal)),
                                   // widget.data['content'] == '' ? Text('edit to add some text',style: TextStyle(fontSize: 18,color: Color(0xff131048).withAlpha(400),fontWeight: FontWeight.normal)):
                                   TextField(
                                     controller: textController,

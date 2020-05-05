@@ -75,6 +75,7 @@ class dataTest {
   // ]
 
   List<dynamic> mapLog(List<dynamic> logList) {
+    print(logList);
     return (logList.map((log) {
       Map logData = log.data;
       logData['logId'] = log.documentID;
@@ -1820,6 +1821,7 @@ class dataTest {
             Timestamp.fromDate(DateTime.now()));
       }
     }
+    print('Dev Complete');
   }
 
   // add develope from edit

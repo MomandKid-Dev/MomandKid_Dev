@@ -47,6 +47,7 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
         Tween<double>(begin: 0, end: 10).animate(slideController2);
   }
 
+
   Future updateVaccineLog(DateTime birthDate, String babyId) {
     print('Vaccine');
     return widget.dataList.getvaccineEdit(birthDate, babyId);
@@ -81,6 +82,13 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
       Navigator.pop(context);
     });
   }
+
+  @override 
+  void dispose() {
+      // TODO: implement dispose
+      slideController2.dispose();
+      super.dispose();
+    }
 
   @override
   Widget build(BuildContext context) {
