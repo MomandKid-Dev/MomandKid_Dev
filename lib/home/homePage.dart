@@ -162,9 +162,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Color(0xFF9FA2A7),
                 iconSize: 30.0,
                 // onPressed: signOut
-                onPressed: () {
-                  print(widget.data.kiddo);
-                  Navigator.push(
+                onPressed: () async {
+                  final infomation = await Navigator.push(
                       context,
                       PageRouteTransition(
                           animationType: AnimationType.slide_left,
@@ -174,6 +173,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                 logoutCallback: widget.logoutCallback,
                                 data: widget.data,
                               )));
+                  if (infomation != null) {
+                    setState(() {
+                      currentIndex = infomation[0];
+                      _pageController.jumpToPage(currentIndex);
+                    });
+                  }
                 },
               ),
               actions: <Widget>[
