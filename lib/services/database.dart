@@ -390,6 +390,14 @@ class Database extends DatabaseService {
         .updateData({sid: FieldValue.delete()});
   }
 
+  Future updateScheduleDate(String sid, DateTime date) async {
+    return await scheduleCollection
+        .document(sid)
+        .updateData({
+          'timeset' : date
+        });
+  }
+
   // this is data control of health page
   // create height log collection in firebase (height_log)
   createHeightLog(double babyHeight, Timestamp dateHeight, String babyId,
