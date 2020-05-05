@@ -654,17 +654,13 @@ class Database extends DatabaseService {
   }
 
   // delete vaccine data
-  deleteVaccineLog(String logId, String babyId) async {
-    print('delete vaccine babyId: $babyId');
-    await vaccineCollection
-        .document(logId)
-        .delete()
-        .whenComplete(() => deleteVaccineId(logId, babyId));
+  deleteVaccineLog(String logId) async {
+    await vaccineCollection.document(logId).delete();
   }
 
   // delete vaccine id
-  deleteVaccineId(String logId, String babyId) async {
-    kidVaccine.document(babyId).updateData({logId: FieldValue.delete()});
+  deleteVaccineId(String babyId) async {
+    kidVaccine.document(babyId).delete();
   }
 
   // get develope data from firebase

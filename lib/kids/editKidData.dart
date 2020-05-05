@@ -47,9 +47,9 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
         Tween<double>(begin: 0, end: 10).animate(slideController2);
   }
 
-  updateVaccineLog(DateTime birthDate, String babyId) {
+  Future updateVaccineLog(DateTime birthDate, String babyId) {
     print('Vaccine');
-    widget.dataList.getvaccineEdit(birthDate, babyId);
+    return widget.dataList.getvaccineEdit(birthDate, babyId);
   }
 
   Future updateDevelopeLog(DateTime birthDate, String babyId) {
@@ -281,23 +281,29 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                             print(nameController.text);
                             print('gender: ${gender}');
                             slideController2.forward();
+
+                            print(birthDate);
+                            print(widget.data['birthdate']);
+
+                            if (birthDate != widget.data['birthdate']) {
+                              await updateVaccineLog(
+                                  birthDate, widget.data['kid']);
+                              await updateDevelopeLog(
+                                  birthDate, widget.data['kid']);
+                            }
+
                             updateDateFirebase(
                               widget.data['kid'],
                               nameController.text,
                               gender,
                               birthDate,
                             );
+
                             updateDataDevice(
                               nameController.text,
                               gender,
                               birthDate,
                             );
-
-                            await updateVaccineLog(
-                                birthDate, widget.data['kid']);
-                            await updateDevelopeLog(
-                                birthDate, widget.data['kid']);
-                            // .whenComplete(() => Navigator.pop(context));
 
                             Navigator.pop(context);
                           },
