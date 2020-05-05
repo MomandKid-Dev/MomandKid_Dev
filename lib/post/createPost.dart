@@ -64,7 +64,13 @@ class _createPostState extends State<createPost> {
               )
             ):
           FlatButton(
-            onPressed: (){ Navigator.pop(context, [_image, _content.text]); }, 
+            onPressed: (){ 
+              print(_content.text);
+              if(_content.text == ''){
+                _content.text = ' ';
+              }
+              Navigator.pop(context, [_image, _content.text]); 
+              }, 
             child: Text(
               'post', 
               style: TextStyle(
