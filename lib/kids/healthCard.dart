@@ -240,7 +240,7 @@ class _healthCardState extends State<healthCard> {
                                 ),
                                 Container(
                                   child: Text(
-                                    card.getSubval(widget.type),
+                                    widget.list['subval'],
                                     style: TextStyle(
                                         fontFamily: 'Segoe UI',
                                         fontSize: 20,

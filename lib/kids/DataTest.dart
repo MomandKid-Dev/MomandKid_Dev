@@ -172,6 +172,8 @@ class dataTest {
     print('data_raw log: ${this.datas_raw}');
 
     datas = mapLog(datas_raw);
+    
+    datas.sort((a, b) => a['due_date'].compareTo(b['due_date']));
 
     print('data log: ${datas}');
   }
