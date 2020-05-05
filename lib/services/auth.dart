@@ -118,8 +118,9 @@ class Auth implements AuthService {
     FacebookLogin facebookLogin = FacebookLogin();
     FacebookLoginResult result =
         await facebookLogin.logIn(['email', "public_profile"]);
-
-    String token = result.accessToken.token;
+    print(result);
+    if(result.accessToken != null){
+      String token = result.accessToken.token;
     await _firebaseAuth.signInWithCredential(
         FacebookAuthProvider.getCredential(accessToken: token));
 
@@ -133,10 +134,12 @@ class Auth implements AuthService {
     print(info);
     if (info == null) {
       await Database(userId: user.uid).createUserInfo(
-          user.displayName.split(' ')[0], user.email, 'image path');
+          user.displayName.split(' ')[0], user.email, user.photoUrl);
     }
 
     print('Login with Facebook');
     return user.uid;
+    }
+    return null;
   }
 }

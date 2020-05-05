@@ -122,7 +122,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     await Database(userId: userId)
         .getUserData()
         .then((onValue) => info = onValue.data);
-    if (info['amount-baby'] == 0) {
+    if(info != null)
+    {
+      if (info['amount-baby'] == 0) {
       await Navigator.push(
         context,
         MaterialPageRoute(
@@ -143,6 +145,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
       widget.loginCallback();
     }
   }
+}
 
   void validateWithGoogle() async {
     setState(() {

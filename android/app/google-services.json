@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "490591992056-03n20h7bj28d79a86kgnbge7m4ng4edb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.momandkid",
+            "certificate_hash": "72a48610149ca96f445e1921d5bbaf8e34993194"
+          }
+        },
+        {
           "client_id": "490591992056-j8qbu2aa9dhah08tp54cl44j7rpnjn23.apps.googleusercontent.com",
           "client_type": 3
         }
