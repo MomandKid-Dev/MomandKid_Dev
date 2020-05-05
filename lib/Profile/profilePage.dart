@@ -7,6 +7,8 @@ import 'package:momandkid/kids/addkid.dart';
 //service
 import 'package:momandkid/services/auth.dart';
 
+import '../shared/circleImg.dart';
+
 class mainProfile extends StatefulWidget {
   mainProfile({this.auth, this.logoutCallback, this.userId, this.data});
 
@@ -129,11 +131,12 @@ class _mainProfileState extends State<mainProfile> {
                               shape: BoxShape.circle,
                               color: Colors.white,
                               border: Border.all(color: Color(0xFFFBBBCD), width: 8)),
-                          child: Icon(
+                          child: ((info == null) || (info['image'] == null) || (info['image'] == '') || (info['image'] == 'image path')) ? Icon(
                             Icons.person_outline,
                             color: Color(0xFFFBBBCD),
                             size: 80,
-                          ),
+                          ):
+                            circleImg(img: NetworkImage(info['image']))
                         ),
                         Container(
                           width: 235,

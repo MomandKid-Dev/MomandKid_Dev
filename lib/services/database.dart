@@ -774,9 +774,26 @@ class Database extends DatabaseService {
       'date': date,
       'images': images,
     }).then((value) {
+      increaseStoryAmount();
       savekidstory(kid, value.documentID, date);
       return value;
     });
+  }
+
+  Future increaseStoryAmount() async {
+    return await userCollection
+        .document(userId)
+        .updateData({
+          'amount-story': FieldValue.increment(1)
+        });
+  }
+
+  Future decreaseStoryAmount() async {
+    return await userCollection
+        .document(userId)
+        .updateData({
+          'amount-story': FieldValue.increment(-1)
+        });
   }
 
   Future savekidstory(String kid, String story, DateTime date) async {
@@ -789,7 +806,10 @@ class Database extends DatabaseService {
     return await storyCollection
         .document(sid)
         .delete()
-        .whenComplete(() => removeStoryFromKidStory(kid, sid));
+        .whenComplete(() {
+          decreaseStoryAmount();
+          removeStoryFromKidStory(kid, sid);
+        });
   }
 
   Future removeStoryFromKidStory(String kid, String sid) async {
@@ -849,5 +869,9 @@ class Database extends DatabaseService {
   // delete develope id
   deleteDevelopeId(String babyId) {
     kidDevelope.document(babyId).delete();
+  }
+
+  Future setUserProfile(String url) async {
+    return await userCollection.document(userId).updateData({'image': url});
   }
 }

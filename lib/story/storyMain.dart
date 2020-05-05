@@ -23,6 +23,7 @@ class mainStoryPage extends StatefulWidget {
 class _mainStoryPageState extends State<mainStoryPage> {
   @override
   Widget build(BuildContext context) {
+    
     return storyPage(child: storyMain(userId:widget.userId,kiddata:widget.kiddata),data: widget.kiddata,);
   }
 }
@@ -144,7 +145,7 @@ class _inheritedStory extends InheritedWidget{
 
 
 class storyMain extends StatefulWidget {
-  storyMain({Key key, this.userId, this.kiddata}) : super(key: key);
+  storyMain({Key key, this.userId, this.kiddata,}) : super(key: key);
   String userId;
   
   dataTest kiddata;
@@ -212,6 +213,7 @@ class _story extends State<storyMain>
     // ));
     
     loadStory().whenComplete((){
+      if (!mounted) return;
       setState(() {
         
       });
@@ -220,6 +222,7 @@ class _story extends State<storyMain>
 
   @override
   Widget build(BuildContext context) {
+    print('WAHHHHJHHH ${widget.userId}');
     if(storyPage.of(context).update){
       
       // storyPage.of(context).update = true;
@@ -250,6 +253,7 @@ class _story extends State<storyMain>
             
             Container(
               child: appBar(
+                data: widget.kiddata,
                 kid: widget.kiddata.getSelectedKid(),
                 open: storyPage.of(context).open,
                 onTap: () {
@@ -275,10 +279,12 @@ class _story extends State<storyMain>
                       left: MediaQuery.of(context).size.width - 80,
                       child: GestureDetector(
                         onTap: () {
+                          print('YYYYAAAAAAH ${widget.userId}');
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => addStoryPage(
+                                        userId: widget.userId,
                                         data: storyData,
                                         kidId: widget.kiddata.getSelectedKid()['kid']
                                       )));
@@ -323,6 +329,7 @@ class _story extends State<storyMain>
                             index: i,
                             controller: storyController,
                             kidId: widget.kiddata.getSelectedKid()['kid'],
+                            userId: widget.userId
                           );
                         }
 
@@ -333,6 +340,7 @@ class _story extends State<storyMain>
                           controller: storyController,
                           datas: storyData,
                           kidId: widget.kiddata.getSelectedKid()['kid'],
+                          userId: widget.userId
                         );
                       },
                     ),
@@ -432,12 +440,13 @@ class _story extends State<storyMain>
 }
 
 class addStoryCard extends StatefulWidget {
-  addStoryCard({this.data, this.active, this.index, this.controller, this.kidId});
+  addStoryCard({this.data, this.active, this.index, this.controller, this.kidId,this.userId});
   StoryData data;
   String kidId;
   bool active;
   PageController controller;
   int index;
+  String userId;
   @override
   _addStoryState createState() => _addStoryState();
 }
@@ -484,10 +493,12 @@ class _addStoryState extends State<addStoryCard> with TickerProviderStateMixin {
                       }
                       // Navigator.push(context, MaterialPageRoute(builder: (context)=>editStory(data:widget.data)));
                       else {
+                        print('YAHHHHHHHHH ${widget.userId}');
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => addStoryPage(
+                                      userId: widget.userId,
                                       data: widget.data,
                                       kidId: widget.kidId
                                     )));
@@ -539,7 +550,8 @@ class storyPreviewCard extends StatefulWidget {
       this.controller,
       this.datas,
       this.newest,
-      this.kidId});
+      this.kidId,
+      this.userId});
   int index, current;
   bool active, newest;
   StoryData datas;
@@ -547,6 +559,7 @@ class storyPreviewCard extends StatefulWidget {
   bool exit;
   String kidId;
   PageController controller;
+  String userId;
   @override
   _storyPreviewState createState() => _storyPreviewState();
 }
@@ -609,7 +622,7 @@ class _storyPreviewState extends State<storyPreviewCard>
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                editStoryScreen(data: widget.data, kidId: widget.kidId)));
+                                editStoryScreen(data: widget.data, kidId: widget.kidId, userId: widget.userId)));
 
                     if (remove == null) {
                       null;
