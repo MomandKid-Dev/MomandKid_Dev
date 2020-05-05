@@ -4,6 +4,7 @@ import 'package:momandkid/schedule/calendarTablePage.dart';
 import 'package:route_transitions/route_transitions.dart';
 import 'package:momandkid/schedule/schedulePage.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
+import '../services/database.dart';
 import 'calendarTablePage.dart';
 import 'package:momandkid/services/database.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart'
@@ -267,15 +268,37 @@ class _mainScheduleState extends State<mainSchedule> {
                                 child: ListTile(
                                     contentPadding:
                                         EdgeInsets.only(top: 10, left: 20),
-                                    onTap: () {
+                                    onTap: () async {
                                       datePicker.DatePicker.showDateTimePicker(
-                                          context,
-                                          showTitleActions: true,
-                                          minTime: DateTime.now(),
-                                          maxTime: DateTime(2025, 12, 31),
-                                          onConfirm: (date) {
-                                        //date คือ datetime ที่เลือกนะจ๊ะr
-                                      });
+                                        context,
+                                        showTitleActions: true,
+                                        minTime: DateTime.now(),
+                                        maxTime: DateTime(2025, 12, 31),
+                                        onConfirm: (date) async {
+                                          await Database(userId: widget.userId).updateScheduleDate(scheduleIds[index],date).whenComplete((){
+                                            setState(() {
+                                              dateTimeSche[index] = date;
+                                              if (date.hour > 9 && date.minute > 9)
+                                                _timeSche[index] = '${date.hour}:${date.minute}';
+                                              else if (date.hour > 9 && date.minute < 10)
+                                                _timeSche[index] = '${date.hour}:0${date.minute}';
+                                              else if (date.hour < 10 && date.minute > 9)
+                                                _timeSche[index] = '0${date.hour}:${date.minute}';
+                                              else if (date.hour < 10 && date.minute < 10)
+                                                _timeSche[index] = '0${date.hour}:0${date.minute}';
+                                              dateTimeSche.sort((a, b) => a.compareTo(b));
+                                              int newindex = dateTimeSche.indexOf(date);
+                                              scheduleIds.insert(newindex, scheduleIds.removeAt(index));
+                                              dataTitleSche.insert(newindex, dataTitleSche.removeAt(index));
+                                              notiSche.insert(newindex, notiSche.removeAt(index));
+                                              colorSche.insert(newindex, colorSche.removeAt(index));
+                                              dataDesSche.insert(newindex, dataDesSche.removeAt(index));
+                                              colorBGSche.insert(newindex, colorBGSche.removeAt(index));
+                                              _timeSche.insert(newindex, _timeSche.removeAt(index));
+                                            });
+                                          });
+                                        }
+                                      );
                                     },
                                     title: Row(
                                       children: <Widget>[
