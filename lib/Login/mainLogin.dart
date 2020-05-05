@@ -292,9 +292,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     print(animation.value);
     stateBloc.toggleAnimation();
     _title = 'Sign up';
-    // setState(() {
-
-    // });
   }
 
   reverseAnimation() {
@@ -302,9 +299,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     print(animation.value);
     stateBloc.toggleAnimation();
     _title = 'Login';
-    // setState(() {
-
-    // });
   }
 
   bool isExpanded = false;
@@ -501,56 +495,64 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                         alignment: Alignment.topCenter,
                         child: FlatButton(
                             onPressed: () {
-                              TextEditingController email = TextEditingController();
+                              TextEditingController email =
+                                  TextEditingController();
                               showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0)), //this right here
-                                    child: Container(
-                                      height: 300,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Forget Password?',
-                                              style: TextStyle(
-                                                fontSize: 40,
-                                                fontWeight: FontWeight.bold
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              20.0)), //this right here
+                                      child: Container(
+                                        height: 300,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Forget Password?',
+                                                style: TextStyle(
+                                                    fontSize: 40,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
-                                            ),
-                                            TextField(
-                                              controller: email,
-                                              keyboardType: TextInputType.emailAddress,
-                                              decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  hintText: 'Enter your E-mail'),
-                                            ),
-                                            SizedBox(
-                                              width: 320.0,
-                                              child: RaisedButton(
-                                                onPressed: () {
-                                                  widget.auth.resetPassword(email.text);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text(
-                                                  "Submit",
-                                                  style: TextStyle(color: Colors.white),
+                                              TextField(
+                                                controller: email,
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                decoration: InputDecoration(
+                                                    border: InputBorder.none,
+                                                    hintText:
+                                                        'Enter your E-mail'),
+                                              ),
+                                              SizedBox(
+                                                width: 320.0,
+                                                child: RaisedButton(
+                                                  onPressed: () {
+                                                    widget.auth.resetPassword(
+                                                        email.text);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(
+                                                    "Submit",
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  color:
+                                                      const Color(0xFF1BC0C5),
                                                 ),
-                                                color: const Color(0xFF1BC0C5),
-                                              ),
-                                            )
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                });
+                                    );
+                                  });
                             },
                             child: Text(
                               'Forget password?',

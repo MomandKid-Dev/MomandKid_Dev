@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:momandkid/kids/addkid.dart';
 import 'package:momandkid/kids/card.dart';
 import 'package:momandkid/kids/editKidData.dart';
-// import 'package:momandkid/shared/appbar.dart';
-// import 'appBar.dart';
 import 'package:momandkid/shared/circleImg.dart';
 import 'package:momandkid/shared/style.dart';
 import 'dart:math' as math;
@@ -55,7 +53,7 @@ class _kidsState extends State<_kids> with TickerProviderStateMixin {
   Animation<double> opaAnimationBlur2;
   int kidsCount;
   loaded() {
-    if(!mounted) return;
+    if (!mounted) return;
     setState(() {
       loading = false;
     });
@@ -63,9 +61,11 @@ class _kidsState extends State<_kids> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // kidsCount = data.kiddo.length;
     data = widget.data;
-    data.getDataLogAll().whenComplete(() {if(!mounted) return; loaded();});
+    data.getDataLogAll().whenComplete(() {
+      if (!mounted) return;
+      loaded();
+    });
     slideController2 =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     slideAnimationBlur2 = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1))
@@ -119,7 +119,6 @@ class _inheritedKids extends InheritedWidget {
 
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) {
-    // TODO: implement updateShouldNotify
     return true;
   }
 }
@@ -154,7 +153,6 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     slideController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
@@ -164,8 +162,7 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     opaControllerBlur =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    //Slide Page Down
-    // slideAnimation = Tween<Offset>(begin: Offset(0,0),end: Offset(0,0.7)).animate(CurvedAnimation(curve: Curves.easeInOutExpo,parent: slideController));
+
     //Drop Down
     slideAnimation = Tween<Offset>(begin: Offset(0, -1), end: Offset(0, 0))
         .animate(CurvedAnimation(
@@ -180,7 +177,6 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
         Tween<double>(begin: 10, end: 0).animate(slideController2);
     opaAnimationBlur =
         Tween<double>(begin: 0, end: 10).animate(slideController);
-    // slideController.forward();
   }
 
   @override
@@ -191,11 +187,9 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // print('data ${_kids.of(context).data}');
     widget.data = _kids.of(context).data;
     print('selected kid: ${widget.data.getSelectedKid()}');
     kidsCount = widget.data.kiddo.length;
-    // kidsCount = widget.data.getKids().length;
     if (opaAnimationBlur.value != 0) {
       setState(() {
         widget.open = true;
@@ -213,7 +207,6 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
       Container(
         color: Colors.white,
         height: MediaQuery.of(context).size.height,
-        // backgroundColor: Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -234,13 +227,10 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
                   }
                 },
               ),
-              // pinned: true,
             ),
             ClipRect(
               child: SizedBox(
                   height: MediaQuery.of(context).size.height - 186,
-                  // height: MediaQuery.of(context).size.height - 150,
-                  // color: Colors.red,
                   child: Container(
                       height: MediaQuery.of(context).size.height,
                       child: Stack(
@@ -340,7 +330,7 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
                                 color: Colors.white,
                                 child: ListView.builder(
                                   padding: edgeAll(0),
-                                  //childrenList\
+                                  //childrenList
                                   physics: BouncingScrollPhysics(),
                                   itemCount: kidsCount + 1,
                                   itemBuilder: (_, i) {
@@ -394,19 +384,10 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
                                       userId: widget.userId,
                                     );
                                   },
-                                  // children:<Widget>[childrenList(img: 'assets/icons/037-baby.png',name: 'nackkie',controller: slideController,)]
                                 )),
                           ),
                         ],
-                      )
-                      // child: ListView(
-                      //   physics: BouncingScrollPhysics(),
-                      //   padding: EdgeInsets.only(top:0),
-                      //   children: <Widget>[
-
-                      //   ],
-                      // ),
-                      )),
+                      ))),
             )
           ],
         ),
@@ -421,128 +402,8 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
     ]);
   }
 }
-// class appBar extends StatefulWidget{
-//   bool open;
-//   Map kid;
-//   AnimationController controller,blurController,opaController;
-//   Animation<Offset> animation;
-//   appBar({this.animation,this.controller,this.open,@required this.kid});
-//   @override
-//   _appBarState createState() => _appBarState();
-// }
-
-// class _appBarState extends State<appBar>{
-//   // final double maxHeight, minHeight;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // TODO: implement build
-//     return LayoutBuilder(
-//       builder: (context, constraints){
-//         var img,name,age;
-//         if(_kids.of(context).data.getSelectedKid()!= null && _kids.of(context).data.getSelectedKid()!= []){
-//           img = _kids.of(context).data.getSelectedKid()['img'];
-//           name = _kids.of(context).data.getSelectedKid()['name'];
-//           age = _kids.of(context).data.getSelectedKid()['age'];
-//         }
-//         return Stack(
-//           children: <Widget>[
-//             Container(
-//               height: 150,
-//               color: Colors.white,
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: <Widget>[
-//                   GestureDetector(
-//                     onTap: (){
-//                       if(_kids.of(context).open){
-//                         widget.controller.reverse();
-
-//                         _kids.of(context).setFalse();
-//                       }
-//                       else{
-//                         _kids.of(context).setTrue();
-//                         widget.controller.forward();
-
-//                       }
-//                     },
-//                     child:Container(
-//                       height: 150,
-//                       color: Colors.white,
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.center,
-//                         children: <Widget>[
-//                           Container(
-//                             margin: EdgeInsets.only(right:20),
-//                             height: 80,
-//                             width: 80,
-//                             decoration: BoxDecoration(
-//                               shape: BoxShape.circle,
-//                               color: Color(0xffFCE3F2),
-//                               image: DecorationImage(
-//                                 image: img == null ? AssetImage('assets/icons/037-baby.png'): AssetImage('assets/icons/${_kids.of(context).data.getSelectedKid()['img']}'),
-//                                 fit: BoxFit.cover
-//                               )
-//                             ),
-//                           ),
-//                           Container(
-//                             margin: EdgeInsets.only(right: 20),
-//                             child: Column(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               crossAxisAlignment: CrossAxisAlignment.start,
-//                               children: <Widget>[
-//                                 Text(name == null ? 'No kids' : name,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w700),),
-//                                 Text(age == null ? 'No data' : age,style: TextStyle(fontSize: 12),)
-//                               ],
-//                             ),
-//                           ),
-
-//                             Container(
-//                               height: 16,
-//                               child:ClipRect(
-//                                 child: Stack(
-//                                   children:<Widget>[
-//                                     SlideTransition(
-//                                     position: widget.animation,
-//                                     child: Image.asset('assets/icons/hide.png',),
-//                                       // Container(
-//                                       //   margin: EdgeInsets.only(top:16),
-//                                       //   child: Image.asset('assets/icons/expand.png'),
-//                                       // ),
-//                                     ),
-//                                     SlideTransition(
-//                                     position: widget.animation,
-//                                     child:
-//                                       Transform.translate(
-//                                         offset: Offset(0,16),
-//                                         child: Image.asset('assets/icons/expand.png'),
-//                                       ),
-//                                     )
-
-//                                   ]
-//                                 )
-//                               ),
-//                             )
-
-//                         ],
-//                       ),
-//                     ),
-//                   )
-//                 ]
-//               )
-//             ),
-
-//           ],
-//         );
-//       },
-//     );
-//   }
-
-// }
 
 list(BuildContext context, dataTest data, String type, String userId) {
-  // data.getData()[0][0]['a']);
-
   String textType;
   String unit;
   String img;
@@ -569,7 +430,6 @@ list(BuildContext context, dataTest data, String type, String userId) {
       },
       child: Container(
         width: MediaQuery.of(context).size.width / 2.3,
-        // height: 200,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
             color: Colors.white),
@@ -584,7 +444,6 @@ list(BuildContext context, dataTest data, String type, String userId) {
               ),
             ),
             Container(
-              // color: Colors.red,
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Container(
                 padding: EdgeInsets.all(10),
@@ -649,7 +508,6 @@ badge(BuildContext context, dataTest data, String type) {
               height: MediaQuery.of(context).size.width / 10,
             ),
             Container(
-              // padding: EdgeInsets.all(5),
               margin: EdgeInsets.only(top: 5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -680,56 +538,6 @@ Widget recent(BuildContext context, dataTest data) => Container(
               .map<Widget>((e) => cards(context, data, e['type'], e))
               .toList()),
     );
-
-// Widget cards(BuildContext context, dataTest data, String type) =>
-//     new GestureDetector(
-//         onTap: () {
-//           // data.setRecent(list['id']);
-//           // 'This is recent ${data.getRecent()}');
-//           // Route route = MaterialPageRoute(builder: (context) => healthCard(data: data,type: type,list: list,));
-//           // Navigator.push(context, route);
-//         },
-//         child: Container(
-//           color: Colors.white,
-//           padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
-
-//           // color: Colors.red,
-//           // height: ,
-//           child: Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: <Widget>[
-//               Row(
-//                 children: <Widget>[
-//                   Container(
-//                     margin: EdgeInsets.only(right: 10),
-//                     height: 40,
-//                     width: 40,
-//                     decoration: BoxDecoration(
-//                         shape: BoxShape.circle,
-//                         // color: Colors.red,
-//                         border: Border.all(width: 0.3),
-//                         image: DecorationImage(
-//                           fit: BoxFit.fill,
-//                           image: AssetImage('${data.getImg(type)}'),
-//                         )),
-//                   ),
-//                   Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: data.getSubval(type) == ''
-//                         ? <Widget>[
-//                             Text('${data.getVal(type)}'),
-//                           ]
-//                         : <Widget>[
-//                             Text('${data.getVal(type)}'),
-//                             Text('${data.getSubval(type)}')
-//                           ],
-//                   )
-//                 ],
-//               ),
-//               Text('อายุ ${data.getAge()} เดือน')
-//             ],
-//           ),
-//         ));
 
 class childrenList extends StatefulWidget {
   childrenList(
@@ -763,21 +571,20 @@ class _childrenListState extends State<childrenList> {
                   _kids.of(context).setFalse();
                   widget.controller.reverse();
 
-                  // _kids.of(context).data.kiddo);
                   _kids.of(context).setSelectedKid(widget.index + 1);
                   _kids.of(context).slideController2.reverse();
                   if (!_kids.of(context).loading)
                     _kids.of(context).slideController2.forward();
-
-                  // widget.data.setSelectedKid(widget.index);
-                  //push new kid use push replacement
                 },
                 child: Row(
                   children: <Widget>[
                     Hero(
                       tag: 'child${widget.index}',
                       child: circleImg(
-                        img: ((widget.img == null) | (widget.img == 'image path')) ? AssetImage('assets/icons/037-baby.png') : NetworkImage(widget.img),
+                        img: ((widget.img == null) |
+                                (widget.img == 'image path'))
+                            ? AssetImage('assets/icons/037-baby.png')
+                            : NetworkImage(widget.img),
                         width: 50,
                         height: 50,
                       ),
@@ -788,7 +595,6 @@ class _childrenListState extends State<childrenList> {
                   ],
                 )),
           ),
-          
         ],
       ),
     );

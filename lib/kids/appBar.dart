@@ -26,7 +26,6 @@ class _appBarState extends State<appBar> {
               height: 30,
             ),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Expanded(
@@ -47,9 +46,6 @@ class _appBarState extends State<appBar> {
                 Expanded(
                     flex: 4,
                     child: Container(
-                        // color: Colors.red,
-                        // alignment: Alignment(0,0),
-                        // padding: EdgeInsets.only(left:35,right:35),
                         child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[

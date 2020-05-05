@@ -6,7 +6,6 @@ import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/style.dart';
 import 'package:momandkid/story/carousel.dart';
 
-//start with this
 class mainAddScreen extends StatefulWidget {
   mainAddScreen({this.userId, this.data});
 
@@ -72,7 +71,6 @@ class _inheritedAddKid extends InheritedWidget {
   _inheritedAddKid({@required Widget child, this.data}) : super(child: child);
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) {
-    // TODO: implement updateShouldNotify
     return true;
   }
 }
@@ -98,19 +96,12 @@ class _addState extends State<_add> {
     }
     return 1;
   }
-  // callback(newMonth,newDay){
-  //   setState(() {
-  //     dayy = newDay;
-  //     monthh = newMonth;
 
-  //   });
-  // }
   bool cantPress = false;
   @override
   void initState() {
     _babyGender = "";
     cantPress = false;
-    // TODO: implement initState
     super.initState();
   }
 
@@ -128,7 +119,7 @@ class _addState extends State<_add> {
         .then((val) {
       kid = val.documentID;
     }).whenComplete(() async {
-      print('add');
+      print('Add kid');
       widget.data.getKiddo(widget.userId).whenComplete(() async {
         await widget.data.getVaccineListFirst(
             DateTime(_mainAddKid.of(context).year,
@@ -144,6 +135,7 @@ class _addState extends State<_add> {
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -242,9 +234,6 @@ class _addState extends State<_add> {
                                               size: 80,
                                               color: Color(0xffF5B0C3),
                                             ))),
-                                    // TextFormField(
-                                    //   controller: TextEditingController(text: 'eiei'),
-                                    // )
                                   ],
                                 ))
                           ],
@@ -253,7 +242,6 @@ class _addState extends State<_add> {
                           title: 'Next step, what date is child born?',
                           children: <Widget>[
                             Container(
-                                // alignment: Alignment.center,
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
@@ -269,7 +257,6 @@ class _addState extends State<_add> {
                                                   DateTime.now().year - 1),
                                               lastDate: DateTime.now())
                                           .then((date) {
-                                        //here
                                         setState(() {
                                           _mainAddKid.of(context).day =
                                               date.day;
@@ -345,20 +332,10 @@ class _addState extends State<_add> {
                                               .weightController,
                                           keyboardType: TextInputType.number,
                                           onChanged: (text) {
-                                            // if(_mainAddKid.of(context).weightController.text == ''){
-                                            //   _mainAddKid.of(context).weightController.text = 0.toString();
-                                            //   _mainAddKid.of(context).weightController.selection = TextSelection.collapsed(offset: _mainAddKid.of(context).weightController.text.length);
-                                            // }
-                                            // else if(text.length > 1){
-                                            //   if(_mainAddKid.of(context).weightController.text.substring(0,1) == '0'){
-                                            //     _mainAddKid.of(context).weightController.text = _mainAddKid.of(context).weightController.text.substring(1,_mainAddKid.of(context).weightController.text.length);
-                                            //   }
-                                            // }
                                             setState(() {});
                                           },
                                         ),
                                       )
-                                      // Text('HERE',style: TextStyle(fontSize: 15 * scale()),)
                                     ],
                                   )
                                 ],
@@ -448,7 +425,6 @@ class _addState extends State<_add> {
                                           },
                                         ),
                                       )
-                                      // Text('HERE',style: TextStyle(fontSize: 15 * scale()),)
                                     ],
                                   )
                                 ],
@@ -485,42 +461,37 @@ class _addState extends State<_add> {
                     padding: edgeLR(10),
                     alignment: Alignment.centerRight,
                     height: 80,
-                    child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          GestureDetector(
-                              onTap: () {
-                                _mainAddKid
-                                    .of(context)
-                                    .pageController
-                                    .previousPage(
-                                        duration: Duration(milliseconds: 500),
-                                        curve: Curves.easeInOutExpo);
-                              },
-                              child: Container(
-                                height: 40,
-                                child: Icon(
-                                  Icons.keyboard_arrow_up,
-                                  color: Colors.white,
-                                  size: 35,
-                                ),
-                              )),
-                          GestureDetector(
-                              onTap: () {
-                                _mainAddKid.of(context).pageController.nextPage(
-                                    duration: Duration(milliseconds: 500),
-                                    curve: Curves.easeInOutExpo);
-                                //here
-                              },
-                              child: Container(
-                                height: 40,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: Colors.white,
-                                  size: 35,
-                                ),
-                              )),
-                        ]))
+                    child: Column(children: <Widget>[
+                      GestureDetector(
+                          onTap: () {
+                            _mainAddKid.of(context).pageController.previousPage(
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeInOutExpo);
+                          },
+                          child: Container(
+                            height: 40,
+                            child: Icon(
+                              Icons.keyboard_arrow_up,
+                              color: Colors.white,
+                              size: 35,
+                            ),
+                          )),
+                      GestureDetector(
+                          onTap: () {
+                            _mainAddKid.of(context).pageController.nextPage(
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeInOutExpo);
+                            //here
+                          },
+                          child: Container(
+                            height: 40,
+                            child: Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.white,
+                              size: 35,
+                            ),
+                          )),
+                    ]))
               ],
             ),
           )
@@ -542,12 +513,10 @@ class _pageState extends State<page> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        // height:MediaQuery.of(context).size.height - 125,
         padding: edgeLR(20),
         child: Column(
           children: <Widget>[
             Expanded(
-                // flex: 1,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[

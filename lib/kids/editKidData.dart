@@ -15,7 +15,6 @@ import '../services/database.dart';
 
 class editKidData extends StatefulWidget {
   editKidData({this.index, this.data, this.userId, this.dataList});
-  // String img,name;
   Map data;
   int index;
   String userId;
@@ -38,7 +37,6 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     nameController = TextEditingController(text: widget.data['name']);
     gender = widget.data['gender'];
@@ -51,7 +49,6 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
     opaAnimationBlur2 =
         Tween<double>(begin: 0, end: 10).animate(slideController2);
   }
-
 
   Future updateVaccineLog(DateTime birthDate, String babyId) {
     print('Vaccine');
@@ -81,19 +78,16 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
     Database(userId: widget.userId).deleteBabyInfo(babyId).whenComplete(() {
       widget.dataList.kiddo.removeWhere((item) => item['kid'] == babyId);
       widget.dataList.kiddo[widget.dataList.kiddo.length - 1]['sel'] = 1;
-      print('kiddo: ${widget.dataList.kiddo}');
       widget.dataList.getDataLogAll();
-      // .whenComplete(() => Navigator.pop(context));
       Navigator.pop(context);
     });
   }
 
-  @override 
+  @override
   void dispose() {
-      // TODO: implement dispose
-      slideController2.dispose();
-      super.dispose();
-    }
+    slideController2.dispose();
+    super.dispose();
+  }
 
   File _image;
     Future getImage() async {
@@ -185,7 +179,6 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
             newDate += date.day.toString();
           }
           if (date.month < 10) {
-            print(date.month);
             newDate += '0${date.month.toString()}';
           } else {
             newDate += date.month.toString();
@@ -229,7 +222,6 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                                 child: Text("Name"),
                               ),
                               Container(
-                                  // margin: edgeTB(10),
                                   child: TextField(
                                       controller: nameController,
                                       style: boldtext(),
@@ -297,12 +289,12 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            print(nameController.text);
-                            print('gender: ${gender}');
+                            // print(nameController.text);
+                            // print('gender: ${gender}');
                             slideController2.forward();
 
-                            print(birthDate);
-                            print(widget.data['birthdate']);
+                            // print(birthDate);
+                            // print(widget.data['birthdate']);
 
                             if (birthDate != widget.data['birthdate']) {
                               await updateVaccineLog(
@@ -352,7 +344,6 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // widget.data['name'] = nameController.text;
                             deleteDataFirebase(widget.data['kid']);
                           },
                           child: SizedBox(
@@ -360,11 +351,7 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                               height: 50,
                               child: Container(
                                 alignment: Alignment.center,
-                                decoration: BoxDecoration(
-
-                                    // borderRadius: allRoundedCorner(20),
-                                    // border: Border.all(color:Color(0xffE7E7EC))
-                                    ),
+                                decoration: BoxDecoration(),
                                 child: Text(
                                   'Delete Profile',
                                   style: TextStyle(color: Color(0xff625BD4)),
@@ -399,12 +386,6 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                     ),
                   )
                 ),
-                //hear
-                // Container(
-                //   color: Colors.red,
-                //   width: 200,
-                //   height: 300,
-                // )
                 Container(
                   height: MediaQuery.of(context).size.height,
                   child: SlideTransition(

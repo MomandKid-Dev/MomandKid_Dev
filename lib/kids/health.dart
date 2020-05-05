@@ -30,15 +30,12 @@ class _healthState extends State<health> {
     widget.color0 = Colors.white;
     widget.color1 = Colors.amber[600];
     widget.color2 = Colors.white;
-    // TODO: implement initState
     super.initState();
     pageController = PageController(initialPage: 1);
   }
 
   @override
   Widget build(BuildContext context) {
-    // widget.data.getData('evo'));
-    // widget.data.getDataWithType(widget.type,1).map((e)=>card(data: widget.data,)).toList());
     return GestureDetector(
         child: Container(
             decoration: BoxDecoration(
@@ -83,7 +80,6 @@ class _healthState extends State<health> {
                                       ? pageController.page
                                       : 1),
                               Container(
-                                  // padding: EdgeInsets.only(bottom: 10),
                                   height: widget.type == 'evo'
                                       ? MediaQuery.of(context).size.height - 260
                                       : MediaQuery.of(context).size.height -
@@ -231,7 +227,6 @@ class _healthState extends State<health> {
                                               ListView(
                                                   physics:
                                                       BouncingScrollPhysics(),
-                                                  // padding: EdgeInsets.all(0),
                                                   children: <Widget>[
                                                     Container(
                                                       child: Column(
@@ -291,7 +286,6 @@ class appBarH extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    // TODO: implement build
     title = data.getTitle(type);
     img = data.getImg(type);
     var addButton;
@@ -383,16 +377,13 @@ class appBarH extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  // TODO: implement maxExtent
   double get maxExtent => math.max(maxHeight, minHeight);
 
   @override
-  // TODO: implement minExtent
   double get minExtent => minHeight;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    // TODO: implement shouldRebuild
     return true;
   }
 }
