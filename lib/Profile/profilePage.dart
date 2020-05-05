@@ -39,7 +39,7 @@ class _mainProfileState extends State<mainProfile> {
       } else {
         kidsList.add([
           1,
-          'assets/icons/037-baby.png',
+          widget.data.kiddo[i]['image'],
           widget.data.kiddo[i]['name'],
           '${widget.data.kiddo[i]['birthdate'].day}  ${month[widget.data.kiddo[i]['birthdate'].month - 1]} ${widget.data.kiddo[i]['birthdate'].year}'
         ]);
@@ -279,10 +279,9 @@ class _mainProfileState extends State<mainProfile> {
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Color(0xFFFCE3F2)),
-                                          child: Image.asset(
-                                            kidsList[index][1],
-                                            fit: BoxFit.fitHeight,
-                                          ),
+                                          child: ((kidsList[index][1] == null) || (kidsList[index][1] == 'image path') || (kidsList[index][1] == '')) ?
+                                            circleImg(img: AssetImage('assets/icons/037-baby.png')) :
+                                            circleImg(img: NetworkImage(kidsList[index][1]))
                                         )),
                                     Align(
                                       alignment: Alignment(0, 0.4),
