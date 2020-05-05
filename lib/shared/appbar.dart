@@ -105,8 +105,7 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
                                 dataList: widget.data,
                               )));
                   if (remove == null) {
-                    setState((){
-                    });
+                    setState(() {});
                   } else {
                     setState(() {
                       widget.data.getKids().removeAt(index);
