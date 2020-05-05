@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class DatabaseService {
@@ -87,6 +90,10 @@ class Database extends DatabaseService {
       Firestore.instance.collection('schedule');
   final CollectionReference uidscheduleCollection =
       Firestore.instance.collection('uid_schedule');
+  final CollectionReference storyCollection =
+      Firestore.instance.collection('story');
+  final CollectionReference kidstoryCollection =
+      Firestore.instance.collection('kid_story');
 
   // collection health
   final CollectionReference heightCollection =
@@ -654,17 +661,13 @@ class Database extends DatabaseService {
   }
 
   // delete vaccine data
-  deleteVaccineLog(String logId, String babyId) async {
-    print('delete vaccine babyId: $babyId');
-    await vaccineCollection
-        .document(logId)
-        .delete()
-        .whenComplete(() => deleteVaccineId(logId, babyId));
+  deleteVaccineLog(String logId) async {
+    await vaccineCollection.document(logId).delete();
   }
 
   // delete vaccine id
-  deleteVaccineId(String logId, String babyId) async {
-    kidVaccine.document(babyId).updateData({logId: FieldValue.delete()});
+  deleteVaccineId(String babyId) async {
+    kidVaccine.document(babyId).delete();
   }
 
   // get develope data from firebase
@@ -746,6 +749,85 @@ class Database extends DatabaseService {
     return await developeCollection.document(developeLogId).get();
   }
 
+  Future getStoryFromKid(String kid) async {
+    return await kidstoryCollection.document(kid).get();
+  }
+
+  Future getStoriesFromKid(List<String> kids) async {
+    return await Future.wait(kids.map((kid) => getStoryFromKid(kid)));
+  }
+
+  Future getStoryData(String sid) async {
+    return await storyCollection.document(sid).get();
+  }
+
+  Future getStoriesData(List<String> sids) async {
+    return await Future.wait(sids.map((sid) => getStoryData(sid)));
+  }
+
+  Future createStory(String kid, String title, String coverImg, DateTime date,
+      List<dynamic> images) async {
+    return await storyCollection.add({
+      'title': title,
+      'coverImg': coverImg,
+      'content': '',
+      'date': date,
+      'images': images,
+    }).then((value) {
+      savekidstory(kid, value.documentID, date);
+      return value;
+    });
+  }
+
+  Future savekidstory(String kid, String story, DateTime date) async {
+    return await kidstoryCollection
+        .document(kid)
+        .setData({story: date}, merge: true);
+  }
+
+  Future removeStory(String sid, String kid) async {
+    return await storyCollection
+        .document(sid)
+        .delete()
+        .whenComplete(() => removeStoryFromKidStory(kid, sid));
+  }
+
+  Future removeStoryFromKidStory(String kid, String sid) async {
+    return await kidstoryCollection
+        .document(kid)
+        .updateData({sid: FieldValue.delete()});
+  }
+
+  Future addImageToStory(String sid, String image) async {
+    return await storyCollection.document(sid).updateData({
+      'images': FieldValue.arrayUnion(List.from([image]))
+    });
+  }
+
+  Future removeImageFromStory(String sid, String image) async {
+    return await storyCollection.document(sid).updateData({
+      'images': FieldValue.arrayRemove(List.from([image]))
+    });
+  }
+
+  Future updateStoryData(
+      String sid, String coverImg, String title, String content) async {
+    return await storyCollection
+        .document(sid)
+        .updateData({'coverImg': coverImg, 'title': title, 'content': content});
+  }
+
+  Future uploadFile(File _image) async {
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child('images/${Uuid().v1()}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    print('Image Uploaded');
+    return await storageReference.getDownloadURL().then((fileURL) {
+      return fileURL;
+    });
+  }
+
   // update stat
   updateDevelopeLog(String logId, int val, Timestamp dateDevelope, dynamic age,
       Timestamp lastModified) async {
@@ -760,15 +842,12 @@ class Database extends DatabaseService {
   }
 
   // delete develope data
-  deleteDavalopeLog(String babyId, String logId) async {
-    await developeCollection
-        .document(logId)
-        .delete()
-        .whenComplete(() => deleteDevelopeId(babyId, logId));
+  deleteDavalopeLog(String logId) async {
+    await developeCollection.document(logId).delete();
   }
 
   // delete develope id
-  deleteDevelopeId(String babyId, String logId) {
-    kidDevelope.document(babyId).updateData({logId: FieldValue.delete()});
+  deleteDevelopeId(String babyId) {
+    kidDevelope.document(babyId).delete();
   }
 }

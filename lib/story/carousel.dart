@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:momandkid/shared/style.dart';
 
 class carousel extends StatefulWidget{
-  carousel({this.selectedMonth,this.selectedDay});
+  carousel({this.selectedMonth,this.selectedDay,this.callback});
   int selectedMonth,selectedDay;
   myDate date = new myDate();
+  Function(int, int) callback;
   @override 
   _carousel createState() => _carousel();
 }
@@ -20,6 +21,7 @@ class _carousel extends State<carousel> with TickerProviderStateMixin{
   PageController monthController, dayController;
   AnimationController controller;
   Animation<double> animation;
+  int mon,dayy;
   @override 
   void initState() {
     // TODO: implement initState
@@ -28,9 +30,12 @@ class _carousel extends State<carousel> with TickerProviderStateMixin{
       vsync: this,
       duration: Duration(milliseconds: 300)
     );
-  
+    widget.selectedDay = DateTime.now().day;
+    widget.selectedMonth = DateTime.now().month;
     monthController = PageController(initialPage: widget.selectedMonth-1,viewportFraction: 1/4);
     dayController = PageController(initialPage: widget.selectedDay-1,viewportFraction: 1/4);
+    dayy = widget.selectedDay;
+    mon = widget.selectedMonth;
   }
 
   
@@ -98,14 +103,16 @@ class _carousel extends State<carousel> with TickerProviderStateMixin{
                             
                             onPageChanged: (int index){
                               setState(() {
+                                mon = index+1;
                                 widget.selectedMonth = index+1;
+                                widget.callback(widget.selectedDay,widget.selectedMonth);
                               });
                             },
                             itemBuilder: (_,i){
                               if(widget.selectedMonth == null){
                                 widget.selectedMonth = 0;
                               }
-                              return dateList(i,widget.selectedMonth-1,widget.date.getMonthList(),controller, animation, touch,opa,'month',dayController); 
+                              return dateList(i,mon-1,widget.date.getMonthList(),controller, animation, touch,opa,'month',dayController); 
                             },
                           )
                         )
@@ -127,20 +134,22 @@ class _carousel extends State<carousel> with TickerProviderStateMixin{
                           width: MediaQuery.of(context).size.width / 6,
                           alignment: Alignment.center,
                           child:PageView.builder(
-                            itemCount: widget.date.getDayList(widget.selectedMonth+1).length,
+                            itemCount: widget.date.getDayList(widget.selectedMonth).length,
                             scrollDirection: Axis.vertical,
                             controller: dayController,
                             physics: BouncingScrollPhysics(),
                             onPageChanged: (int index){
                               setState(() {
+                                dayy = index+1;
                                 widget.selectedDay = index+1;
+                                widget.callback(widget.selectedDay,widget.selectedMonth);
                               });
                             },
                             itemBuilder: (_,i){
                               if(widget.selectedDay == null){
                                 widget.selectedDay = 0;
                               }
-                              return dateList(i,widget.selectedDay-1,widget.date.getDayList(3),controller, animation, touch,opa,'day',monthController); 
+                              return dateList(i,dayy-1,widget.date.getDayList(widget.selectedMonth),controller, animation, touch,opa,'day',monthController); 
                             },
                           )
                         )
@@ -161,7 +170,8 @@ class _carousel extends State<carousel> with TickerProviderStateMixin{
 
 dateList(int index,int current,List list,AnimationController controller, Animation<double> animation,bool touch, double opa,String type,PageController pageController){
  
-  double alpha = (1 - (((current - index )/10) * 4.3).abs()).toDouble() ;  
+  // double alpha = (1 - (((current - index )/10) * 4.3).abs()).toDouble() ;  
+  double alpha = 1;
   var align;
   if(type == 'day'){
     align = Alignment.center;

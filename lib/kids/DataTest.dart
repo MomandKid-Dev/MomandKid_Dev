@@ -1441,7 +1441,7 @@ class dataTest {
   }
 
   getKids() {
-    print('call getKid: $kiddo');
+    //print('call getKid: $kiddo');
     return kiddo;
   }
 
@@ -1611,7 +1611,6 @@ class dataTest {
     AgeDuration age =
         Age.dateDifference(fromDate: birthDate, toDate: DateTime.now());
     int sumAge = (age.years * 12) + age.months;
-    int i = 0;
     vaccineRaw = [];
     vaccine = [];
 
@@ -1681,26 +1680,20 @@ class dataTest {
   // add vaccine for edit kid data
   getvaccineEdit(dynamic birthDate, String babyId) async {
     print('delete vaccinee');
-    List<Map<dynamic, dynamic>> temp = new List();
-    // print('datas : $datas');
-    for (var i = 0; i < datas.length; i++) {
-      if ((datas[i])['type'] == 'vac') {
-        temp.add(datas[i]);
+
+    List<dynamic> listVaccineDelete = await Database().getVaccineLogId(babyId);
+    Database().deleteVaccineId(babyId);
+
+    if (listVaccineDelete != null) {
+      for (int i = 0; i < listVaccineDelete.length; i++) {
+        Database().deleteVaccineLog((listVaccineDelete[i]));
       }
-    }
 
-    print(temp);
-
-    for (int i = 0; i < temp.length; i++) {
-      await Database().deleteVaccineLog((temp[i])['logId'], babyId);
-    }
-
-    print('delete datas');
-    if (babyId == getSelectedKid()['kid']) {
       datas.removeWhere((item) => item['type'] == 'vac');
-    }
 
-    getVaccineListFirst(birthDate, babyId);
+      print('delete vaccine complete');
+      getVaccineListFirst(birthDate, babyId);
+    }
   }
 
   List<dynamic> mapVaccine(List<dynamic> dataList) {
@@ -1780,7 +1773,6 @@ class dataTest {
     AgeDuration age =
         Age.dateDifference(fromDate: birthDate, toDate: DateTime.now());
     int sumAge = (age.years * 12) + age.months;
-    int i = 0;
     int index;
     developeRaw = [];
     develope = [];
@@ -1831,25 +1823,20 @@ class dataTest {
   // add develope from edit
   getDevelopeEdit(dynamic birthDate, String babyId) async {
     print('delete develope');
-    List<Map<dynamic, dynamic>> temp = new List();
-    for (var i = 0; i < datas.length; i++) {
-      if ((datas[i])['type'] == 'evo') {
-        temp.add(datas[i]);
+    List<dynamic> listDevelopeDelete =
+        await Database().getDevelopeLogId(babyId);
+    Database().deleteDevelopeId(babyId);
+
+    if (listDevelopeDelete != null) {
+      for (int i = 0; i < listDevelopeDelete.length; i++) {
+        Database().deleteDavalopeLog(listDevelopeDelete[i]);
       }
-    }
 
-    print(temp);
-
-    for (int i = 0; i < temp.length; i++) {
-      await Database().deleteDavalopeLog(babyId, (temp[i])['logId']);
-    }
-
-    print('delete datas');
-    if (babyId == getSelectedKid()['kid']) {
       datas.removeWhere((item) => item['type'] == 'evo');
-    }
 
-    getDevelopeListFirst(birthDate, babyId);
+      print('delete develope complete');
+      getDevelopeListFirst(birthDate, babyId);
+    }
   }
 
   List<dynamic> mapDevelope(List<dynamic> dataList) {

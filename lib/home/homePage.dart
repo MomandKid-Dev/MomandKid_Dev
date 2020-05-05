@@ -15,9 +15,6 @@ import 'package:momandkid/Article/mainArticle.dart';
 import 'package:momandkid/schedule/mainSchedulePage.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'package:quiver/iterables.dart';
-import 'package:uuid/uuid.dart';
-import 'package:momandkid/story/storyData.dart';
-
 
 //service
 import 'package:momandkid/services/auth.dart';
@@ -25,7 +22,6 @@ import '../post/postMain.dart';
 import '../services/database.dart';
 import '../shared/style.dart';
 import 'package:momandkid/post/createPost.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({this.auth, this.logoutCallback, this.userId, this.data});
@@ -35,7 +31,6 @@ class MyHomePage extends StatefulWidget {
   final String userId;
   dataTest data;
 
-  
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -46,7 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _visible = true;
   bool _showappbar = true;
   String _title;
-  storyData story = storyData();
   @override
   void initState() {
     widget.data.getKiddo(widget.userId);
@@ -142,17 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
   // //FirebaseStorage storage = FirebaseStorage.getInstance();
   // //postss.sort((a, b) => a.pid.compareTo(b.pid));
   // return postsss;
-
-  Future uploadFile(File _image) async {
-    StorageReference storageReference =
-        FirebaseStorage.instance.ref().child('images/${Uuid().v1()}');
-    StorageUploadTask uploadTask = storageReference.putFile(_image);
-    await uploadTask.onComplete;
-    print('Image Uploaded');
-    return await storageReference.getDownloadURL().then((fileURL) {
-      return fileURL;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -333,7 +316,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   }),
             ),
             Container(child: mainArticle()),
-            Container(child: storyMain(data: story,)),
+            Container(
+                child: mainStoryPage(
+              userId: widget.userId,
+              kiddata: widget.data,
+            )),
             Container(
                 child: mainKidScreen(userId: widget.userId, data: widget.data)),
             Container(child: mainSchedule(userId: widget.userId)),
@@ -342,32 +329,35 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: Opacity(
         opacity: _visible ? 1 : 0,
-        child: _visible ? FloatingActionButton(
-            backgroundColor: Color(0xFF76C5BA),
-            child: Icon(
-              Icons.edit,
-              size: 30.0,
-            ),
-            onPressed: () async {
-              final postCreated = await Navigator.push(
-                  context,
-                  PageRouteTransition(
-                      animationType: AnimationType.slide_up,
-                      builder: (context) => createPost()));
-              if(postCreated != null){
-                uploadFile(postCreated[0])  
-                    .then((imageURL) => Database(userId: widget.userId)
-                        .createPost(postCreated[1], imageURL))
-                    .whenComplete(() {
-                  setState(() {});
-                });
-              }
-              else{
-                setState(() {});
-              }
-            }):  PreferredSize(
-                      child: Container(),
-                      preferredSize: Size(0.0, 0.0),),
+        child: _visible
+            ? FloatingActionButton(
+                backgroundColor: Color(0xFF76C5BA),
+                child: Icon(
+                  Icons.edit,
+                  size: 30.0,
+                ),
+                onPressed: () async {
+                  final postCreated = await Navigator.push(
+                      context,
+                      PageRouteTransition(
+                          animationType: AnimationType.slide_up,
+                          builder: (context) => createPost()));
+                  if (postCreated != null) {
+                    Database()
+                        .uploadFile(postCreated[0])
+                        .then((imageURL) => Database(userId: widget.userId)
+                            .createPost(postCreated[1], imageURL))
+                        .whenComplete(() {
+                      setState(() {});
+                    });
+                  } else {
+                    setState(() {});
+                  }
+                })
+            : PreferredSize(
+                child: Container(),
+                preferredSize: Size(0.0, 0.0),
+              ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

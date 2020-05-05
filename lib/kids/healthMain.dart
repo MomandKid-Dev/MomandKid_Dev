@@ -55,6 +55,7 @@ class _kidsState extends State<_kids> with TickerProviderStateMixin {
   Animation<double> opaAnimationBlur2;
   int kidsCount;
   loaded() {
+    if(!mounted) return;
     setState(() {
       loading = false;
     });
@@ -64,7 +65,7 @@ class _kidsState extends State<_kids> with TickerProviderStateMixin {
   void initState() {
     // kidsCount = data.kiddo.length;
     data = widget.data;
-    data.getDataLogAll().whenComplete(() => loaded());
+    data.getDataLogAll().whenComplete(() {if(!mounted) return; loaded();});
     slideController2 =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     slideAnimationBlur2 = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1))
@@ -386,7 +387,7 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
 
                                     return childrenList(
                                       index: i,
-                                      img: widget.data.getKids()[i]['img'],
+                                      img: widget.data.getKids()[i]['image'],
                                       name: widget.data.getKids()[i]['name'],
                                       controller: slideController,
                                       data: _kids.of(context).data,
@@ -776,7 +777,7 @@ class _childrenListState extends State<childrenList> {
                     Hero(
                       tag: 'child${widget.index}',
                       child: circleImg(
-                        img: AssetImage('assets/icons/037-baby.png'),
+                        img: ((widget.img == null) | (widget.img == 'image path')) ? AssetImage('assets/icons/037-baby.png') : NetworkImage(widget.img),
                         width: 50,
                         height: 50,
                       ),
