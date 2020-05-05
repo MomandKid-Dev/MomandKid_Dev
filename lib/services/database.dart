@@ -765,7 +765,8 @@ class Database extends DatabaseService {
     return await Future.wait(sids.map((sid) => getStoryData(sid)));
   }
 
-  Future createStory(String kid, String title, String coverImg, DateTime date, List<dynamic> images) async {
+  Future createStory(String kid, String title, String coverImg, DateTime date,
+      List<dynamic> images) async {
     return await storyCollection.add({
       'title': title,
       'coverImg': coverImg,
@@ -788,10 +789,10 @@ class Database extends DatabaseService {
     return await storyCollection
         .document(sid)
         .delete()
-        .whenComplete(() => removeStoryFromKidStory(kid,sid));
+        .whenComplete(() => removeStoryFromKidStory(kid, sid));
   }
 
-  Future removeStoryFromKidStory(String kid,String sid) async {
+  Future removeStoryFromKidStory(String kid, String sid) async {
     return await kidstoryCollection
         .document(kid)
         .updateData({sid: FieldValue.delete()});
@@ -809,14 +810,13 @@ class Database extends DatabaseService {
     });
   }
 
-  Future updateStoryData(String sid, String coverImg, String title, String content) async {
-    return await storyCollection.document(sid).updateData({
-      'coverImg' : coverImg,
-      'title' : title,
-      'content': content
-    });
+  Future updateStoryData(
+      String sid, String coverImg, String title, String content) async {
+    return await storyCollection
+        .document(sid)
+        .updateData({'coverImg': coverImg, 'title': title, 'content': content});
   }
-  
+
   Future uploadFile(File _image) async {
     StorageReference storageReference =
         FirebaseStorage.instance.ref().child('images/${Uuid().v1()}');
@@ -827,6 +827,7 @@ class Database extends DatabaseService {
       return fileURL;
     });
   }
+
   // update stat
   updateDevelopeLog(String logId, int val, Timestamp dateDevelope, dynamic age,
       Timestamp lastModified) async {

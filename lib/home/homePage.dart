@@ -16,7 +16,6 @@ import 'package:momandkid/schedule/mainSchedulePage.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'package:quiver/iterables.dart';
 
-
 //service
 import 'package:momandkid/services/auth.dart';
 import '../post/postMain.dart';
@@ -32,7 +31,6 @@ class MyHomePage extends StatefulWidget {
   final String userId;
   dataTest data;
 
-  
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -318,7 +316,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   }),
             ),
             Container(child: mainArticle()),
-            Container(child: mainStoryPage(userId: widget.userId, kiddata: widget.data,)),
+            Container(
+                child: mainStoryPage(
+              userId: widget.userId,
+              kiddata: widget.data,
+            )),
             Container(
                 child: mainKidScreen(userId: widget.userId, data: widget.data)),
             Container(child: mainSchedule(userId: widget.userId)),
@@ -327,32 +329,35 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: Opacity(
         opacity: _visible ? 1 : 0,
-        child: _visible ? FloatingActionButton(
-            backgroundColor: Color(0xFF76C5BA),
-            child: Icon(
-              Icons.edit,
-              size: 30.0,
-            ),
-            onPressed: () async {
-              final postCreated = await Navigator.push(
-                  context,
-                  PageRouteTransition(
-                      animationType: AnimationType.slide_up,
-                      builder: (context) => createPost()));
-              if(postCreated != null){
-                uploadFile(postCreated[0])  
-                    .then((imageURL) => Database(userId: widget.userId)
-                        .createPost(postCreated[1], imageURL))
-                    .whenComplete(() {
-                  setState(() {});
-                });
-              }
-              else{
-                setState(() {});
-              }
-            }):  PreferredSize(
-                      child: Container(),
-                      preferredSize: Size(0.0, 0.0),),
+        child: _visible
+            ? FloatingActionButton(
+                backgroundColor: Color(0xFF76C5BA),
+                child: Icon(
+                  Icons.edit,
+                  size: 30.0,
+                ),
+                onPressed: () async {
+                  final postCreated = await Navigator.push(
+                      context,
+                      PageRouteTransition(
+                          animationType: AnimationType.slide_up,
+                          builder: (context) => createPost()));
+                  if (postCreated != null) {
+                    Database()
+                        .uploadFile(postCreated[0])
+                        .then((imageURL) => Database(userId: widget.userId)
+                            .createPost(postCreated[1], imageURL))
+                        .whenComplete(() {
+                      setState(() {});
+                    });
+                  } else {
+                    setState(() {});
+                  }
+                })
+            : PreferredSize(
+                child: Container(),
+                preferredSize: Size(0.0, 0.0),
+              ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
