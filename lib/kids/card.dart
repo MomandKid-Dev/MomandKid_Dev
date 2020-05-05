@@ -15,11 +15,9 @@ class card extends StatefulWidget {
 class _cardState extends State<card> {
   @override
   Widget build(BuildContext context) {
-    // print(widget.list.runtimeType);
     return Container(
         margin: EdgeInsets.only(top: 0),
         padding: EdgeInsets.only(bottom: 20),
-        // width: MediaQuery.of(context).size.width / 1.13,
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -43,13 +41,9 @@ Widget allcard(BuildContext context, dataTest data,
             padding: EdgeInsets.all(20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Text('Today,'),
-                Text('${toDate(list[0]['date'].toDate())}')
-              ],
+              children: <Widget>[Text('${toDate(list[0]['date'].toDate())}')],
             )),
         Container(
-          // color: Colors.red,
           padding: EdgeInsets.all(40),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -64,7 +58,6 @@ Widget allcard(BuildContext context, dataTest data,
                   Text('${list.length} ', style: TextStyle(fontSize: 20)),
                   Text('${data.getTitle(type)}',
                       style: TextStyle(fontSize: 17)),
-                  // Text(data.getTitle(type))
                 ],
               )
             ],
@@ -77,12 +70,7 @@ Widget allcard(BuildContext context, dataTest data,
 getCard(BuildContext context, dataTest data, List<Map<dynamic, dynamic>> list,
     String type) {
   return Column(
-      // children: ,
-      children: list.map((e) => cards(context, data, type, e)).toList()
-      // children: <Widget>[
-      //   cards(context,data, type)
-      // ],
-      );
+      children: list.map((e) => cards(context, data, type, e)).toList());
 }
 
 getDateLog(dynamic data) {
@@ -106,8 +94,6 @@ Widget cards(BuildContext context, dataTest data, String type,
         Map<dynamic, dynamic> list) =>
     new GestureDetector(
         onTap: () {
-          // data.setRecent(list['id']);
-          // print('This is recent ${data.getRecent()}');
           Route route = MaterialPageRoute(
               builder: (context) => healthCard(
                     data: data,
@@ -119,9 +105,6 @@ Widget cards(BuildContext context, dataTest data, String type,
         child: Container(
           color: Colors.white,
           padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
-
-          // color: Colors.red,
-          // height: ,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -133,7 +116,6 @@ Widget cards(BuildContext context, dataTest data, String type,
                     width: 40,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        // color: Colors.red,
                         border: Border.all(width: 0.3),
                         image: DecorationImage(
                           fit: BoxFit.fill,
@@ -183,7 +165,6 @@ Widget cards(BuildContext context, dataTest data, String type,
                           Container(
                               width: 80, child: Text('อายุ${getDateLog(list)}'))
                         ])
-              // Text('อายุ ${list['']} เดือน')
             ],
           ),
         ));

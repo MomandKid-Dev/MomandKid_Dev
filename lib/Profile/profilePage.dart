@@ -7,6 +7,8 @@ import 'package:momandkid/kids/addkid.dart';
 //service
 import 'package:momandkid/services/auth.dart';
 
+import '../shared/circleImg.dart';
+
 class mainProfile extends StatefulWidget {
   mainProfile({this.auth, this.logoutCallback, this.userId, this.data});
 
@@ -19,28 +21,46 @@ class mainProfile extends StatefulWidget {
 }
 
 class _mainProfileState extends State<mainProfile> {
-
   dynamic info;
 
-  getInfo() async{
-    await Database(userId: widget.userId).getUserData().then((onValue) => info = onValue.data).whenComplete(
-      (){
-        setState(() {
-          print('done');
-        });
-      }
-    );
+  getInfo() async {
+    await Database(userId: widget.userId)
+        .getUserData()
+        .then((onValue) => info = onValue.data)
+        .whenComplete(() {
+      setState(() {
+        print('done');
+      });
+    });
     kidsList = [];
     for (var i = 0; i <= widget.data.kiddo.length; i++) {
-      if(i == widget.data.kiddo.length){
+      if (i == widget.data.kiddo.length) {
         kidsList.add([2]);
-      }
-      else{
-        kidsList.add([1, 'assets/icons/037-baby.png', widget.data.kiddo[i]['name'], '${widget.data.kiddo[i]['birthdate'].day}  ${month[widget.data.kiddo[i]['birthdate'].month - 1]} ${widget.data.kiddo[i]['birthdate'].year}']);
+      } else {
+        kidsList.add([
+          1,
+          widget.data.kiddo[i]['image'],
+          widget.data.kiddo[i]['name'],
+          '${widget.data.kiddo[i]['birthdate'].day}  ${month[widget.data.kiddo[i]['birthdate'].month - 1]} ${widget.data.kiddo[i]['birthdate'].year}'
+        ]);
       }
     }
   }
-  List month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  List month = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
   List kidsList = [];
   @override
   void initState() {
@@ -48,7 +68,7 @@ class _mainProfileState extends State<mainProfile> {
     print('hello world');
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     print(widget.data.kiddo.length);
@@ -93,8 +113,8 @@ class _mainProfileState extends State<mainProfile> {
                           height: 50,
                           decoration: BoxDecoration(
                               color: Color(0xFFFBD7E6),
-                              borderRadius:
-                                  BorderRadius.horizontal(left: Radius.circular(24))),
+                              borderRadius: BorderRadius.horizontal(
+                                  left: Radius.circular(24))),
                           child: IconButton(
                               icon: Icon(
                                 Icons.menu,
@@ -105,11 +125,13 @@ class _mainProfileState extends State<mainProfile> {
                                 Navigator.push(
                                     context,
                                     PageRouteTransition(
-                                        animationType: AnimationType.slide_right,
+                                        animationType:
+                                            AnimationType.slide_right,
                                         builder: (context) => settingPage(
                                               userId: widget.userId,
                                               auth: widget.auth,
-                                              logoutCallback: widget.logoutCallback,
+                                              logoutCallback:
+                                                  widget.logoutCallback,
                                               info: info,
                                             )));
                               }),
@@ -123,24 +145,29 @@ class _mainProfileState extends State<mainProfile> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                              border: Border.all(color: Color(0xFFFBBBCD), width: 8)),
-                          child: Icon(
-                            Icons.person_outline,
-                            color: Color(0xFFFBBBCD),
-                            size: 80,
-                          ),
-                        ),
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: Color(0xFFFBBBCD), width: 8)),
+                            child: ((info == null) ||
+                                    (info['image'] == null) ||
+                                    (info['image'] == '') ||
+                                    (info['image'] == 'image path'))
+                                ? Icon(
+                                    Icons.person_outline,
+                                    color: Color(0xFFFBBBCD),
+                                    size: 80,
+                                  )
+                                : circleImg(img: NetworkImage(info['image']))),
                         Container(
                           width: 235,
                           height: 100,
                           decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.horizontal(left: Radius.circular(36)),
+                              borderRadius: BorderRadius.horizontal(
+                                  left: Radius.circular(36)),
                               color: Color(0xFFFBD7E6)),
                           child: Stack(
                             children: <Widget>[
@@ -163,7 +190,9 @@ class _mainProfileState extends State<mainProfile> {
                               Align(
                                   alignment: Alignment(0.42, -0.5),
                                   child: Text(
-                                    info == null ? '0':'${info['amount-baby']}',
+                                    info == null
+                                        ? '0'
+                                        : '${info['amount-baby']}',
                                     style: TextStyle(
                                         color: Color(0xFF131048),
                                         fontSize: 36,
@@ -172,7 +201,9 @@ class _mainProfileState extends State<mainProfile> {
                               Align(
                                   alignment: Alignment(-0.42, -0.5),
                                   child: Text(
-                                    info == null ? '0':'${info['amount-story']}',
+                                    info == null
+                                        ? '0'
+                                        : '${info['amount-story']}',
                                     style: TextStyle(
                                         color: Color(0xFF131048),
                                         fontSize: 36,
@@ -205,7 +236,7 @@ class _mainProfileState extends State<mainProfile> {
                   Align(
                     alignment: Alignment(-1, -0.4),
                     child: Text(
-                      info == null ? '':'${info['name']}',
+                      info == null ? '' : '${info['name']}',
                       style: TextStyle(color: Color(0xFF131048), fontSize: 24),
                     ),
                   ),
@@ -234,7 +265,8 @@ class _mainProfileState extends State<mainProfile> {
                                   borderRadius: BorderRadius.circular(24)),
                               child: RawMaterialButton(
                                 onPressed: () {
-                                  print('on pressed');
+                                  widget.data.setSelectedKid(index + 1);
+                                  Navigator.pop(context, [2]);
                                 },
                                 child: Stack(
                                   children: <Widget>[
@@ -247,10 +279,9 @@ class _mainProfileState extends State<mainProfile> {
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Color(0xFFFCE3F2)),
-                                          child: Image.asset(
-                                            kidsList[index][1],
-                                            fit: BoxFit.fitHeight,
-                                          ),
+                                          child: ((kidsList[index][1] == null) || (kidsList[index][1] == 'image path') || (kidsList[index][1] == '')) ?
+                                            circleImg(img: AssetImage('assets/icons/037-baby.png')) :
+                                            circleImg(img: NetworkImage(kidsList[index][1]))
                                         )),
                                     Align(
                                       alignment: Alignment(0, 0.4),
@@ -294,12 +325,12 @@ class _mainProfileState extends State<mainProfile> {
                               child: RawMaterialButton(
                                 onPressed: () async {
                                   await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => mainAddScreen(
-                                              userId: widget.userId,
-                                              data: widget.data,
-                                            )));
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => mainAddScreen(
+                                                userId: widget.userId,
+                                                data: widget.data,
+                                              )));
                                   getInfo();
                                   print('on pressed');
                                 },

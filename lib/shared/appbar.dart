@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'package:momandkid/kids/editKidData.dart';
 import 'package:momandkid/kids/DataTest.dart';
-import 'package:momandkid/shared/circleImg.dart';
 
 typedef OnTap = void Function();
 
@@ -47,12 +45,10 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
         setState(() {
           controller.forward();
         });
-        
       } else {
         setState(() {
           controller.reverse();
         });
-        
       }
     }
     //print('show kid: ${widget.kid}');
@@ -62,14 +58,12 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
         img() {
           if ((widget.kid == null)) {
             return AssetImage('assets/icons/037-baby.png');
-          } else if ((widget.kid['image'] == null) | (widget.kid['image'] == 'image path')) {
+          } else if ((widget.kid['image'] == null) |
+              (widget.kid['image'] == 'image path')) {
             return AssetImage('assets/icons/037-baby.png');
           }
           return NetworkImage(widget.kid['image']);
         }
-
-        
-
 
         name() {
           if ((widget.kid == null)) {
@@ -89,12 +83,14 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
                 widget.kid['name'],
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
-              SizedBox(width: 10,),
+              SizedBox(
+                width: 10,
+              ),
               GestureDetector(
                 onTap: () async {
-                  var index ;
+                  var index;
                   for (var i = 0; i < widget.data.kiddo.length; i++) {
-                    if(widget.kid['name'] == widget.data.kiddo[i]['name']){
+                    if (widget.kid['name'] == widget.data.kiddo[i]['name']) {
                       index = i;
                       break;
                     }
@@ -109,11 +105,11 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
                                 dataList: widget.data,
                               )));
                   if (remove == null) {
-                    null;
+                    setState(() {});
                   } else {
                     setState(() {
                       widget.data.getKids().removeAt(index);
-
+                      // widget.onTap();
                       widget.data.setSelectedKidAny();
                       // widget.data.getSelectedKid());
                     });
@@ -159,7 +155,6 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
                     children: <Widget>[
                       GestureDetector(
                         onTap: () {
-                          
                           widget.onTap();
                           // if(_kids.of(context).open){
                           //   widget.controller.reverse();

@@ -7,10 +7,14 @@ import 'package:momandkid/kids/healthMain.dart';
 import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/circleImg.dart';
 import 'package:momandkid/shared/style.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
+import '../services/database.dart';
+
 
 class editKidData extends StatefulWidget {
   editKidData({this.index, this.data, this.userId, this.dataList});
-  // String img,name;
   Map data;
   int index;
   String userId;
@@ -33,7 +37,6 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     nameController = TextEditingController(text: widget.data['name']);
     gender = widget.data['gender'];
@@ -75,12 +78,22 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
     Database(userId: widget.userId).deleteBabyInfo(babyId).whenComplete(() {
       widget.dataList.kiddo.removeWhere((item) => item['kid'] == babyId);
       widget.dataList.kiddo[widget.dataList.kiddo.length - 1]['sel'] = 1;
-      print('kiddo: ${widget.dataList.kiddo}');
       widget.dataList.getDataLogAll();
-      // .whenComplete(() => Navigator.pop(context));
       Navigator.pop(context);
     });
   }
+
+  @override
+  void dispose() {
+    slideController2.dispose();
+    super.dispose();
+  }
+
+  File _image;
+    Future getImage() async {
+      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      _image = image;
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +179,6 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
             newDate += date.day.toString();
           }
           if (date.month < 10) {
-            print(date.month);
             newDate += '0${date.month.toString()}';
           } else {
             newDate += date.month.toString();
@@ -210,7 +222,6 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                                 child: Text("Name"),
                               ),
                               Container(
-                                  // margin: edgeTB(10),
                                   child: TextField(
                                       controller: nameController,
                                       style: boldtext(),
@@ -278,12 +289,12 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            print(nameController.text);
-                            print('gender: ${gender}');
+                            // print(nameController.text);
+                            // print('gender: ${gender}');
                             slideController2.forward();
 
-                            print(birthDate);
-                            print(widget.data['birthdate']);
+                            // print(birthDate);
+                            // print(widget.data['birthdate']);
 
                             if (birthDate != widget.data['birthdate']) {
                               await updateVaccineLog(
@@ -291,6 +302,8 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                               await updateDevelopeLog(
                                   birthDate, widget.data['kid']);
                             }
+
+                            
 
                             updateDateFirebase(
                               widget.data['kid'],
@@ -305,7 +318,13 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                               birthDate,
                             );
 
-                            Navigator.pop(context);
+                            if (_image != null){
+                              await Database().uploadFile(_image).then((url) async {
+                                widget.data['image'] = url;
+                                await Database().updateKidImage(widget.data['kid'], url).whenComplete(()=>Navigator.pop(context));
+                              });
+                            }
+                            else Navigator.pop(context);
                           },
                           child: SizedBox(
                               width: double.infinity,
@@ -318,14 +337,13 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                                     border:
                                         Border.all(color: Color(0xffE7E7EC))),
                                 child: Text(
-                                  'Save Change',
+                                  'Save Change',  
                                   style: TextStyle(color: Color(0xff625BD4)),
                                 ),
                               )),
                         ),
                         GestureDetector(
                           onTap: () {
-                            // widget.data['name'] = nameController.text;
                             deleteDataFirebase(widget.data['kid']);
                           },
                           child: SizedBox(
@@ -333,11 +351,7 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                               height: 50,
                               child: Container(
                                 alignment: Alignment.center,
-                                decoration: BoxDecoration(
-
-                                    // borderRadius: allRoundedCorner(20),
-                                    // border: Border.all(color:Color(0xffE7E7EC))
-                                    ),
+                                decoration: BoxDecoration(),
                                 child: Text(
                                   'Delete Profile',
                                   style: TextStyle(color: Color(0xff625BD4)),
@@ -350,26 +364,29 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                 ),
                 Positioned(
                   top: MediaQuery.of(context).size.height - 500,
-                  child: Column(
-                    children: <Widget>[
-                      Hero(
-                        tag: 'child${widget.index}',
-                        child: circleImg(
-                          img: AssetImage('assets/icons/037-baby.png'),
-                          height: 150,
-                          width: 150,
+                  child: GestureDetector(
+                    onTap: ()async{
+                      getImage().whenComplete(() {
+                        setState(() {});
+                      });
+                    },
+                    child: Column(
+                      children: <Widget>[
+                        Hero(
+                          tag: 'child${widget.index}',
+                          child: circleImg(
+                            img: (_image != null) ? FileImage(_image) : 
+                            ((widget.data['image'] == null) || (widget.data['image'] == '') || (widget.data['image'] == 'image path')) ?
+                            AssetImage('assets/icons/037-baby.png') :
+                            NetworkImage(widget.data['image']),
+                            height: 150,
+                            width: 150,
+                          ),
                         ),
-                      ),
-                      Text('eiei')
-                    ],
-                  ),
+                      ],
+                    ),
+                  )
                 ),
-                //hear
-                // Container(
-                //   color: Colors.red,
-                //   width: 200,
-                //   height: 300,
-                // )
                 Container(
                   height: MediaQuery.of(context).size.height,
                   child: SlideTransition(
