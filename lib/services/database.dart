@@ -749,6 +749,12 @@ class Database extends DatabaseService {
     return await developeCollection.document(developeLogId).get();
   }
 
+  Future updateKidImage(String kid, String url) async {
+    return await babyCollection.document(kid).updateData({
+      'image' : url
+    });
+  }
+
   Future getStoryFromKid(String kid) async {
     return await kidstoryCollection.document(kid).get();
   }

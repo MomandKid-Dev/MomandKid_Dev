@@ -7,6 +7,11 @@ import 'package:momandkid/kids/healthMain.dart';
 import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/circleImg.dart';
 import 'package:momandkid/shared/style.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
+import '../services/database.dart';
+
 
 class editKidData extends StatefulWidget {
   editKidData({this.index, this.data, this.userId, this.dataList});
@@ -88,6 +93,12 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
       // TODO: implement dispose
       slideController2.dispose();
       super.dispose();
+    }
+
+  File _image;
+    Future getImage() async {
+      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      _image = image;
     }
 
   @override
@@ -300,6 +311,8 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                                   birthDate, widget.data['kid']);
                             }
 
+                            
+
                             updateDateFirebase(
                               widget.data['kid'],
                               nameController.text,
@@ -313,7 +326,13 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                               birthDate,
                             );
 
-                            Navigator.pop(context);
+                            if (_image != null){
+                              await Database().uploadFile(_image).then((url) async {
+                                widget.data['image'] = url;
+                                await Database().updateKidImage(widget.data['kid'], url).whenComplete(()=>Navigator.pop(context));
+                              });
+                            }
+                            else Navigator.pop(context);
                           },
                           child: SizedBox(
                               width: double.infinity,
@@ -326,7 +345,7 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                                     border:
                                         Border.all(color: Color(0xffE7E7EC))),
                                 child: Text(
-                                  'Save Change',
+                                  'Save Change',  
                                   style: TextStyle(color: Color(0xff625BD4)),
                                 ),
                               )),
@@ -358,19 +377,27 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                 ),
                 Positioned(
                   top: MediaQuery.of(context).size.height - 500,
-                  child: Column(
-                    children: <Widget>[
-                      Hero(
-                        tag: 'child${widget.index}',
-                        child: circleImg(
-                          img: AssetImage('assets/icons/037-baby.png'),
-                          height: 150,
-                          width: 150,
+                  child: GestureDetector(
+                    onTap: ()async{
+                      getImage().whenComplete(() {
+                        setState(() {});
+                      });
+                    },
+                    child: Column(
+                      children: <Widget>[
+                        Hero(
+                          tag: 'child${widget.index}',
+                          child: circleImg(
+                            img: ((widget.data['image'] == null) || (widget.data['image'] == '') || (widget.data['image'] == 'image path')) ?
+                            AssetImage('assets/icons/037-baby.png') :
+                            (_image != null) ? FileImage(_image) : NetworkImage(widget.data['image']),
+                            height: 150,
+                            width: 150,
+                          ),
                         ),
-                      ),
-                      Text('eiei')
-                    ],
-                  ),
+                      ],
+                    ),
+                  )
                 ),
                 //hear
                 // Container(
