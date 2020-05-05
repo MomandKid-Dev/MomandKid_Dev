@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-
+import 'package:momandkid/kids/editKidData.dart';
+import 'package:momandkid/kids/DataTest.dart';
 import 'package:momandkid/shared/circleImg.dart';
 
 typedef OnTap = void Function();
@@ -10,7 +11,10 @@ class appBar extends StatefulWidget {
   Map kid;
   OnTap onTap;
 
-  appBar({this.open, @required this.kid, this.onTap});
+  String userId;
+  dataTest data;
+
+  appBar({this.open, @required this.kid, this.onTap, this.userId, this.data});
   @override
   _appBarState createState() => _appBarState();
 }
@@ -64,6 +68,9 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
           return NetworkImage(widget.kid['image']);
         }
 
+        
+
+
         name() {
           if ((widget.kid == null)) {
             return Text(
@@ -76,9 +83,46 @@ class _appBarState extends State<appBar> with TickerProviderStateMixin {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             );
           }
-          return Text(
-            widget.kid['name'],
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+          return Row(
+            children: <Widget>[
+              Text(
+                widget.kid['name'],
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              ),
+              SizedBox(width: 10,),
+              GestureDetector(
+                onTap: () async {
+                  var index ;
+                  for (var i = 0; i < widget.data.kiddo.length; i++) {
+                    if(widget.kid['name'] == widget.data.kiddo[i]['name']){
+                      index = i;
+                      break;
+                    }
+                  }
+                  var remove = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => editKidData(
+                                index: index,
+                                data: widget.data.getKids()[index],
+                                userId: widget.userId,
+                                dataList: widget.data,
+                              )));
+                  if (remove == null) {
+                    null;
+                  } else {
+                    setState(() {
+                      widget.data.getKids().removeAt(index);
+
+                      widget.data.setSelectedKidAny();
+                      // widget.data.getSelectedKid());
+                    });
+                    // widget.data.getKids().removeAt(widget.index);
+                  }
+                },
+                child: Icon(Icons.edit),
+              ),
+            ],
           );
         }
 

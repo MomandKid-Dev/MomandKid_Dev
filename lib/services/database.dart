@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class DatabaseService {
   // this is data control of user info
@@ -25,35 +26,42 @@ abstract class DatabaseService {
   // this is data control of health page
   // create height log collection in firebase
   createHeightLog(double babyHeight, Timestamp dateHeight, String babyId,
-      dynamic subVal, dynamic age);
+      dynamic subVal, dynamic age, Timestamp lastModified);
 
   Future<void> saveKID_Height(
       String heightLogId, Timestamp dateHeight, String babyId);
 
   // create weight log collection in firebase
   createWeightLog(double babyWeight, Timestamp dateWeight, String babyId,
-      dynamic subVal, dynamic age);
+      dynamic subVal, dynamic age, Timestamp lastModified);
 
   Future<void> saveKID_Weight(
       String weightLogId, Timestamp dateWeight, String babyId);
 
   // create midicine log collection in firebase
   createMedicineLog(String nameMedicine, Timestamp dateMedicine, String babyId,
-      dynamic subVal, dynamic age);
+      dynamic subVal, dynamic age, Timestamp lastModified);
 
   Future<void> saveKID_Medicine(
       String medicineLogId, Timestamp dateMedicine, String babyId);
 
   // create vaccine log collection in firebase
   createVaccineLog(String nameVaccine, Timestamp dateVaccine, String babyId,
-      dynamic subVal, dynamic dueDate, dynamic age);
+      dynamic subVal, dynamic dueDate, dynamic age, Timestamp lastModified);
 
   Future<void> saveKID_Vaccine(
       String vaccineLogId, Timestamp dateVaccine, String babyId);
 
   // create develope log collection in firebase
-  createDevelopeLog(String nameDavelope, Timestamp dateDevelope, String babyId,
-      dynamic subVal, dynamic dueDate);
+  createDevelopeLog(
+      String nameDavelope,
+      Timestamp dateDevelope,
+      String babyId,
+      dynamic subVal,
+      dynamic dueDate,
+      dynamic age,
+      int stat,
+      Timestamp lastModified);
 
   Future<void> saveKID_Develope(
       String developeLogId, Timestamp dateDevelope, String babyId);
@@ -113,6 +121,10 @@ class Database extends DatabaseService {
       Firestore.instance.collection('vaccine');
   final CollectionReference vaccineList =
       Firestore.instance.collection('vaccine_list');
+  final CollectionReference developeInfo =
+      Firestore.instance.collection('develope');
+  final CollectionReference developeList =
+      Firestore.instance.collection('develope_list');
 
   // Create user info in firebase (user_info)
   Future<void> createUserInfo(String name, String email, String image) async {
@@ -191,10 +203,11 @@ class Database extends DatabaseService {
 
   // delete kid data
   Future deleteBabyInfo(String babyId) async {
-    return await babyCollection
-        .document(babyId)
-        .delete()
-        .whenComplete(() => deleteBabyId(babyId));
+    return await babyCollection.document(babyId).delete().then((val) {
+      userCollection
+          .document(userId)
+          .updateData({'amount-baby': FieldValue.increment(-1)});
+    }).whenComplete(() => deleteBabyId(babyId));
   }
 
   // delete kid in uid
@@ -286,6 +299,25 @@ class Database extends DatabaseService {
     return await userCollection.document(userId).get();
   }
 
+  Future updateUserData(String name) async {
+    return await userCollection.document(userId).updateData({'name': name});
+  }
+
+  Future updateUserDataNotification(bool notification) async {
+    print('noti : $notification');
+    return await userCollection
+        .document(userId)
+        .updateData({'notification': notification});
+  }
+
+  Future deleteUserData() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    return await userCollection
+        .document(userId)
+        .delete()
+        .then((onValue) => user.delete());
+  }
+
   Future getUserFromPost(DocumentSnapshot post) async {
     return await userCollection.document(post.data['uid']).get();
   }
@@ -361,7 +393,7 @@ class Database extends DatabaseService {
   // this is data control of health page
   // create height log collection in firebase (height_log)
   createHeightLog(double babyHeight, Timestamp dateHeight, String babyId,
-      dynamic subVal, dynamic age) async {
+      dynamic subVal, dynamic age, Timestamp lastModified) async {
     dynamic logId;
     await heightCollection.add({
       'type': 'height',
@@ -370,7 +402,8 @@ class Database extends DatabaseService {
       'date': dateHeight,
       'year': age.years,
       'month': age.months,
-      'day': age.days
+      'day': age.days,
+      'last_modified': lastModified,
     }).then((value) {
       saveKID_Height(value.documentID, dateHeight, babyId);
       logId = value.documentID;
@@ -409,8 +442,11 @@ class Database extends DatabaseService {
   }
 
   // delete height log data
-  deleteHeightLog(String logId) async {
-    await heightCollection.document(logId).delete();
+  deleteHeightLog(String babyId, String logId) async {
+    await heightCollection
+        .document(logId)
+        .delete()
+        .whenComplete(() => deleteHeightLogId(babyId, logId));
   }
 
   // delete height log id from KID
@@ -420,7 +456,7 @@ class Database extends DatabaseService {
 
   // create weight log collection in firebase (weight_log)
   createWeightLog(double babyWeight, Timestamp dateWeight, String babyId,
-      dynamic subVal, dynamic age) async {
+      dynamic subVal, dynamic age, Timestamp lastModified) async {
     dynamic logId;
     await weightCollection.add({
       'type': 'weight',
@@ -429,7 +465,8 @@ class Database extends DatabaseService {
       'date': dateWeight,
       'year': age.years,
       'month': age.months,
-      'day': age.days
+      'day': age.days,
+      'last_modified': lastModified,
     }).then((value) {
       saveKID_Weight(value.documentID, dateWeight, babyId);
       logId = value.documentID;
@@ -468,8 +505,11 @@ class Database extends DatabaseService {
   }
 
   // delete weight log data
-  deleteWeightLog(String logId) async {
-    await weightCollection.document(logId).delete();
+  deleteWeightLog(String babyId, String logId) async {
+    await weightCollection
+        .document(logId)
+        .delete()
+        .whenComplete(() => deleteWeightLogId(babyId, logId));
   }
 
   // delete Weight log id from KID
@@ -479,7 +519,7 @@ class Database extends DatabaseService {
 
   // create medicine log collection in firebase (medicine_log)
   createMedicineLog(String nameMedicine, Timestamp dateMedicine, String babyId,
-      dynamic subVal, dynamic age) async {
+      dynamic subVal, dynamic age, Timestamp lastModified) async {
     dynamic logId;
     await medicineCollection.add({
       'type': 'med',
@@ -488,7 +528,8 @@ class Database extends DatabaseService {
       'date': dateMedicine,
       'year': age.years,
       'month': age.months,
-      'day': age.days
+      'day': age.days,
+      'last_modified': lastModified,
     }).then((value) {
       saveKID_Medicine(value.documentID, dateMedicine, babyId);
       logId = value.documentID;
@@ -522,8 +563,11 @@ class Database extends DatabaseService {
   }
 
   // delete medicine log data
-  deleteMedicineLog(String logId) async {
-    await medicineCollection.document(logId).delete();
+  deleteMedicineLog(String babyId, String logId) async {
+    await medicineCollection
+        .document(logId)
+        .delete()
+        .whenComplete(() => deleteMedicineLogId(babyId, logId));
   }
 
   // delete medicine log id from KID
@@ -549,8 +593,14 @@ class Database extends DatabaseService {
   }
 
   // create vaccine log in firebase (vaccine_log)
-  Future createVaccineLog(String nameVaccine, Timestamp dateVaccine,
-      String babyId, dynamic subVal, dynamic dueDate, dynamic age) async {
+  Future createVaccineLog(
+      String nameVaccine,
+      Timestamp dateVaccine,
+      String babyId,
+      dynamic subVal,
+      dynamic dueDate,
+      dynamic age,
+      Timestamp lastModified) async {
     return await vaccineCollection.add({
       'type': 'vac',
       'val': nameVaccine,
@@ -560,10 +610,20 @@ class Database extends DatabaseService {
       'stat': 0,
       'year': age.years,
       'month': age.months,
-      'day': age.days
+      'day': age.days,
+      'last_modified': lastModified,
     }).then((value) {
       saveKID_Vaccine(value.documentID, dateVaccine, babyId);
       return value;
+    });
+  }
+
+  Future getAllVaccineData() async {
+    return await vaccineInfo
+        .orderBy('due_date')
+        .getDocuments()
+        .then((vaccineIds) {
+      return (vaccineIds.documents.map((vaccineId) => vaccineId.data)).toList();
     });
   }
 
@@ -593,41 +653,65 @@ class Database extends DatabaseService {
   }
 
   // update stat
-  updateVaccineLog(String logId, int val) async {
-    return await vaccineCollection.document(logId).updateData({'stat': val});
+  updateVaccineLog(String logId, int val, Timestamp lastModified) async {
+    return await vaccineCollection.document(logId).updateData({
+      'stat': val,
+      'last_modified': lastModified,
+    });
   }
 
   // delete vaccine data
-  deleteVaccineLog(String logId, String babyId) async {
-    print('lodId: $logId');
-    print('babyId: $babyId');
-    await vaccineCollection
-        .document(logId)
-        .delete()
-        .whenComplete(() => deleteVaccineId(logId, babyId));
+  deleteVaccineLog(String logId) async {
+    await vaccineCollection.document(logId).delete();
   }
 
   // delete vaccine id
-  deleteVaccineId(String logId, String babyId) async {
-    kidVaccine.document(babyId).updateData({logId: FieldValue.delete()});
+  deleteVaccineId(String babyId) async {
+    kidVaccine.document(babyId).delete();
+  }
+
+  // get develope data from firebase
+  getDevelopeData(String developeId) async {
+    return await developeInfo.document(developeId).get();
+  }
+
+  // get develope list from firebase
+  getDevelopeList(String developeDue) async {
+    dynamic developeListA;
+    await developeList.document(developeDue).get().then((value) {
+      if (value.data == null) {
+        return null;
+      }
+      developeListA = value.data.keys.toList();
+    });
+    return developeListA;
   }
 
   // create develope log in firebase (develope_log)
-  createDevelopeLog(String nameDevelope, Timestamp dateDevelope, String babyId,
-      dynamic subVal, dynamic dueDate) async {
-    dynamic logId;
-    await developeCollection.add({
+  Future createDevelopeLog(
+      String nameDevelope,
+      Timestamp dateDevelope,
+      String babyId,
+      dynamic subVal,
+      dynamic dueDate,
+      dynamic age,
+      int stat,
+      Timestamp lastModified) async {
+    return await developeCollection.add({
       'type': 'evo',
       'val': nameDevelope,
       'subval': subVal,
       'date': dateDevelope,
       'due_date': dueDate,
-      'stat': 0
+      'stat': stat,
+      'year': age.years,
+      'month': age.months,
+      'day': age.days,
+      'last_modified': lastModified,
     }).then((value) {
       saveKID_Develope(value.documentID, dateDevelope, babyId);
-      logId = value.documentID;
+      return value;
     });
-    return logId;
   }
 
   // keep develope log id in KID (kid_develope)
@@ -636,6 +720,16 @@ class Database extends DatabaseService {
     return await kidDevelope
         .document(babyId)
         .setData({developeLogId: dateDevelope}, merge: true);
+  }
+
+  Future getAllDevelope() async {
+    return await developeInfo
+        .orderBy('due_date')
+        .getDocuments()
+        .then((developeIds) {
+      return (developeIds.documents.map((developeId) => developeId.data))
+          .toList();
+    });
   }
 
   // get develope log id from KID
@@ -732,5 +826,30 @@ class Database extends DatabaseService {
     return await storageReference.getDownloadURL().then((fileURL) {
       return fileURL;
     });
+  }
+  // update stat
+  updateDevelopeLog(String logId, int val, Timestamp dateDevelope, dynamic age,
+      Timestamp lastModified) async {
+    return await developeCollection.document(logId).updateData({
+      'date': dateDevelope,
+      'stat': val,
+      'year': age.years,
+      'month': age.months,
+      'day': age.days,
+      'last_modified': lastModified,
+    });
+  }
+
+  // delete develope data
+  deleteDavalopeLog(String babyId, String logId) async {
+    await developeCollection
+        .document(logId)
+        .delete()
+        .whenComplete(() => deleteDevelopeId(babyId, logId));
+  }
+
+  // delete develope id
+  deleteDevelopeId(String babyId, String logId) {
+    kidDevelope.document(babyId).updateData({logId: FieldValue.delete()});
   }
 }

@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 //service
 import 'package:momandkid/services/auth.dart';
+import 'package:momandkid/services/database.dart';
 
 class settingPage extends StatefulWidget {
-  settingPage({this.auth, this.logoutCallback, this.userId});
+  settingPage({this.auth, this.logoutCallback, this.userId, this.info});
 
   final AuthService auth;
   final VoidCallback logoutCallback;
   final String userId;
+  dynamic info;
   @override
   _settingPageState createState() => _settingPageState();
 }
 
 class _settingPageState extends State<settingPage> {
 
-  bool notification = false, readOnly = true;
-  TextEditingController name = TextEditingController(text: 'Mom name');
+  bool notification, readOnly = true;
+  TextEditingController name;
+  getData(){
+    name = TextEditingController(text: widget.info['name']);
+    notification = widget.info['notification'];
+    print(notification);
+  }
   FocusNode myFocusNode = FocusNode();
 
   signOut() async {
@@ -27,6 +34,11 @@ class _settingPageState extends State<settingPage> {
     } catch (e) {
       print(e);
     }
+  }
+  @override
+  void initState(){
+    getData();
+    super.initState();
   }
 
   @override
@@ -120,6 +132,9 @@ class _settingPageState extends State<settingPage> {
                               controller: name,
                               onEditingComplete: (){
                                 setState(() {
+                                  print(name.text);
+                                  widget.info['name'] = name.text;
+                                  Database(userId: widget.userId).updateUserData(name.text);
                                   readOnly = true;
                                 });
                               },
@@ -180,6 +195,9 @@ class _settingPageState extends State<settingPage> {
                           onChanged: (value){
                             setState(() {
                               notification = value;
+                              widget.info['notification'] = notification;
+                              Database(userId: widget.userId).updateUserDataNotification(notification);
+                              print(notification);
                             });
                           },
                           activeColor: Color(0xFFFE8DAF),
@@ -239,7 +257,9 @@ class _settingPageState extends State<settingPage> {
             Align(
               alignment: Alignment(0, 0.8),
               child: FlatButton(
-                onPressed: (){}, 
+                onPressed: () {
+                  Database(userId: widget.userId).deleteUserData().whenComplete(() => signOut());
+                }, 
                 child: Text(
                   'DELETE YOUR ACCOUNT',
                   style: TextStyle(

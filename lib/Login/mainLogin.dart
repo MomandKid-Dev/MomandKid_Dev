@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
+import 'package:momandkid/services/database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
-import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:momandkid/kids/addkid.dart';
 import 'package:momandkid/services/auth.dart';
-import 'package:momandkid/services/database.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'dart:async';
 
@@ -114,6 +113,79 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
       return true;
     }
     return false;
+  }
+
+  void validateWithFacebook() async {
+    String userId = "";
+    userId = await widget.auth.loginWithFacebook();
+    dynamic info;
+    await Database(userId: userId)
+        .getUserData()
+        .then((onValue) => info = onValue.data);
+    if (info['amount-baby'] == 0) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => mainAddScreen(
+                  userId: userId,
+                  data: widget.data,
+                )),
+      );
+      print('Signed up: $userId');
+    } else {
+      print('Signed in: $userId');
+    }
+    setState(() {
+      _isLoading = false;
+    });
+    if (userId.length > 0 && userId != null) {
+      print('Login complete');
+      widget.loginCallback();
+    }
+  }
+
+  void validateWithGoogle() async {
+    setState(() {
+      _errorMessage = "";
+      _isLoading = true;
+    });
+
+    print('google Login');
+    String userId = "";
+    try {
+      userId = await widget.auth.signInWithGoogle();
+      dynamic info;
+      await Database(userId: userId).getUserData().then((val) {
+        info = val.data;
+      });
+      if (info['amount-baby'] == 0) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => mainAddScreen(
+                    userId: userId,
+                    data: widget.data,
+                  )),
+        );
+      }
+      print('Signed up: $userId');
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (userId.length > 0 && userId != null) {
+        print('Login complete');
+        widget.loginCallback();
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.message;
+        _formKey.currentState.reset();
+      });
+    }
   }
 
   void validateAndSubmit() async {
@@ -236,6 +308,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
   }
 
   bool isExpanded = false;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _message = 'Log in/out by pressing the buttons below.';
 
   @override
   Widget build(BuildContext context) {
@@ -425,7 +500,58 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                       Align(
                         alignment: Alignment.topCenter,
                         child: FlatButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              TextEditingController email = TextEditingController();
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0)), //this right here
+                                    child: Container(
+                                      height: 300,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Forget Password?',
+                                              style: TextStyle(
+                                                fontSize: 40,
+                                                fontWeight: FontWeight.bold
+                                              ),
+                                            ),
+                                            TextField(
+                                              controller: email,
+                                              keyboardType: TextInputType.emailAddress,
+                                              decoration: InputDecoration(
+                                                  border: InputBorder.none,
+                                                  hintText: 'Enter your E-mail'),
+                                            ),
+                                            SizedBox(
+                                              width: 320.0,
+                                              child: RaisedButton(
+                                                onPressed: () {
+                                                  widget.auth.resetPassword(email.text);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "Submit",
+                                                  style: TextStyle(color: Colors.white),
+                                                ),
+                                                color: const Color(0xFF1BC0C5),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                });
+                            },
                             child: Text(
                               'Forget password?',
                               style: TextStyle(
@@ -467,26 +593,33 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                           width: 50,
                           decoration: BoxDecoration(
                               color: Colors.white, shape: BoxShape.circle),
-                          child: IconButton(
-                              icon: Icon(LineAwesomeIcons.google),
+                          child: RawMaterialButton(
+                              shape: CircleBorder(),
+                              child: Image.asset(
+                                'assets/icons/google.png',
+                                height: 30,
+                                width: 30,
+                              ),
                               onPressed: () {
-                                print('google');
+                                validateWithGoogle();
                               }),
                         ),
                       ),
                       Align(
                         alignment: Alignment(-0.3, 0.25),
                         child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          child: IconButton(
-                              icon: Icon(LineAwesomeIcons.facebook),
-                              onPressed: () {
-                                print('facebook');
-                              }),
-                        ),
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                                color: Colors.white, shape: BoxShape.circle),
+                            child: RawMaterialButton(
+                                shape: CircleBorder(),
+                                child: Image.asset(
+                                  'assets/icons/facebook.png',
+                                  height: 30,
+                                  width: 30,
+                                ),
+                                onPressed: validateWithFacebook)),
                       )
                     ],
                   ),

@@ -339,12 +339,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   PageRouteTransition(
                       animationType: AnimationType.slide_up,
                       builder: (context) => createPost()));
-              Database().uploadFile(postCreated[0])
-                  .then((imageURL) => Database(userId: widget.userId)
-                      .createPost(postCreated[1], imageURL))
-                  .whenComplete(() {
+              if(postCreated != null){
+                uploadFile(postCreated[0])  
+                    .then((imageURL) => Database(userId: widget.userId)
+                        .createPost(postCreated[1], imageURL))
+                    .whenComplete(() {
+                  setState(() {});
+                });
+              }
+              else{
                 setState(() {});
-              });
+              }
             }):  PreferredSize(
                       child: Container(),
                       preferredSize: Size(0.0, 0.0),),
@@ -377,7 +382,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   GButton(
                     icon: Icons.face,
-                    text: 'Profile',
+                    text: 'Diaries',
                   ),
                   GButton(
                     icon: Icons.assignment_ind,

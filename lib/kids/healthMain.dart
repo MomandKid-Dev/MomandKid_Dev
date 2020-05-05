@@ -220,6 +220,8 @@ class _healthMainState extends State<healthMain> with TickerProviderStateMixin {
             Container(
               height: 100,
               child: appBar(
+                data: _kids.of(context).data,
+                userId: widget.userId,
                 kid: widget.data.getSelectedKid(),
                 open: _kids.of(context).open,
                 onTap: () {
@@ -675,8 +677,7 @@ Widget recent(BuildContext context, dataTest data) => Container(
       child: Column(
           children: data
               .getRecent()
-              .map<Widget>((e) => cards(
-                  context, data, e['type'], data.getData(e['type'])[0][0]))
+              .map<Widget>((e) => cards(context, data, e['type'], e))
               .toList()),
     );
 
@@ -787,31 +788,7 @@ class _childrenListState extends State<childrenList> {
                   ],
                 )),
           ),
-          GestureDetector(
-            onTap: () async {
-              var remove = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => editKidData(
-                            index: widget.index,
-                            data: widget.data.getKids()[widget.index],
-                            userId: widget.userId,
-                            dataList: widget.data,
-                          )));
-              if (remove == null) {
-                null;
-              } else {
-                setState(() {
-                  widget.data.getKids().removeAt(widget.index);
-
-                  widget.data.setSelectedKidAny();
-                  // widget.data.getSelectedKid());
-                });
-                // widget.data.getKids().removeAt(widget.index);
-              }
-            },
-            child: Icon(Icons.edit),
-          )
+          
         ],
       ),
     );

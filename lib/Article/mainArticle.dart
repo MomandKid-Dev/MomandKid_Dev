@@ -7,10 +7,24 @@ class mainArticle extends StatefulWidget {
 
 class _mainArticleState extends State<mainArticle> {
 
-  static List listDrink = ['assets/article/drink/01.png', 'assets/article/drink/02.png', 'assets/article/drink/03.png', 'assets/article/drink/04.png', 'assets/article/drink/05.png', 'assets/article/drink/06.png', 'assets/article/drink/07.png'];
-  static List listMeat = ['assets/article/meat/01.png', 'assets/article/meat/02.png', 'assets/article/meat/03.png', 'assets/article/meat/04.png', 'assets/article/meat/05.png', 'assets/article/meat/06.png', 'assets/article/meat/07.png', 'assets/article/meat/08.png', 'assets/article/meat/09.png'];
-  static List listMilk = ['assets/article/milk/01.png', 'assets/article/milk/02.png', 'assets/article/milk/03.png', 'assets/article/milk/04.png', 'assets/article/milk/05.png', 'assets/article/milk/06.png'];
-  List all = listDrink + listMeat + listMilk;
+  static List listDrink = ['assets/article/drink/01d.png', 'assets/article/drink/02d.png', 'assets/article/drink/03d.png', 'assets/article/drink/04d.png', 'assets/article/drink/05d.png', 
+                          'assets/article/drink/06d.png', 'assets/article/drink/07d.png', 'assets/article/drink/08d.png', 'assets/article/drink/09d.png', 'assets/article/drink/10d.png',
+                          'assets/article/drink/11d.png', 'assets/article/drink/12d.png', 'assets/article/drink/13d.png', 'assets/article/drink/14d.png', 'assets/article/drink/15d.png',
+                          'assets/article/drink/16d.png', 'assets/article/drink/17d.png', 'assets/article/drink/18d.png', 'assets/article/drink/19d.png', 'assets/article/drink/20d.png'];
+  static List listMeat = ['assets/article/meat/01m.png', 'assets/article/meat/02m.png', 'assets/article/meat/03m.png', 'assets/article/meat/04m.png', 'assets/article/meat/05m.png', 
+                          'assets/article/meat/06m.png', 'assets/article/meat/07m.png', 'assets/article/meat/08m.png', 'assets/article/meat/09m.png', 'assets/article/meat/10m.png',
+                          'assets/article/meat/11m.png', 'assets/article/meat/12m.png', 'assets/article/meat/13m.png', 'assets/article/meat/14m.png', 'assets/article/meat/15m.png',
+                          'assets/article/meat/16m.png', 'assets/article/meat/17m.png', 'assets/article/meat/18m.png', 'assets/article/meat/19m.png', 'assets/article/meat/20m.png'];
+  static List listVeg = ['assets/article/veggies/01v.png', 'assets/article/veggies/02v.png', 'assets/article/veggies/03v.png', 'assets/article/veggies/04v.png', 'assets/article/veggies/05v.png', 
+                          'assets/article/veggies/06v.png', 'assets/article/veggies/07v.png', 'assets/article/veggies/08v.png', 'assets/article/veggies/09v.png', 'assets/article/veggies/10v.png',
+                          'assets/article/veggies/11v.png', 'assets/article/veggies/12v.png', 'assets/article/veggies/13v.png', 'assets/article/veggies/14v.png', 'assets/article/veggies/15v.png',
+                          'assets/article/veggies/16v.png', 'assets/article/veggies/17v.png', 'assets/article/veggies/18v.png', 'assets/article/veggies/19v.png', 'assets/article/veggies/20v.png'];
+  static List listFruit = ['assets/article/fruit/01f.png', 'assets/article/fruit/02f.png', 'assets/article/fruit/03f.png', 'assets/article/fruit/04f.png', 'assets/article/fruit/05f.png', 
+                          'assets/article/fruit/06f.png', 'assets/article/fruit/07f.png', 'assets/article/fruit/08f.png', 'assets/article/fruit/09f.png', 'assets/article/fruit/10f.png',
+                          'assets/article/fruit/11f.png', 'assets/article/fruit/12f.png', 'assets/article/fruit/13f.png', 'assets/article/fruit/14f.png', 'assets/article/fruit/15f.png',
+                          'assets/article/fruit/16f.png', 'assets/article/fruit/17f.png', 'assets/article/fruit/18f.png', 'assets/article/fruit/19f.png', 'assets/article/fruit/20f.png'];
+  static List listMilk = ['assets/article/milk/01b.png', 'assets/article/milk/02b.png', 'assets/article/milk/03b.png', 'assets/article/milk/04b.png', 'assets/article/milk/05b.png', 'assets/article/milk/06b.png'];
+  List all = listVeg + listFruit + listDrink + listMeat + listMilk;
   var selectedCard = '0';
 
   ScrollController _scrollController = ScrollController();
@@ -64,12 +78,13 @@ class _mainArticleState extends State<mainArticle> {
               Container(
                 height: 120.0,
                 child: ListView(
+                  padding: EdgeInsets.only(left: 10, right:10),
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
                     Container(
                       child: Row(
                         children: <Widget>[
-                          _buildInfoCard('3', 'assets/Pictures/grai.png', 'All')
+                          _buildInfoCard('5', 'assets/Pictures/stores.png', 'All')
                         ],
                       )
                     ),
@@ -77,7 +92,7 @@ class _mainArticleState extends State<mainArticle> {
                     Container(
                       child: Row(
                         children: <Widget>[
-                          _buildInfoCard('0', 'assets/Pictures/grai.png', 'GRAINS'),
+                          _buildInfoCard('0', 'assets/Pictures/veg.png', 'VEGGIES'),
                         ],
                       )
                     ),
@@ -85,7 +100,7 @@ class _mainArticleState extends State<mainArticle> {
                     Container(
                       child: Row(
                         children: <Widget>[
-                          _buildInfoCard('1', 'assets/Pictures/veg.png', 'VEGGIES'),
+                          _buildInfoCard('1', 'assets/Pictures/fru.png', 'FRUITS'),
                         ],
                       )
                     ),
@@ -93,7 +108,23 @@ class _mainArticleState extends State<mainArticle> {
                     Container(
                       child: Row(
                         children: <Widget>[
-                          _buildInfoCard('2', 'assets/Pictures/fru.png', 'FRUITS'),
+                          _buildInfoCard('2', 'assets/Pictures/drink.png', 'DRINKS'),
+                        ],
+                      )
+                    ),
+                    SizedBox(width: 20.0),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          _buildInfoCard('3', 'assets/Pictures/meat.png', 'MEATS'),
+                        ],
+                      )
+                    ),
+                    SizedBox(width: 20.0),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          _buildInfoCard('4', 'assets/Pictures/cheese.png', 'Dairy'),
                         ],
                       )
                     ),
@@ -125,13 +156,19 @@ class _mainArticleState extends State<mainArticle> {
                 ),
               ),
               SizedBox(height: 10,),
-              if(selectedCard == '0')
+              if(selectedCard == '0') //VEG
+                for (var i = 0; i < listVeg.length; i++) 
+                  Image.asset(listVeg[i])
+              else if(selectedCard == '1') //FRUIT
+                for (var i = 0; i < listFruit.length; i++) 
+                  Image.asset(listFruit[i])
+              else if(selectedCard == '2')//DRINK
                 for (var i = 0; i < listDrink.length; i++) 
                   Image.asset(listDrink[i])
-              else if(selectedCard == '1')
+              else if(selectedCard == '3')//MEAT
                 for (var i = 0; i < listMeat.length; i++) 
                   Image.asset(listMeat[i])
-              else if(selectedCard == '2')
+              else if(selectedCard == '4')//BEAN
                 for (var i = 0; i < listMilk.length; i++) 
                   Image.asset(listMilk[i])
               else

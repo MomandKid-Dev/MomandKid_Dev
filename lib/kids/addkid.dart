@@ -105,9 +105,11 @@ class _addState extends State<_add> {
 
   //   });
   // }
+  bool cantPress = false;
   @override
   void initState() {
     _babyGender = "";
+    cantPress = false;
     // TODO: implement initState
     super.initState();
   }
@@ -132,13 +134,16 @@ class _addState extends State<_add> {
             DateTime(_mainAddKid.of(context).year,
                 _mainAddKid.of(context).month, _mainAddKid.of(context).day),
             kid);
+        await widget.data.getDevelopeListFirst(
+            DateTime(_mainAddKid.of(context).year,
+                _mainAddKid.of(context).month, _mainAddKid.of(context).day),
+            kid);
 
         print('kid: $kid');
         Navigator.pop(context);
       });
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -449,20 +454,26 @@ class _addState extends State<_add> {
                                 ],
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                confirmData();
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                padding: edgeAll(20),
-                                width: 200,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: allRoundedCorner(30)),
-                                child: Text(
-                                  'Confirm',
-                                  style: TextStyle(fontSize: 12 * scale()),
+                            IgnorePointer(
+                              ignoring: cantPress,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    cantPress = true;
+                                  });
+                                  confirmData();
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: edgeAll(20),
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: allRoundedCorner(30)),
+                                  child: Text(
+                                    'Confirm',
+                                    style: TextStyle(fontSize: 12 * scale()),
+                                  ),
                                 ),
                               ),
                             )

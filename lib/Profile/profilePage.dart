@@ -3,6 +3,7 @@ import 'package:momandkid/Profile/settingPage.dart';
 import 'package:momandkid/services/database.dart';
 import 'package:route_transitions/route_transitions.dart';
 import 'package:momandkid/kids/DataTest.dart';
+import 'package:momandkid/kids/addkid.dart';
 //service
 import 'package:momandkid/services/auth.dart';
 
@@ -29,13 +30,7 @@ class _mainProfileState extends State<mainProfile> {
         });
       }
     );
-  }
-  List month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  List kidsList = [];
-  @override
-  void initState() {
-    getInfo();
-    super.initState();
+    kidsList = [];
     for (var i = 0; i <= widget.data.kiddo.length; i++) {
       if(i == widget.data.kiddo.length){
         kidsList.add([2]);
@@ -44,6 +39,14 @@ class _mainProfileState extends State<mainProfile> {
         kidsList.add([1, 'assets/icons/037-baby.png', widget.data.kiddo[i]['name'], '${widget.data.kiddo[i]['birthdate'].day}  ${month[widget.data.kiddo[i]['birthdate'].month - 1]} ${widget.data.kiddo[i]['birthdate'].year}']);
       }
     }
+  }
+  List month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  List kidsList = [];
+  @override
+  void initState() {
+    getInfo();
+    print('hello world');
+    super.initState();
   }
   
   @override
@@ -107,6 +110,7 @@ class _mainProfileState extends State<mainProfile> {
                                               userId: widget.userId,
                                               auth: widget.auth,
                                               logoutCallback: widget.logoutCallback,
+                                              info: info,
                                             )));
                               }),
                         )
@@ -288,7 +292,15 @@ class _mainProfileState extends State<mainProfile> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24)),
                               child: RawMaterialButton(
-                                onPressed: () {
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => mainAddScreen(
+                                              userId: widget.userId,
+                                              data: widget.data,
+                                            )));
+                                  getInfo();
                                   print('on pressed');
                                 },
                                 child: Stack(

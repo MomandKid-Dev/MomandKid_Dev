@@ -41,6 +41,9 @@ dependencies:
   cloud_firestore: ^0.12.9+4
   age: ^0.0.1
   uuid: ^2.0.4
+  flutter_facebook_login: ^3.0.0
+
+  google_sign_in: ^4.0.4
 
 dev_dependencies:
   flutter_test:
@@ -60,11 +63,17 @@ flutter:
     - assets/Pictures/grai.png
     - assets/Pictures/veg.png
     - assets/Pictures/fru.png
-    - assets/Pictures/pinkBG.jpg
+    - assets/Pictures/meat.png 
+    - assets/Pictures/stores.png 
+    - assets/Pictures/cheese.png  
+    - assets/Pictures/drink.png
+    - assets/Pictures/3459610.png
     - assets/icons/
     - assets/article/drink/
     - assets/article/meat/
     - assets/article/milk/
+    - assets/article/veggies/
+    - assets/article/fruit/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
