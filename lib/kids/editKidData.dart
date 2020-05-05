@@ -375,9 +375,10 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
                         Hero(
                           tag: 'child${widget.index}',
                           child: circleImg(
-                            img: ((widget.data['image'] == null) || (widget.data['image'] == '') || (widget.data['image'] == 'image path')) ?
+                            img: (_image != null) ? FileImage(_image) : 
+                            ((widget.data['image'] == null) || (widget.data['image'] == '') || (widget.data['image'] == 'image path')) ?
                             AssetImage('assets/icons/037-baby.png') :
-                            (_image != null) ? FileImage(_image) : NetworkImage(widget.data['image']),
+                            NetworkImage(widget.data['image']),
                             height: 150,
                             width: 150,
                           ),
