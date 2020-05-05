@@ -25,7 +25,6 @@ class _healthCardState extends State<healthCard> {
     list = widget.data.getData(type);
 
     print('list: $list');
-    // print('list.length: ${list[0].length}');
 
     if (list.length > 0) {
       if (list[0].length > 0) {
@@ -82,7 +81,6 @@ class _healthCardState extends State<healthCard> {
               DateTime.now().year, DateTime.now().month, DateTime.now().day)),
           age,
           lastModified);
-      // widget.list['stat'] = 0;
       updateDataDevice(
           0,
           Timestamp.fromDate(DateTime(
@@ -99,7 +97,6 @@ class _healthCardState extends State<healthCard> {
                 DateTime.now().year, DateTime.now().month, DateTime.now().day)),
             age,
             lastModified);
-        // widget.list['stat'] = 2;
         updateDataDevice(
             2,
             Timestamp.fromDate(DateTime(
@@ -114,7 +111,6 @@ class _healthCardState extends State<healthCard> {
                 DateTime.now().year, DateTime.now().month, DateTime.now().day)),
             age,
             lastModified);
-        // widget.list['stat'] = 1;
         updateDataDevice(
             1,
             Timestamp.fromDate(DateTime(
@@ -137,7 +133,6 @@ class _healthCardState extends State<healthCard> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     widget.date =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -166,11 +161,8 @@ class _healthCardState extends State<healthCard> {
       cardHeight = 1;
     }
     callback(var1, var2) {}
-    // dataTest card = new dataTest(widget.type);
     dataTest card = widget.data;
-    // print('This is ${card.getData(widget.type)[0][0]['a'].length}');
     bool exit = false;
-    // test card = new test(widget.type);
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         body: Container(
@@ -198,8 +190,6 @@ class _healthCardState extends State<healthCard> {
                         }
                       },
                       child: Container(
-                        // height: (120*test().getKeys().length).toDouble(),
-                        // height: (220 + 56 * (2 + cardHeight)).toDouble(),
                         padding: EdgeInsets.only(
                             top: 20, left: 20, right: 20, bottom: 20),
                         width: MediaQuery.of(context).size.width / 1.13,
@@ -217,7 +207,6 @@ class _healthCardState extends State<healthCard> {
                                   width: 56,
                                 ),
                                 Container(
-                                  // alignment: Alignment.center,
                                   child: Text(
                                     card.getTitle(widget.type),
                                     textAlign: TextAlign.center,
@@ -359,7 +348,6 @@ class table extends StatefulWidget {
   table({this.type, this.card, this.list, this.date, this.callbacks});
   String type;
   dataTest card;
-  // Function(Map) callback;
   Map<dynamic, dynamic> list;
   Function(dynamic, DateTime) callbacks;
   DateTime date;
@@ -368,11 +356,9 @@ class table extends StatefulWidget {
 }
 
 class _tableState extends State<table> {
-  // print(list);
   callback(newVal, newDate) {
     setState(() {
       print(newVal.toString() + ' ' + newDate.toString());
-      // widget.date = newDate;
       widget.callbacks(newVal, newDate);
     });
   }
@@ -455,21 +441,7 @@ class _tableState extends State<table> {
         )
       ];
     }
-
-    // print(card.getData()[0]['a'].map((e)=>print(e.keys)));
-    // print(card.getData()[0]['a'].forEach((a,b)=>print(a,b)));
-    // print(card.getData()[0]['a'].forEach((k,v)=>print(k)));
-    // print(list['val']);
-    // print(list['title']);
-    Widget tables() => Column(
-        // children: list.map((e)=> tab())
-
-        //children:<Widget>[((e)=> tab(e,list['a'][e],temp.length,temp.indexOf(e))).toList()],
-        children: tableList
-        // children: card.getData()[0]['a'].forEach((k)=>tab('a','a',0,0)).toList(),
-        // children: ((card.getData()[0])['a']).map<Widget>((e)=>tab(e,'a',0,0)).toList(),
-        // children: (card.getData()[0])['a'].map((e)=>tab(e['title'],e['val'],e.length,i)).toList(),
-        );
+    Widget tables() => Column(children: tableList);
     return tables();
   }
 }
@@ -507,7 +479,6 @@ class _tabState extends State<tab> {
   ];
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     textController = new TextEditingController();
     if (widget.date == null) {
@@ -519,7 +490,6 @@ class _tabState extends State<tab> {
     widget.selectedDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     valued = textController.text;
-    // temp = '';
   }
 
   setVal(var val) {
@@ -531,13 +501,7 @@ class _tabState extends State<tab> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        // padding: EdgeInsets.only(top:16,bottom: 16),
-        decoration: BoxDecoration(
-            // border: size == index + 1 ? Border() : Border(bottom: BorderSide(
-            //   color: Color(0xff8988A2),
-            //   width: 0.5
-            // )) ,
-            ),
+        decoration: BoxDecoration(),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -562,7 +526,6 @@ class _tabState extends State<tab> {
                                   year = newDate.year;
                                   selectedDated = newDate;
                                   temp = newDate.month;
-                                  // print("Date : ${newDate.day}" );
                                   widget.callback(valued, selectedDated);
                                 });
                               });
@@ -574,7 +537,6 @@ class _tabState extends State<tab> {
                             controller: textController,
                             onChanged: (text) {
                               setVal(text);
-                              print(day);
                               setState(() {
                                 widget.callback(valued, selectedDated);
                               });
@@ -586,37 +548,10 @@ class _tabState extends State<tab> {
                     style: TextStyle(fontSize: 18, color: Color(0xff625BD4)),
                     overflow: TextOverflow.fade,
                   ),
-
-            // Expanded(
-            //   flex: 4,
-            //   child: Container(
-
-            //     child:Text(key,style: TextStyle(fontSize: 20,color: Color(0xff131048)),
-            //     ),
-            //   ),
-            // ),
-            // Expanded(
-            //   flex: 6,
-            //   child: Container(
-            //     child:Text(value,textAlign: TextAlign.right,style: TextStyle(fontSize: 20,color: Color(0xff625BD4))),
-            //   )
-            // )
           ],
         ));
   }
 }
-// Row(
-//         children: <Widget>[
-//           Expanded(
-//             flex: 4,
-//             child: Text('ช่วงอายุ',style: TextStyle(fontSize: 20,color: Color(0xff131048)),),
-//           ),
-//           Expanded(
-//             flex: 6,
-//             child: Text('แรกเกิด',textAlign: TextAlign.right,style: TextStyle(fontSize: 20,color: Color(0xff625BD4))),
-//           )
-//         ],
-//       ),
 
 toDate(DateTime date) {
   String newDate = '';
@@ -657,7 +592,6 @@ class _editCardState extends State<editCard> {
   var value;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     date = DateTime.now();
     selectedDated =
@@ -781,10 +715,8 @@ class _editCardState extends State<editCard> {
             value, dateTime, babyId, subVal, age, lastModified);
         break;
       case 'vac':
-        // return createVaccine(value, dateTime, babyId, subVal);
         break;
       case 'evo':
-        // return createDevelope(value, dateTime, babyId, subVal);
         break;
       default:
         break;
@@ -802,12 +734,9 @@ class _editCardState extends State<editCard> {
       cardHeight = 1;
     }
 
-    // dataTest card = new dataTest(widget.type);
     dataTest card = widget.data;
-    // print('This is ${card.getData(widget.type)[0][0]['a'].length}');
     bool exit = false;
     return Scaffold(
-        // resizeToAvoidBottomPadding: false,
         body: ListView(
             physics: BouncingScrollPhysics(),
             padding: edgeAll(0),
@@ -829,16 +758,7 @@ class _editCardState extends State<editCard> {
                   Column(
                     children: <Widget>[
                       GestureDetector(
-                        // onTapDown: (TapDownDetails details){
-                        //   exit = true;
-                        // },
-                        // onTapCancel: (){
-                        //   if(exit){
-                        //     Navigator.pop(context);
-                        //   }
-                        // },
                         child: Container(
-                          // height: (120*test().getKeys().length).toDouble(),
                           height: (220 + 56 * (2 + cardHeight)).toDouble(),
                           padding:
                               EdgeInsets.only(top: 20, left: 20, right: 20),
@@ -915,11 +835,6 @@ class _editCardState extends State<editCard> {
                                       'assets/icons/check-circle.png'),
                                 ),
                                 onPressed: () async {
-                                  // widget.data.setDatasStat(widget.list['id'], widget.list['type']);
-                                  // print(value + ' ' + selectedDate.toString());
-                                  //here na ja
-                                  //value
-                                  //selectedDate
                                   print('create log');
                                   await createLog(
                                       widget.type,
@@ -929,10 +844,6 @@ class _editCardState extends State<editCard> {
                                       '',
                                       widget.data.getSelectedKid()['age'],
                                       Timestamp.fromDate(DateTime.now()));
-                                  // print('TYPE: ${widget.type}');
-                                  // //here
-                                  // print(
-                                  //     'KID: ${widget.data.getSelectedKid()['kid']}');
                                   Navigator.pop(context);
                                 },
                               ),
@@ -948,8 +859,6 @@ class _editCardState extends State<editCard> {
                                           'assets/icons/trash-alt.png'),
                                     ),
                                     onPressed: () {
-                                      // widget.data.setDatas(widget.list['id'], widget.list['type']);
-                                      // deleteLog();
                                       Navigator.pop(context);
                                     },
                                   ),

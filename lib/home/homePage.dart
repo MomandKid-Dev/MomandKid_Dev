@@ -51,11 +51,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _title = 'Home';
   }
 
-  // Future testData() {
-  //   _data.kiddo[0]['sel'] = 1;
-  //   print('test data: ${_data.kiddo[0]}');
-  // }
-
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
   @override
   void dispose() {
@@ -129,17 +124,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ));
     }
     List<Map> postsss = postss.map((post) => post.getMap()).toList();
-    //postss.sort((a, b) => a.pid.compareTo(b.pid));
     return postsss;
   }
-  // List<Map> postsss = postss.map((post) => post.getMap()).toList();
-  // //FirebaseStorage storage = FirebaseStorage.getInstance();
-  // //postss.sort((a, b) => a.pid.compareTo(b.pid));
-  // return postsss;
 
   @override
   Widget build(BuildContext context) {
-    //print('test : ${dataTest().kiddo}');
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFB),
       key: _scaffoldKey,

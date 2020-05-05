@@ -45,14 +45,10 @@ class dataTest {
     // new version (map baby model)
     await getBabyInfo(userId).then((value) {
       dynamic babyInfo = mapBaby(value);
-      print('Baby info not form: ${babyInfo}');
 
       kiddo = mapBabyForm(babyInfo);
-      // AgeDuration age = kiddo[0]['age'];
-      // print('Age: ${age.years}');
       kiddo.sort((a, b) => a['date'].compareTo(b['date']));
       kiddo[kiddo.length - 1]['sel'] = 1;
-      print('Baby info form: ${kiddo}');
     });
   }
 
@@ -61,21 +57,8 @@ class dataTest {
   //this is just sample data to simulate when i got the data from ...;
   List<dynamic> datas_raw = new List();
   List<dynamic> datas = new List();
-  // List<dynamic> datas = [
-  //   {
-  //     'id': 1,
-  //     'kidID': '1',
-  //     'type': 'vac',
-  //     'val': 'วัคซีนป้องกันวัณโรค',
-  //     'subval': 'ช่วงอายุ แรกเกิด',
-  //     'stat': '1',
-  //     'range': 'แรกเกิด',
-  //     'Date': '12012021'
-  //   },
-  // ]
 
   List<dynamic> mapLog(List<dynamic> logList) {
-    print(logList);
     return (logList.map((log) {
       Map logData = log.data;
       logData['logId'] = log.documentID;
@@ -153,15 +136,10 @@ class dataTest {
     }
   }
 
-  // List<dynamic> mapData(List<dynamic> dataList) {
-  //   return (dataList.map((dataList) => dataList.data)).toList();
-  // }
-
   Future getDataLogAll() async {
     datas_raw = [];
     datas = [];
     dynamic babyId = getSelectedKid()['kid'];
-    print('babyId: ${babyId}');
 
     // list log
     await getHeightLog(babyId);
@@ -170,13 +148,9 @@ class dataTest {
     await getVaccineLog(babyId);
     await getDevelopeLog(babyId);
 
-    print('data_raw log: ${this.datas_raw}');
-
     datas = mapLog(datas_raw);
-    
-    datas.sort((a, b) => a['due_date'].compareTo(b['due_date']));
 
-    print('data log: ${datas}');
+    datas.sort((a, b) => a['due_date'].compareTo(b['due_date']));
   }
 
   // male
@@ -1444,7 +1418,6 @@ class dataTest {
   }
 
   getKids() {
-    //print('call getKid: $kiddo');
     return kiddo;
   }
 
@@ -1462,7 +1435,6 @@ class dataTest {
   }
 
   setDatas(int id, String type) {
-    // print('deleted');
     for (var i = 0; i < datas.length; i++) {
       if (datas[i]['id'] == id && datas[i]['type'] == type) {
         datas.removeAt(i);
@@ -1489,7 +1461,6 @@ class dataTest {
   }
 
   setDatasStat(int id, String type) {
-    // print('deleted');
     for (var i = 0; i < datas.length; i++) {
       if (datas[i]['id'] == id && datas[i]['type'] == type) {
         datas[i]['stat'] = 0.toString();
@@ -1555,7 +1526,6 @@ class dataTest {
     if (tempDatas.length > 0) {
       tempDatas
           .sort((a, b) => a['last_modified'].compareTo(b['last_modified']));
-      print('temp datas : $tempDatas');
 
       for (var i = 0; i < tempDatas.length; i++) {
         out.add(tempDatas[i]);
@@ -1594,7 +1564,6 @@ class dataTest {
   List getData(String type) {
     List<Map<dynamic, dynamic>> temp = new List();
     List<dynamic> out = new List();
-    // print('datas : $datas');
     for (var i = 0; i < datas.length; i++) {
       if ((datas[i])['type'] == type) {
         temp.add(datas[i]);
@@ -1618,7 +1587,6 @@ class dataTest {
     vaccine = [];
 
     List<dynamic> listVaccine = await Database().getAllVaccineData();
-    print(listVaccine);
 
     for (int i = 0; i < listVaccine.length; i++) {
       if (listVaccine[i]['due_date'] > sumAge) {
@@ -1640,50 +1608,8 @@ class dataTest {
     }
   }
 
-  // add vaccine each month
-  // getVaccine(String babyId,dynamic age) async {
-  //   int index;
-  //   int sumAge = (age.years * 12) + age.months;
-  //   vaccineRaw = [];
-  //   vaccine = [];
-
-  //   for (index = 0; index < vaccineDue.length; index++) {
-  //     if (sumAge < vaccineDue[index]) {
-  //       break;
-  //     }
-  //   }
-
-  //   List<dynamic> listVaccine =
-  //       await Database().getVaccineList('${vaccineDue[index - 1]}_month');
-  //   if (listVaccine != null) {
-  //     for (var i = 0; i < listVaccine.length; i++) {
-  //       dynamic data;
-  //       await Database().getVaccineData(listVaccine[i]).then((val) {
-  //         data = val;
-  //       });
-  //       this.vaccineRaw.add(data);
-  //     }
-  //   }
-
-  //   vaccine = mapVaccine(vaccineRaw);
-
-  //   for (var i = 0; i < vaccine.length; i++) {
-  //     createVaccine(
-  //         vaccine[i]['val'],
-  //         DateTime(
-  //             DateTime.now().year, DateTime.now().month, DateTime.now().day),
-  //         babyId,
-  //         vaccine[i]['subval'],
-  //         vaccine[i]['due_date'],
-  //         age,
-  //         Timestamp.fromDate(DateTime.now()));
-  //   }
-  // }
-
   // add vaccine for edit kid data
   getvaccineEdit(dynamic birthDate, String babyId) async {
-    print('delete vaccinee');
-
     List<dynamic> listVaccineDelete = await Database().getVaccineLogId(babyId);
     Database().deleteVaccineId(babyId);
 
@@ -1694,7 +1620,6 @@ class dataTest {
 
       datas.removeWhere((item) => item['type'] == 'vac');
 
-      print('delete vaccine complete');
       getVaccineListFirst(birthDate, babyId);
     }
   }
@@ -1787,7 +1712,6 @@ class dataTest {
     }
 
     List<dynamic> listDevelope = await Database().getAllDevelope();
-    print(listDevelope);
 
     for (int i = 0; i < listDevelope.length; i++) {
       if (listDevelope[i]['due_date'] > sumAge) {
@@ -1821,12 +1745,10 @@ class dataTest {
             Timestamp.fromDate(DateTime.now()));
       }
     }
-    print('Dev Complete');
   }
 
   // add develope from edit
   getDevelopeEdit(dynamic birthDate, String babyId) async {
-    print('delete develope');
     List<dynamic> listDevelopeDelete =
         await Database().getDevelopeLogId(babyId);
     Database().deleteDevelopeId(babyId);
@@ -1838,7 +1760,6 @@ class dataTest {
 
       datas.removeWhere((item) => item['type'] == 'evo');
 
-      print('delete develope complete');
       getDevelopeListFirst(birthDate, babyId);
     }
   }
@@ -1905,7 +1826,6 @@ evalDate(String date) {
 }
 
 genData(List<Map<dynamic, dynamic>> temp) {
-  print('temp na : ${temp}');
   for (var j = 0; j < temp.length; j++) {
     for (var k = 0; k < temp.length; k++) {
       if ((temp[j]['date'].millisecondsSinceEpoch) >
@@ -1916,7 +1836,6 @@ genData(List<Map<dynamic, dynamic>> temp) {
       }
     }
   }
-  // print(temp);
   List eiei = new List.from(temp);
   List temp1 = new List();
   List<Map<dynamic, dynamic>> temp2 = new List();
@@ -1925,7 +1844,6 @@ genData(List<Map<dynamic, dynamic>> temp) {
     int j = 1;
     while ((eiei[0])['date'].millisecondsSinceEpoch ==
         (eiei[j]['date'].millisecondsSinceEpoch)) {
-      print(eiei[j]['date'].millisecondsSinceEpoch);
       temp2.add(eiei[j]);
       j++;
       if (j >= eiei.length) {
