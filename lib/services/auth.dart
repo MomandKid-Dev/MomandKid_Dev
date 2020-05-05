@@ -12,16 +12,15 @@ abstract class AuthService {
 
   Future<void> sendEmailVerification();
 
+  Future resetPassword(String email);
+
   Future<void> signOut();
 
   Future<bool> isEmailVerified();
 
-  Future loginWithFacebook();
-
-  Future resetPassword(String email);
+  Future<String> loginWithFacebook();
 
   Future<String> signInWithGoogle();
-
 }
 
 class Auth implements AuthService {
@@ -52,27 +51,6 @@ class Auth implements AuthService {
     } catch (e) {
       return e.toString();
     }
-    
-  }
-
-  Future loginWithFacebook() async {
-    FacebookLogin facebookLogin = FacebookLogin();
-    FacebookLoginResult result = await facebookLogin
-        .logIn(['email', "public_profile"]);
- 
-    String token = result.accessToken.token;
-    print("Access token = $token");
-    await _firebaseAuth.signInWithCredential(
-        FacebookAuthProvider.getCredential(accessToken: token));
-    // checkAuth(context); // after success, navigate to home.
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    dynamic info;
-    await Database(userId: user.uid).getUserData().then((onValue) => info = onValue.data);
-    print(info);
-    if(info == null){
-      await Database(userId: user.uid).createUserInfo(user.displayName.split(' ')[0], user.email, 'image path');
-    }
-    return user.uid;
   }
 
   Future<FirebaseUser> getCurrentUser() async {
@@ -133,6 +111,32 @@ class Auth implements AuthService {
     }
 
     print('Login with google');
+    return user.uid;
+  }
+
+  Future<String> loginWithFacebook() async {
+    FacebookLogin facebookLogin = FacebookLogin();
+    FacebookLoginResult result =
+        await facebookLogin.logIn(['email', "public_profile"]);
+
+    String token = result.accessToken.token;
+    await _firebaseAuth.signInWithCredential(
+        FacebookAuthProvider.getCredential(accessToken: token));
+
+    FirebaseUser user = await _firebaseAuth.currentUser();
+
+    dynamic info;
+    await Database(userId: user.uid)
+        .getUserData()
+        .then((onValue) => info = onValue.data);
+
+    print(info);
+    if (info == null) {
+      await Database(userId: user.uid).createUserInfo(
+          user.displayName.split(' ')[0], user.email, 'image path');
+    }
+
+    print('Login with Facebook');
     return user.uid;
   }
 }

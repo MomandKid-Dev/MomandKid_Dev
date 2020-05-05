@@ -76,9 +76,9 @@ class _editState extends State<editKidData> with TickerProviderStateMixin {
       widget.dataList.kiddo.removeWhere((item) => item['kid'] == babyId);
       widget.dataList.kiddo[widget.dataList.kiddo.length - 1]['sel'] = 1;
       print('kiddo: ${widget.dataList.kiddo}');
-      widget.dataList
-          .getDataLogAll()
-          .whenComplete(() => Navigator.pop(context));
+      widget.dataList.getDataLogAll();
+      // .whenComplete(() => Navigator.pop(context));
+      Navigator.pop(context);
     });
   }
 

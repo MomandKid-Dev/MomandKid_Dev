@@ -293,22 +293,22 @@ class Database extends DatabaseService {
   }
 
   Future updateUserData(String name) async {
-    return await userCollection.document(userId).updateData({
-      'name': name
-    });
+    return await userCollection.document(userId).updateData({'name': name});
   }
 
   Future updateUserDataNotification(bool notification) async {
     print('noti : $notification');
-    return await userCollection.document(userId).updateData({
-      'notification': notification
-    });
+    return await userCollection
+        .document(userId)
+        .updateData({'notification': notification});
   }
 
   Future deleteUserData() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    return await userCollection.document(userId).delete().then((onValue) => user.delete());
-     
+    return await userCollection
+        .document(userId)
+        .delete()
+        .then((onValue) => user.delete());
   }
 
   Future getUserFromPost(DocumentSnapshot post) async {
@@ -611,6 +611,15 @@ class Database extends DatabaseService {
     });
   }
 
+  Future getAllVaccineData() async {
+    return await vaccineInfo
+        .orderBy('due_date')
+        .getDocuments()
+        .then((vaccineIds) {
+      return (vaccineIds.documents.map((vaccineId) => vaccineId.data)).toList();
+    });
+  }
+
   // keep vaccine log id in KID (kid_vaccine)
   Future<void> saveKID_Vaccine(
       String vaccineLogId, Timestamp dateVaccine, String babyId) async {
@@ -708,6 +717,16 @@ class Database extends DatabaseService {
     return await kidDevelope
         .document(babyId)
         .setData({developeLogId: dateDevelope}, merge: true);
+  }
+
+  Future getAllDevelope() async {
+    return await developeInfo
+        .orderBy('due_date')
+        .getDocuments()
+        .then((developeIds) {
+      return (developeIds.documents.map((developeId) => developeId.data))
+          .toList();
+    });
   }
 
   // get develope log id from KID

@@ -1563,13 +1563,6 @@ class dataTest {
       }
     }
     out = out.reversed.toList();
-    // if (getData('weight').length > 0) out.add(getData('weight')[0][0]);
-    // if (getData('height').length > 0) out.add(getData('height')[0][0]);
-    // if (getDataWithType('vac', 1).length > 0)
-    //   out.add(getDataWithType('vac', 1)[0][0]);
-    // if (getData('med').length > 0) out.add(getData('med')[0][0]);
-    // if (getDataWithType('evo', 0).length > 0)
-    //   out.add(getDataWithType('evo', 0)[0][0]);
     return out;
   }
 
@@ -1622,25 +1615,15 @@ class dataTest {
     vaccineRaw = [];
     vaccine = [];
 
-    while (sumAge >= vaccineDue[i]) {
-      List<dynamic> listVaccine =
-          await Database().getVaccineList('${vaccineDue[i]}_month');
-      print(listVaccine);
-      // get develope log data
-      if (listVaccine != null) {
-        for (var i = 0; i < listVaccine.length; i++) {
-          dynamic data;
-          await Database().getVaccineData(listVaccine[i]).then((val) {
-            data = val;
-          });
-          this.vaccineRaw.add(data);
-        }
-      }
-      // update state
-      i++;
-    }
+    List<dynamic> listVaccine = await Database().getAllVaccineData();
+    print(listVaccine);
 
-    vaccine = mapVaccine(vaccineRaw);
+    for (int i = 0; i < listVaccine.length; i++) {
+      if (listVaccine[i]['due_date'] > sumAge) {
+        break;
+      }
+      vaccine.add(listVaccine[i]);
+    }
 
     for (var i = 0; i < vaccine.length; i++) {
       createVaccine(
@@ -1656,20 +1639,20 @@ class dataTest {
   }
 
   // add vaccine each month
-  // getVaccine(dynamic age) async {
+  // getVaccine(String babyId,dynamic age) async {
   //   int index;
   //   int sumAge = (age.years * 12) + age.months;
   //   vaccineRaw = [];
   //   vaccine = [];
 
   //   for (index = 0; index < vaccineDue.length; index++) {
-  //     if (sumAge == vaccineDue[index]) {
+  //     if (sumAge < vaccineDue[index]) {
   //       break;
   //     }
   //   }
 
   //   List<dynamic> listVaccine =
-  //       await Database().getVaccineList('${vaccineDue[index]}_month');
+  //       await Database().getVaccineList('${vaccineDue[index - 1]}_month');
   //   if (listVaccine != null) {
   //     for (var i = 0; i < listVaccine.length; i++) {
   //       dynamic data;
@@ -1687,17 +1670,17 @@ class dataTest {
   //         vaccine[i]['val'],
   //         DateTime(
   //             DateTime.now().year, DateTime.now().month, DateTime.now().day),
-  //         getSelectedKid()['kid'],
+  //         babyId,
   //         vaccine[i]['subval'],
   //         vaccine[i]['due_date'],
-  //         getSelectedKid()['age'],
+  //         age,
   //         Timestamp.fromDate(DateTime.now()));
   //   }
   // }
 
   // add vaccine for edit kid data
   getvaccineEdit(dynamic birthDate, String babyId) async {
-    print('delete develope');
+    print('delete vaccinee');
     List<Map<dynamic, dynamic>> temp = new List();
     // print('datas : $datas');
     for (var i = 0; i < datas.length; i++) {
@@ -1735,10 +1718,9 @@ class dataTest {
       logId = val.documentID;
     });
     // update on divice
-    if (babyId == getSelectedKid()['kid']) {
-      addVaccineDatas(value, Timestamp.fromDate(dateTime), babyId, subVal,
-          logId, dueDate, age, lastModified);
-    }
+
+    addVaccineDatas(value, Timestamp.fromDate(dateTime), babyId, subVal, logId,
+        dueDate, age, lastModified);
   }
 
   addVaccineDatas(
@@ -1809,27 +1791,15 @@ class dataTest {
       }
     }
 
-    while (sumAge >= developeDue[i]) {
-      List<dynamic> listDevelope =
-          await Database().getDevelopeList('${developeDue[i]}_month');
-      print(listDevelope);
-      // get develope log data
-      if (listDevelope != null) {
-        for (var i = 0; i < listDevelope.length; i++) {
-          dynamic data;
-          await Database().getDevelopeData(listDevelope[i]).then((val) {
-            data = val;
-          });
-          this.developeRaw.add(data);
-        }
+    List<dynamic> listDevelope = await Database().getAllDevelope();
+    print(listDevelope);
+
+    for (int i = 0; i < listDevelope.length; i++) {
+      if (listDevelope[i]['due_date'] > sumAge) {
+        break;
       }
-      // update state
-      i++;
+      develope.add(listDevelope[i]);
     }
-
-    develope = mapDevelope(developeRaw);
-
-    print(develope);
 
     for (var i = 0; i < develope.length; i++) {
       if (develope[i]['due_date'] < developeDue[index - 1]) {
@@ -1862,7 +1832,6 @@ class dataTest {
   getDevelopeEdit(dynamic birthDate, String babyId) async {
     print('delete develope');
     List<Map<dynamic, dynamic>> temp = new List();
-    // print('datas : $datas');
     for (var i = 0; i < datas.length; i++) {
       if ((datas[i])['type'] == 'evo') {
         temp.add(datas[i]);
