@@ -225,6 +225,7 @@ class _story extends State<storyMain> with TickerProviderStateMixin {
             children: <Widget>[
               Container(
                 child: appBar(
+                  userId: widget.userId,
                   data: widget.kiddata,
                   kid: widget.kiddata.getSelectedKid(),
                   open: storyPage.of(context).open,
