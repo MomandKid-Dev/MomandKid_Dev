@@ -10,9 +10,10 @@ import 'package:photo_view/photo_view.dart';
 import 'commentdata.dart';
 
 class mainPostScreen extends StatefulWidget {
-  mainPostScreen({this.data, this.userId});
+  mainPostScreen({this.data, this.userId, this.comment});
   Map data;
   String userId;
+  bool comment;
   @override
   _mainPostScreenState createState() => _mainPostScreenState();
 }
@@ -20,7 +21,12 @@ class mainPostScreen extends StatefulWidget {
 class _mainPostScreenState extends State<mainPostScreen> {
   @override
   Widget build(BuildContext context) {
-    return posts(child: postPage(), data: widget.data, userId: widget.userId);
+    return posts(
+      child: postPage(),
+      data: widget.data,
+      userId: widget.userId,
+      comment: widget.comment,
+    );
   }
 }
 
@@ -28,7 +34,8 @@ class posts extends StatefulWidget {
   Widget child;
   Map data;
   String userId;
-  posts({this.child, this.data, this.userId});
+  bool comment;
+  posts({this.child, this.data, this.userId, this.comment});
   @override
   _postsState createState() => _postsState();
   static _postsState of(BuildContext context) =>
@@ -209,6 +216,11 @@ class postPage extends StatefulWidget {
 class _postPageState extends State<postPage> {
   @override
   Widget build(BuildContext context) {
+    if (posts.of(context).widget.comment != null) {
+      if (posts.of(context).widget.comment) {
+        posts.of(context).commentNode.requestFocus();
+      }
+    }
     return Scaffold(
         body: ListView(
             padding: edgeAll(0),
@@ -496,9 +508,9 @@ class _postBoxState extends State<postBox> {
                 width: MediaQuery.of(context).size.width / 4,
                 height: 8,
                 child: FlatButton(
-                  onPressed: (){
-                      Navigator.pop(context);
-                    },
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   color: Colors.grey,
                   child: Container(),
                 ),
@@ -727,6 +739,9 @@ class _selfCommentState extends State<selfComment> {
               img: _userimg,
               height: 50,
               width: 50,
+            ),
+            SizedBox(
+              width: 10,
             ),
             Container(
               width: 200,

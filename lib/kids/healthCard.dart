@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/style.dart';
 import 'DataTest.dart';
@@ -297,6 +298,9 @@ class _healthCardState extends State<healthCard> {
                                 child: RawMaterialButton(
                                   child: Container(child: trashIcon),
                                   onPressed: () {
+                                    print(widget.type);
+                                    print(widget.data.getSelectedKid()['kid']);
+                                    print(widget.list['logId']);
                                     switch (widget.type) {
                                       case 'height':
                                         deleteHeight(
@@ -429,6 +433,7 @@ class _tableState extends State<table> {
           value: null,
           date: widget.date,
           callback: callback,
+          type: widget.type,
         ),
         Divider(
           height: 30,
@@ -438,6 +443,7 @@ class _tableState extends State<table> {
           value: null,
           date: widget.date,
           callback: callback,
+          type: widget.type,
         )
       ];
     }
@@ -500,6 +506,7 @@ class _tabState extends State<tab> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.type);
     return Container(
         decoration: BoxDecoration(),
         child: Row(
@@ -532,9 +539,15 @@ class _tabState extends State<tab> {
                             },
                             child: Text('${day.toString()}' +
                                 ' ${month[mon - 1]} ' +
-                                '${year.toString()}'))
+                                '${year.toString()} '))
                         : TextFormField(
                             controller: textController,
+                            keyboardType: widget.type == 'med'
+                                ? TextInputType.text
+                                : TextInputType.number,
+                            inputFormatters: widget.type == 'med'
+                                ? []
+                                : [WhitelistingTextInputFormatter.digitsOnly],
                             onChanged: (text) {
                               setVal(text);
                               setState(() {
@@ -609,8 +622,12 @@ class _editCardState extends State<editCard> {
       dynamic age, Timestamp lastModified) async {
     dynamic logId;
     // create height log on firebase
-    logId = await Database().createHeightLog(double.parse(value),
-        Timestamp.fromDate(dateTime), babyId, subVal, age, lastModified);
+    await Database()
+        .createHeightLog(double.parse(value), Timestamp.fromDate(dateTime),
+            babyId, subVal, age, lastModified)
+        .then((val) {
+      logId = val.documentID;
+    });
     // create hieght log on device (datas)
     addHeight(double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal,
         age, logId, lastModified);
@@ -644,8 +661,12 @@ class _editCardState extends State<editCard> {
       dynamic age, Timestamp lastModified) async {
     dynamic logId;
     // create weight log on firebase
-    logId = await Database().createWeightLog(double.parse(value),
-        Timestamp.fromDate(dateTime), babyId, subVal, age, lastModified);
+    await Database()
+        .createWeightLog(double.parse(value), Timestamp.fromDate(dateTime),
+            babyId, subVal, age, lastModified)
+        .then((val) {
+      logId = val.documentID;
+    });
     // create wieght log on device (datas)
     addWeight(double.parse(value), Timestamp.fromDate(dateTime), babyId, subVal,
         age, logId, lastModified);
@@ -679,8 +700,14 @@ class _editCardState extends State<editCard> {
       dynamic subVal, dynamic age, Timestamp lastModified) async {
     dynamic logId;
     // create weight log on firebase
-    logId = Database().createMedicineLog(
-        value, Timestamp.fromDate(dateTime), babyId, subVal, age, lastModified);
+    await Database()
+        .createMedicineLog(value, Timestamp.fromDate(dateTime), babyId, subVal,
+            age, lastModified)
+        .then((val) {
+      logId = val.documentID;
+    });
+
+    print(logId);
     // update on divice
     addMedicineDatas(value, Timestamp.fromDate(dateTime), babyId, subVal, age,
         logId, lastModified);
@@ -794,17 +821,6 @@ class _editCardState extends State<editCard> {
                                         fontSize: 30,
                                         color: Color(0xff131048),
                                         fontWeight: FontWeight.w700),
-                                  ),
-                                  Container(
-                                    child: Text(
-                                      'test',
-                                      style: TextStyle(
-                                          fontFamily: 'Segoe UI',
-                                          fontSize: 14,
-                                          color: Color(0xff131048),
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    padding: EdgeInsets.only(bottom: 20),
                                   ),
                                   table(
                                     type: widget.type,

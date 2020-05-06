@@ -100,7 +100,7 @@ class _addState extends State<_add> {
   bool cantPress = false;
   @override
   void initState() {
-    _babyGender = "";
+    _babyGender = "Male";
     cantPress = false;
     super.initState();
   }
@@ -411,16 +411,6 @@ class _addState extends State<_add> {
                                               .heightController,
                                           keyboardType: TextInputType.number,
                                           onChanged: (text) {
-                                            if (_mainAddKid
-                                                    .of(context)
-                                                    .heightController
-                                                    .text ==
-                                                '') {
-                                              _mainAddKid
-                                                  .of(context)
-                                                  .heightController
-                                                  .text = 0.toString();
-                                            }
                                             setState(() {});
                                           },
                                         ),

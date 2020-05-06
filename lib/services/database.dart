@@ -389,19 +389,14 @@ class Database extends DatabaseService {
   }
 
   Future updateScheduleDate(String sid, DateTime date) async {
-    return await scheduleCollection
-        .document(sid)
-        .updateData({
-          'timeset' : date
-        });
+    return await scheduleCollection.document(sid).updateData({'timeset': date});
   }
 
   // this is data control of health page
   // create height log collection in firebase (height_log)
   createHeightLog(double babyHeight, Timestamp dateHeight, String babyId,
       dynamic subVal, dynamic age, Timestamp lastModified) async {
-    dynamic logId;
-    await heightCollection.add({
+    return await heightCollection.add({
       'type': 'height',
       'val': babyHeight,
       'subval': subVal,
@@ -412,9 +407,8 @@ class Database extends DatabaseService {
       'last_modified': lastModified,
     }).then((value) {
       saveKID_Height(value.documentID, dateHeight, babyId);
-      logId = value.documentID;
+      return value;
     });
-    return logId;
   }
 
   // keep height log id in KID (kid_height)
@@ -463,8 +457,7 @@ class Database extends DatabaseService {
   // create weight log collection in firebase (weight_log)
   createWeightLog(double babyWeight, Timestamp dateWeight, String babyId,
       dynamic subVal, dynamic age, Timestamp lastModified) async {
-    dynamic logId;
-    await weightCollection.add({
+    return await weightCollection.add({
       'type': 'weight',
       'val': babyWeight,
       'subval': subVal,
@@ -475,9 +468,8 @@ class Database extends DatabaseService {
       'last_modified': lastModified,
     }).then((value) {
       saveKID_Weight(value.documentID, dateWeight, babyId);
-      logId = value.documentID;
+      return value;
     });
-    return logId;
   }
 
   // keep weight log id in KID (kid_weight)
@@ -527,7 +519,7 @@ class Database extends DatabaseService {
   createMedicineLog(String nameMedicine, Timestamp dateMedicine, String babyId,
       dynamic subVal, dynamic age, Timestamp lastModified) async {
     dynamic logId;
-    await medicineCollection.add({
+    return await medicineCollection.add({
       'type': 'med',
       'val': nameMedicine,
       'subval': subVal,
@@ -538,9 +530,8 @@ class Database extends DatabaseService {
       'last_modified': lastModified,
     }).then((value) {
       saveKID_Medicine(value.documentID, dateMedicine, babyId);
-      logId = value.documentID;
+      return value;
     });
-    return logId;
   }
 
   // keep medicine log id in KID (kid_medicine)
@@ -756,9 +747,7 @@ class Database extends DatabaseService {
   }
 
   Future updateKidImage(String kid, String url) async {
-    return await babyCollection.document(kid).updateData({
-      'image' : url
-    });
+    return await babyCollection.document(kid).updateData({'image': url});
   }
 
   Future getStoryFromKid(String kid) async {
@@ -795,17 +784,13 @@ class Database extends DatabaseService {
   Future increaseStoryAmount() async {
     return await userCollection
         .document(userId)
-        .updateData({
-          'amount-story': FieldValue.increment(1)
-        });
+        .updateData({'amount-story': FieldValue.increment(1)});
   }
 
   Future decreaseStoryAmount() async {
     return await userCollection
         .document(userId)
-        .updateData({
-          'amount-story': FieldValue.increment(-1)
-        });
+        .updateData({'amount-story': FieldValue.increment(-1)});
   }
 
   Future savekidstory(String kid, String story, DateTime date) async {
@@ -815,13 +800,10 @@ class Database extends DatabaseService {
   }
 
   Future removeStory(String sid, String kid) async {
-    return await storyCollection
-        .document(sid)
-        .delete()
-        .whenComplete(() {
-          decreaseStoryAmount();
-          removeStoryFromKidStory(kid, sid);
-        });
+    return await storyCollection.document(sid).delete().whenComplete(() {
+      decreaseStoryAmount();
+      removeStoryFromKidStory(kid, sid);
+    });
   }
 
   Future removeStoryFromKidStory(String kid, String sid) async {

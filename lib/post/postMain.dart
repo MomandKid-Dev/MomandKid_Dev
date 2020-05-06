@@ -225,16 +225,28 @@ class _postState extends State<post> {
                         favButton(like: liked()),
                       ],
                     )),
-                Container(
-                    width: 100,
-                    height: 40,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.comment),
-                        SizedBox(width: 10),
-                        Text(comments().toString())
-                      ],
-                    )),
+                FlatButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => mainPostScreen(
+                                  data: widget.data,
+                                  userId: widget.userId,
+                                  comment: true,
+                                )));
+                  },
+                  child: Container(
+                      width: 100,
+                      height: 40,
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.comment),
+                          SizedBox(width: 10),
+                          Text(comments().toString())
+                        ],
+                      )),
+                ),
                 SizedBox(
                   height: 30,
                 ),

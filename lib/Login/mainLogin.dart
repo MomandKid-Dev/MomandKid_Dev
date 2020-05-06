@@ -40,8 +40,8 @@ class _mainLoginState extends State<mainLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
+        body: SingleChildScrollView(
+      child: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
@@ -55,7 +55,7 @@ class _mainLoginState extends State<mainLogin> {
             loginCallback: widget.loginCallback,
             data: widget.data),
       ),
-    );
+    ));
   }
 }
 
@@ -122,30 +122,29 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     await Database(userId: userId)
         .getUserData()
         .then((onValue) => info = onValue.data);
-    if(info != null)
-    {
+    if (info != null) {
       if (info['amount-baby'] == 0) {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => mainAddScreen(
-                  userId: userId,
-                  data: widget.data,
-                )),
-      );
-      print('Signed up: $userId');
-    } else {
-      print('Signed in: $userId');
-    }
-    setState(() {
-      _isLoading = false;
-    });
-    if (userId.length > 0 && userId != null) {
-      print('Login complete');
-      widget.loginCallback();
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => mainAddScreen(
+                    userId: userId,
+                    data: widget.data,
+                  )),
+        );
+        print('Signed up: $userId');
+      } else {
+        print('Signed in: $userId');
+      }
+      setState(() {
+        _isLoading = false;
+      });
+      if (userId.length > 0 && userId != null) {
+        print('Login complete');
+        widget.loginCallback();
+      }
     }
   }
-}
 
   void validateWithGoogle() async {
     setState(() {
@@ -701,7 +700,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
               Icons.lock,
               color: Colors.grey,
             )),
-        validator: (val) => val.length < 6 ? 'password must be at least 6 characters' : null,
+        validator: (val) =>
+            val.length < 6 ? 'password must be at least 6 characters' : null,
         onSaved: (val) => _password = val.trim(),
       ),
     );
