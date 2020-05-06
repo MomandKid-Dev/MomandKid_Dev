@@ -225,7 +225,18 @@ class _postState extends State<post> {
                         favButton(like: liked()),
                       ],
                     )),
-                Container(
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => mainPostScreen(
+                              data: widget.data,
+                              userId: widget.userId,
+                              comment: true,
+                            )));
+                  },
+                child:Container(
                     width: 100,
                     height: 40,
                     child: Row(
@@ -235,6 +246,7 @@ class _postState extends State<post> {
                         Text(comments().toString())
                       ],
                     )),
+                ),
                 SizedBox(
                   height: 30,
                 ),

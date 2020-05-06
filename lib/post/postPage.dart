@@ -10,9 +10,10 @@ import 'package:photo_view/photo_view.dart';
 import 'commentdata.dart';
 
 class mainPostScreen extends StatefulWidget {
-  mainPostScreen({this.data, this.userId});
+  mainPostScreen({this.data, this.userId,this.comment});
   Map data;
   String userId;
+  bool comment;
   @override
   _mainPostScreenState createState() => _mainPostScreenState();
 }
@@ -20,7 +21,7 @@ class mainPostScreen extends StatefulWidget {
 class _mainPostScreenState extends State<mainPostScreen> {
   @override
   Widget build(BuildContext context) {
-    return posts(child: postPage(), data: widget.data, userId: widget.userId);
+    return posts(child: postPage(), data: widget.data, userId: widget.userId, comment: widget.comment,);
   }
 }
 
@@ -28,7 +29,8 @@ class posts extends StatefulWidget {
   Widget child;
   Map data;
   String userId;
-  posts({this.child, this.data, this.userId});
+  bool comment;
+  posts({this.child, this.data, this.userId, this.comment});
   @override
   _postsState createState() => _postsState();
   static _postsState of(BuildContext context) =>
@@ -83,6 +85,7 @@ class _postsState extends State<posts> with TickerProviderStateMixin {
   @override
   initState() {
     super.initState();
+    
     slideController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     commentController = TextEditingController();
@@ -91,6 +94,7 @@ class _postsState extends State<posts> with TickerProviderStateMixin {
         .animate(
             CurvedAnimation(curve: Curves.easeInExpo, parent: slideController));
     scrollController = ScrollController();
+    
     testPost = widget.data;
     testUser = user;
     testComment = commentdata;
@@ -104,6 +108,15 @@ class _postsState extends State<posts> with TickerProviderStateMixin {
         });
       });
     });
+    // if (posts.of(context).widget.comment != null){
+    //   if(posts.of(context).widget.comment == true){
+    //     print('hello');
+    //     posts.of(context).scrollController = ScrollController(initialScrollOffset: 100); 
+    //   }
+    // }
+    // else{
+    //   posts.of(context).scrollController = ScrollController();
+    // }
   }
 
   @override
@@ -207,8 +220,12 @@ class postPage extends StatefulWidget {
 }
 
 class _postPageState extends State<postPage> {
+  
   @override
   Widget build(BuildContext context) {
+    if(posts.of(context).widget.comment){
+      posts.of(context).commentNode.requestFocus();
+    }
     return Scaffold(
         body: ListView(
             padding: edgeAll(0),

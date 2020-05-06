@@ -411,16 +411,7 @@ class _addState extends State<_add> {
                                               .heightController,
                                           keyboardType: TextInputType.number,
                                           onChanged: (text) {
-                                            if (_mainAddKid
-                                                    .of(context)
-                                                    .heightController
-                                                    .text ==
-                                                '') {
-                                              _mainAddKid
-                                                  .of(context)
-                                                  .heightController
-                                                  .text = 0.toString();
-                                            }
+                                            
                                             setState(() {});
                                           },
                                         ),
