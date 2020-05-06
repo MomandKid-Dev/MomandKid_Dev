@@ -495,8 +495,12 @@ class _postBoxState extends State<postBox> {
               child: SizedBox(
                 width: MediaQuery.of(context).size.width / 4,
                 height: 8,
-                child: Container(
+                child: FlatButton(
+                  onPressed: (){
+                      Navigator.pop(context);
+                    },
                   color: Colors.grey,
+                  child: Container(),
                 ),
               ),
             ),

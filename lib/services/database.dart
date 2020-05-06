@@ -312,10 +312,8 @@ class Database extends DatabaseService {
 
   Future deleteUserData() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    return await userCollection
-        .document(userId)
-        .delete()
-        .then((onValue) => user.delete());
+    print(user);
+    return await user.delete();
   }
 
   Future getUserFromPost(DocumentSnapshot post) async {
