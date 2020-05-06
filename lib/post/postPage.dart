@@ -40,11 +40,12 @@ class posts extends StatefulWidget {
 }
 
 class _postsState extends State<posts> with TickerProviderStateMixin {
+  FocusNode commentNode;
   AnimationController slideController;
   Animation<Offset> slideAnimation;
   TextEditingController commentController;
   ScrollController scrollController;
-  FocusNode commentNode;
+  
   User user = User();
   Commentdata commentdata = Commentdata();
 
@@ -223,8 +224,10 @@ class _postPageState extends State<postPage> {
   
   @override
   Widget build(BuildContext context) {
-    if(posts.of(context).widget.comment){
-      posts.of(context).commentNode.requestFocus();
+    if(posts.of(context).widget.comment != null){
+      if(posts.of(context).widget.comment){
+        posts.of(context).commentNode.requestFocus();
+      }
     }
     return Scaffold(
         body: ListView(
