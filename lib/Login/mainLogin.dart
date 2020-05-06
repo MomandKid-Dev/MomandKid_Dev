@@ -701,7 +701,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
               Icons.lock,
               color: Colors.grey,
             )),
-        validator: (val) => val.length < 6 ? 'Password must not less 6 letter' : null,
+        validator: (val) => val.length < 6 ? 'password must be at least 6 characters' : null,
         onSaved: (val) => _password = val.trim(),
       ),
     );
