@@ -150,7 +150,6 @@ class dataTest {
 
     datas = mapLog(datas_raw);
 
-    datas.sort((a, b) => a['due_date'].compareTo(b['due_date']));
   }
 
   // male

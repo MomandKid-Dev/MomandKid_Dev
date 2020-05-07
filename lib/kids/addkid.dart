@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:momandkid/kids/DataTest.dart';
 import 'package:momandkid/services/database.dart';
 import 'package:momandkid/shared/style.dart';
@@ -331,6 +332,9 @@ class _addState extends State<_add> {
                                               .of(context)
                                               .weightController,
                                           keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            WhitelistingTextInputFormatter.digitsOnly
+                                          ],
                                           onChanged: (text) {
                                             setState(() {});
                                           },
@@ -397,7 +401,7 @@ class _addState extends State<_add> {
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Text(
-                                        'Baby weight',
+                                        'Baby height',
                                         style:
                                             TextStyle(fontSize: 15 * scale()),
                                       ),
@@ -410,6 +414,9 @@ class _addState extends State<_add> {
                                               .of(context)
                                               .heightController,
                                           keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            WhitelistingTextInputFormatter.digitsOnly
+                                          ],
                                           onChanged: (text) {
                                             setState(() {});
                                           },
@@ -423,12 +430,13 @@ class _addState extends State<_add> {
                             IgnorePointer(
                               ignoring: cantPress,
                               child: GestureDetector(
-                                onTap: () {
+                                onTap: _mainAddKid.of(context).textController.text != '' ? () {
                                   setState(() {
                                     cantPress = true;
                                   });
                                   confirmData();
-                                },
+                                }:
+                                null,
                                 child: Container(
                                   alignment: Alignment.center,
                                   padding: edgeAll(20),
@@ -438,7 +446,7 @@ class _addState extends State<_add> {
                                       borderRadius: allRoundedCorner(30)),
                                   child: Text(
                                     'Confirm',
-                                    style: TextStyle(fontSize: 12 * scale()),
+                                    style: TextStyle(fontSize: 12 * scale(), color: _mainAddKid.of(context).textController.text != '' ? Colors.black : Colors.grey),
                                   ),
                                 ),
                               ),
